@@ -1,4 +1,4 @@
-# GorillaGame
+# PubMed Parser
 # Student Information
 Author: Michael Lewis\
 Date: September 16, 2020\
