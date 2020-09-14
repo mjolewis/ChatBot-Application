@@ -1,7 +1,7 @@
 # PubMed Parser
 # Student Information
 Author: Michael Lewis\
-Course: CS 622
+Course: CS 622\
 Date: September 16, 2020\
 Homework #2: PubMed
 
