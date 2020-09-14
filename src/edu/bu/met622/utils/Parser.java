@@ -101,18 +101,38 @@ public class Parser extends DefaultHandler {
         return articles;
     }
 
+    /**
+     * Accessor method that returns the search string
+     *
+     * @return The search string
+     */
     public String getSearchParam() {
         return searchParam;
     }
 
+    /**
+     * Mutator method that sets the search parameter to the specified argument
+     * @param searchParam
+     */
     public void setSearchParam(String searchParam) {
         this.searchParam = searchParam;
     }
 
+    /**
+     * Accessor method that returns the list of articles containing the search string
+     *
+     * @return A list of articles
+     */
     public List<Article> getArticles() {
         return articles;
     }
 
+    /**
+     * Mutator method that sets the list of articles. This can be used if you already have a list and you want to add
+     * additional articles to the list
+     *
+     * @param articles A list of articles
+     */
     public void setArticles(List<Article> articles) {
         this.articles = articles;
     }
