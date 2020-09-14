@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
-public class PubMedParser extends DefaultHandler {
+public class Parser extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private String searchParam;                                 // Search string
     private List<Article> articles = new ArrayList<>();         // A container of PubMed articles
@@ -30,9 +30,9 @@ public class PubMedParser extends DefaultHandler {
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public PubMedParser() {
+    public Parser() {
 
-        fileName = Constants.DEFAULT_FILE_NAME;
+        fileName = Constants.OUTPUT_FILE;
         searchParam = Constants.DEFAULT_SEARCH_PARAM;
     }
 
@@ -42,7 +42,7 @@ public class PubMedParser extends DefaultHandler {
      * @param searchParam A value to be searched
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public PubMedParser(String fileName, String searchParam) {
+    public Parser(String fileName, String searchParam) {
 
         this.fileName = fileName;
         this.searchParam = searchParam;

@@ -12,12 +12,10 @@ import java.util.ArrayList;
  *********************************************************************************************************************/
 public class FileMerger {
 
-    private ArrayList<String> fileContainer;
-    private String fileName;
+    private ArrayList<String> filePaths;
+    private String mergedFileName;
     private File outputFile;
     private StringBuilder stringBuilder;
-    private BufferedReader reader;
-    private BufferedWriter writer;
 
     /**
      * Initialize a FilerMerger
@@ -25,26 +23,22 @@ public class FileMerger {
      * @throws OutOfMemoryError Indicates insufficient memory for this FileMerger
      */
     public FileMerger() {
-        fileContainer = new ArrayList<>();
-        fileName = Constants.DEFAULT_FILE_NAME;
+        filePaths = new ArrayList<>();
+        mergedFileName = Constants.OUTPUT_FILE;
         stringBuilder = new StringBuilder();
-        reader = null;
-        writer = null;
     }
 
     /**
      * Initialize a FilerMerger
      *
-     * @param fileContainer Contains file paths for each file that will be merged
-     * @param fileName      The name and type of the master file
+     * @param filePaths      Contains file paths for each file that will be merged
+     * @param mergedFileName The name and type of the master file
      * @throws OutOfMemoryError Indicates insufficient memory for this FilerMerger
      */
-    public FileMerger(ArrayList<String> fileContainer, String fileName) {
-        this.fileContainer = fileContainer;
-        this.fileName = fileName;
+    public FileMerger(ArrayList<String> filePaths, String mergedFileName) {
+        this.filePaths = filePaths;
+        this.mergedFileName = mergedFileName;
         stringBuilder = new StringBuilder();
-        reader = null;
-        writer = null;
     }
 
     /**
@@ -66,23 +60,24 @@ public class FileMerger {
     private void readFile() throws IOException {
         File file;
         String fileContent;
+        BufferedReader reader = null;
         try {
             int x = 0;
-            for (String currentFile : fileContainer) {
+            for (String currentFile : filePaths) {
                 x++;                                                      // Track which file is being processed
 
-                file  = new File(currentFile);
+                file = new File(currentFile);
                 reader = new BufferedReader(new FileReader(file));
 
                 if (x == 1) {                                             // Process first file
                     while ((fileContent = reader.readLine()) != null) {
 
                         // Only include a closing root tag when processing the last file
-                        if (!(fileContent.contains(Constants.END_OF_FIRST_FILE))) {
+                        if (!(fileContent.contains(Constants.CLOSING_ROOT_TAG))) {
                             stringBuilder.append(fileContent);
                         }
                     }
-                } else if (x > 1 && x < fileContainer.size()) {           // Process [second file, last file)
+                } else if (x > 1 && x < filePaths.size()) {               // Process [second file, last file)
 
                     reader.readLine();                                    // Avoid processing a duplicate Prolog
                     reader.readLine();                                    // Avoid processing a duplicate Prolog
@@ -91,7 +86,7 @@ public class FileMerger {
                     while ((fileContent = reader.readLine()) != null) {
 
                         // Only include a closing root tag when processing the last file
-                        if (!(fileContent.contains(Constants.END_OF_FIRST_FILE))) {
+                        if (!(fileContent.contains(Constants.CLOSING_ROOT_TAG))) {
                             stringBuilder.append(fileContent);
                         }
                     }
@@ -118,8 +113,9 @@ public class FileMerger {
      * @throws IOException Indicates an I/O error has occurred
      */
     private void writeFile() throws IOException {
+        BufferedWriter writer = null;
         try {
-            outputFile = new File(fileName);
+            outputFile = new File(mergedFileName);
             writer = new BufferedWriter(new FileWriter(outputFile));
             writer.write(stringBuilder.toString());
         } catch (NullPointerException | IOException e) {
@@ -138,17 +134,17 @@ public class FileMerger {
      *
      * @return An ArrayList of file paths
      */
-    public ArrayList<String> getFileContainer() {
-        return fileContainer;
+    public ArrayList<String> getFilePaths() {
+        return filePaths;
     }
 
     /**
      * Mutator method that assigns an ArrayList of file paths
      *
-     * @param fileContainer A container of file paths
+     * @param filePaths A container of file paths
      */
-    public void setFileContainer(ArrayList<String> fileContainer) {
-        this.fileContainer = fileContainer;
+    public void setFilePaths(ArrayList<String> filePaths) {
+        this.filePaths = filePaths;
     }
 
     /**
@@ -156,28 +152,24 @@ public class FileMerger {
      *
      * @return The name of the file that contains all the merged documents
      */
-    public String getFileName() {
-        return fileName;
+    public String getMergedFileName() {
+        return mergedFileName;
     }
 
     /**
      * Mutator method that sets the name of the file to the specified argument
      *
-     * @param fileName The name and type of the file
+     * @param mergedFileName The name and type of the file
      */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setMergedFileName(String mergedFileName) {
+        this.mergedFileName = mergedFileName;
     }
 
     @Override
     public String toString() {
         return "FileMerger{" +
-                "fileContainer=" + fileContainer +
-                ", fileName='" + fileName + '\'' +
+                ", fileName='" + mergedFileName + '\'' +
                 ", outputFile=" + outputFile +
-                ", stringBuilder=" + stringBuilder +
-                ", reader=" + reader +
-                ", writer=" + writer +
                 '}';
     }
 }
