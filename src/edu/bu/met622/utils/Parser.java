@@ -76,14 +76,14 @@ public class Parser extends DefaultHandler {
                             break;
                         case Constants.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
-                            title = xmlEvent.toString();
+                            title = xmlEvent.toString().toLowerCase();
                             break;
                     }
                 } else if (xmlEvent.isEndElement()) {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
-                        if (title.contains(searchParam)) {
+                        if (title.contains(searchParam.toLowerCase())) {
                             articles.add(new Article(year, title));
                         }
                     }
