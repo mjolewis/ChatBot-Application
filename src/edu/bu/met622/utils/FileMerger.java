@@ -78,11 +78,7 @@ public class FileMerger {
                         }
                     }
                 } else if (x > 1 && x < filePaths.size()) {               // Process [second file, last file)
-
-                    reader.readLine();                                    // Avoid processing a duplicate Prolog
-                    reader.readLine();                                    // Avoid processing a duplicate Prolog
-                    reader.readLine();                                    // Avoid processing the opening root tag
-
+                    advanceRows(reader, 3);
                     while ((fileContent = reader.readLine()) != null) {
 
                         // Only include a closing root tag when processing the last file
@@ -91,10 +87,7 @@ public class FileMerger {
                         }
                     }
                 } else {                                                  // Process last file
-                    reader.readLine();                                    // Avoid processing a duplicate Prolog
-                    reader.readLine();                                    // Avoid processing a duplicate Prolog
-                    reader.readLine();                                    // Avoid processing the opening root tag
-
+                    advanceRows(reader, 3);
                     while ((fileContent = reader.readLine()) != null) {   // Includes closing root tag
                         stringBuilder.append(fileContent);
                     }
@@ -126,6 +119,17 @@ public class FileMerger {
             if (writer != null) {
                 writer.close();
             }
+        }
+    }
+
+    /*
+     * Advances N rows in the document and discards them. This method can be used to avoid processing duplicate XML
+     * tags. For example, a well-formed XML document can only have one prolog tag, one opening root tag, and one
+     * closing root tag.
+     */
+    private void advanceRows(BufferedReader reader, int rows) throws IOException {
+        for (int i = 0; i < rows; ++i) {
+            reader.readLine();
         }
     }
 
