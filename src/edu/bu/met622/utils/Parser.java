@@ -22,7 +22,6 @@ import java.util.List;
  *********************************************************************************************************************/
 public class Parser extends DefaultHandler {
     private String fileName;                                    // File to be searched
-    private String searchParam;                                 // Search string
     private List<Article> articles = new ArrayList<>();         // A container of PubMed articles
 
     /**
@@ -33,19 +32,17 @@ public class Parser extends DefaultHandler {
     public Parser() {
 
         fileName = Constants.OUTPUT_FILE;
-        searchParam = Constants.DEFAULT_SEARCH_PARAM;
     }
 
     /**
      * Initialize a new XMLParser with the file to be parsed
      *
-     * @param searchParam A value to be searched
+     * @param fileName Name and extension of the file to parse
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public Parser(String fileName, String searchParam) {
+    public Parser(String fileName) {
 
         this.fileName = fileName;
-        this.searchParam = searchParam;
     }
 
     /**
@@ -76,12 +73,10 @@ public class Parser extends DefaultHandler {
                             xmlEventReader.nextTag();           // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
                             year = xmlEvent.asCharacters().toString();
-                            //System.out.println("Year: " + xmlEvent.asCharacters().getData());
                             break;
                         case Constants.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
                             title = xmlEvent.toString();
-                            //System.out.println("Article: " + xmlEvent.toString());// asCharacters().getData().toString());
                             break;
                     }
                 } else if (xmlEvent.isEndElement()) {
@@ -99,23 +94,6 @@ public class Parser extends DefaultHandler {
         }
 
         return articles;
-    }
-
-    /**
-     * Accessor method that returns the search string
-     *
-     * @return The search string
-     */
-    public String getSearchParam() {
-        return searchParam;
-    }
-
-    /**
-     * Mutator method that sets the search parameter to the specified argument
-     * @param searchParam
-     */
-    public void setSearchParam(String searchParam) {
-        this.searchParam = searchParam;
     }
 
     /**
