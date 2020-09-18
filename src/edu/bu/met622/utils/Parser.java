@@ -62,7 +62,7 @@ public class Parser extends DefaultHandler {
         String year = "";
         String title = "";
 
-        saveSearchHistory(searchParam);
+        save(searchParam);
 
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
@@ -105,8 +105,8 @@ public class Parser extends DefaultHandler {
     /**
      * Prints the search history to the console
      */
-    public void printSearchHistory() {
-        storage.printSearchHistory();                      // Delegate to the storage object
+    public void print() {
+        storage.print();                      // Delegate to the storage object
     }
 
     /**
@@ -146,7 +146,7 @@ public class Parser extends DefaultHandler {
     /*
      * Store search history in-memory and on disk
      */
-    private void saveSearchHistory(String searchParam) {
+    private void save(String searchParam) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         storage.saveToMemory(searchParam, timestamp);

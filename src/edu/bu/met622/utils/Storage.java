@@ -38,7 +38,7 @@ public class Storage {
         // If search history exists on disk, put it back into memory
         if (file.exists()) {
             try {
-                populateSearchHistory();
+                restoreHistory();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -99,7 +99,7 @@ public class Storage {
     /**
      * Prints the search history to the console
      */
-    public void printSearchHistory() {
+    public void print() {
         for (Map.Entry<String, ArrayList<Object>> entry : searchHistory.entrySet()) {
             System.out.println(entry);
         }
@@ -112,7 +112,7 @@ public class Storage {
     /*
      * If search history exists on disk, put it back into memory
      */
-    private void populateSearchHistory() throws IOException {
+    private void restoreHistory() throws IOException {
         String[] items;
         String line;
 
