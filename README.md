@@ -55,7 +55,9 @@ The Storage class takes input from the Parser class and provides in-memory and d
 the application has previously stored data on disk, the application will first restore that data into memory to give  
 the user fast access to all previous search results.
 
-Finally, the application automatically persists search results onto disk right before the application terminates. 
+Finally, the application automatically persists search results onto disk. Despite the cost of I/O operations, storing 
+the search results to disk happens immediately to ensure system integrity. This approach prevents data loss if an event 
+that causes a loss of volatile storage occurs while the application is still running.
 
 # System Design
 The system architecture is based on SOLID principles. Each class within the application has a well-defined 
