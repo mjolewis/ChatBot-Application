@@ -1,17 +1,14 @@
 package edu.bu.met622;
 
-import edu.bu.met622.model.Article;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.Parser;
-import edu.bu.met622.utils.Storage;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 /**********************************************************************************************************************
@@ -97,7 +94,7 @@ public class Builder {
 
             System.out.print("\nDisplay search history (y/n)? ");
             if (scanner.nextLine().equalsIgnoreCase("y")) {
-                parser.printSearchHistory();
+                parser.print();
             }
 
             System.out.print("\nSearch again (y/n)? ");
