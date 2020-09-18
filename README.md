@@ -6,19 +6,21 @@ Date: September 18, 2020\
 Project: PubMed
 
 # Description
-This application can is used in text processing scenarios to merge XML documents and to search the merged file for a 
-given search parameter. The search parameter can be fixed within the system or be fed into the program by the user. 
+This application can be used to merge XML documents and to search the merged file for a given search parameter. The 
+search parameter can be fixed within the system or be fed into the program by the user. 
 
 The current application logic follows a classification logic, that is, it groups file objects into one master aggregate 
 and then uses that aggregate file to search for a keyword. When the searching is complete, the simulation results are 
-packaged into Article aggregates. These Article aggregates are sent back to the caller where they can be printed to the 
+packaged into Article aggregates. These Article aggregates can be retrieved by the user and subsequently printed to the 
 console or otherwise repacked into an output file. 
+
+Finally, all search data is persisted onto disk.
 
 #Usage
 For demonstration purposes, this application has been specialized to work with files from 
 ftp://ftp.ncbi.nlm.nih.gov/pubmed/ but can easily be extended to work with XML files from any source. Keep in mind, 
-that working with files from other sources will require minor modifications to the program. In particular, several of 
-the Constants need to be updated, along with the data model class (Articles in this case).
+that working with files from other sources will require minor modifications to the program. In particular, several 
+variables in the Constants class need to be updated, along with the data model class (Articles in this case).
 
 # System Components
 ***Builder***\
