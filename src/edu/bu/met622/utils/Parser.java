@@ -12,8 +12,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**********************************************************************************************************************
  * Parse XML trees using pull parsing, which allows the client to control the application thread.
@@ -22,39 +23,46 @@ import java.util.List;
  *********************************************************************************************************************/
 public class Parser extends DefaultHandler {
     private String fileName;                                    // File to be searched
-    private List<Article> articles = new ArrayList<>();         // A container of PubMed articles
+    private List<Article> articles;                             // A container of PubMed articles
+    private Storage storage;                                    // Persist search history
 
     /**
-     * Initialize a new XMLParser
+     * Initialize a new Parser
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
     public Parser() {
 
         fileName = Constants.OUTPUT_FILE;
+        articles = new ArrayList<>();
+        storage = new Storage();
     }
 
     /**
-     * Initialize a new XMLParser with the file to be parsed
+     * Initialize a new Parser with the file to be parsed
      *
      * @param fileName Name and extension of the file to parse
+     * @param articles A list of articles
+     * @param storage An object capable of storing data in memory and on disk
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public Parser(String fileName) {
+    public Parser(String fileName, ArrayList<Article> articles, Storage storage) {
 
         this.fileName = fileName;
+        this.articles = articles;
+        this.storage = storage;
     }
 
     /**
      * Event-based processing of an XML document assigned to this objects fileName member variable
      *
      * @param searchParam A value to be searched
-     * @return A List of Articles whose titles contain the specified search parameter
      */
-    public List<Article> parse(String searchParam) {
+    public void parse(String searchParam) {
         String year = "";
         String title = "";
-        List<Article> articles = new ArrayList<>();
+
+        saveSearchHistory(searchParam);
 
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
@@ -92,8 +100,24 @@ public class Parser extends DefaultHandler {
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
+    }
 
-        return articles;
+    /**
+     * Prints the search history to the console
+     */
+    public void printSearchHistory() {
+        storage.printSearchHistory();                      // Delegate to the storage object
+    }
+
+    /**
+     * Accessor method that returns the container of search history data. This includes the search parameter, the
+     * frequency, and timestamps
+     *
+     * @return The users search history
+     * @note Each entry in the container stores the time stamps for all searches
+     */
+    public Map<String, ArrayList<Object>> getSearchHistory() {
+        return storage.getSearchHistory();                 // Delegate to the storage object
     }
 
     /**
@@ -113,5 +137,23 @@ public class Parser extends DefaultHandler {
      */
     public void setArticles(List<Article> articles) {
         this.articles = articles;
+    }
+
+    //*****************************************************************************************************************
+    // Helper methods to persist data
+    //*****************************************************************************************************************
+
+    /*
+     * Store search history in-memory and on disk
+     */
+    private void saveSearchHistory(String searchParam) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        storage.saveToMemory(searchParam, timestamp);
+        try {
+            storage.saveToDisk(searchParam, timestamp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
