@@ -16,7 +16,7 @@ console or otherwise repacked into an output file.
 
 Finally, all search data is persisted onto disk.
 
-#Usage
+# Usage
 For demonstration purposes, this application has been specialized to work with files from 
 ftp://ftp.ncbi.nlm.nih.gov/pubmed/ but can easily be extended to work with XML files from any source. Keep in mind, 
 that working with files from other sources will require minor modifications to the program. In particular, several 
