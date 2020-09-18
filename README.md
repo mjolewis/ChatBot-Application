@@ -2,8 +2,8 @@
 # Student Information
 Author: Michael Lewis\
 Course: CS 622\
-Date: September 16, 2020\
-Homework #2: PubMed
+Date: September 18, 2020\
+Project: PubMed
 
 # Description
 This application can is used in text processing scenarios to merge XML documents and to search the merged file for a 
@@ -48,7 +48,14 @@ documents. Please visit https://docs.oracle.com/javase/tutorial/jaxp/stax/api.ht
 
 ***Article***\
 The Article class provides a simplified data model of the XML documents. It's sole job is to represent an article that
-was successfully parsed by the Parser.  
+was successfully parsed by the Parser. 
+
+***Storage***\
+The Storage class takes input from the Parser class and provides in-memory and disk storage solutions. Importantly, if 
+the application has previously stored data on disk, the application will first restore that data into memory to give  
+the user fast access to all previous search results.
+
+Finally, the application automatically persists search results onto disk right before the application terminates. 
 
 # System Design
 The system architecture is based on SOLID principles. Each class within the application has a well-defined 
@@ -56,7 +63,7 @@ single-responsibility, which has been highlighted in the System Components secti
 for extension, but closed for modification to ensure system integrity (e.g. invariants always remain true).
 
 UML Diagram:
-![PubMed](https://user-images.githubusercontent.com/12025538/93139978-ac617800-f6af-11ea-890b-a025cf292251.png)
+![PubMed (1)](https://user-images.githubusercontent.com/12025538/93641173-d8d80580-f9c9-11ea-9ddd-929ad83683fd.png)
 
 # Extreme Scenarios and Limitations
 Depending on the JVM and XML files sizes, this application has limitations. For example, the heap size may be exceeded
