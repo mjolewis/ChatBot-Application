@@ -73,15 +73,15 @@ public class Storage {
      */
     public void saveToMemory(String searchParam, Timestamp timestamp) {
 
-        if (!searchHistory.containsKey(searchParam)) {                    // First time the search parameter was entered
+        if (!searchHistory.containsKey(searchParam)) {                         // If the key isn't in the collection
             ArrayList<Object> values = new ArrayList<>();
-            values.add(0, 1);                              // Store search frequency at index 0
-            values.add(timestamp);                                        // Track time stamp of all searches
+            values.add(0, 1);                                   // Add initial frequency
+            values.add(timestamp);                                             // Add time stamp of the search
             searchHistory.put(searchParam.toLowerCase(), values);
-        } else {                                                          // Update frequency; add another timestamp
+        } else {                                                               // Otherwise the key is in the collection
             int frequency = (int) searchHistory.get(searchParam.toLowerCase()).get(0);
-            searchHistory.get(searchParam.toLowerCase()).set(0, ++frequency);
-            searchHistory.get(searchParam.toLowerCase()).add(timestamp);
+            searchHistory.get(searchParam.toLowerCase()).set(0, ++frequency);  // Increment the frequency
+            searchHistory.get(searchParam.toLowerCase()).add(timestamp);       // Add time stamp of the search
         }
     }
 
@@ -121,15 +121,15 @@ public class Storage {
             while ((line = bufferedReader.readLine()) != null) {
                 items = line.split(Constants.COMMA_DELIMITER);                 // K,V pair split by "," in CSV file
 
-                if (!searchHistory.containsKey(items[0])) {                    // If container doesn't contain the key
+                if (!searchHistory.containsKey(items[0])) {                    // If the key isn't in the collection
                     ArrayList<Object> values = new ArrayList<>();
                     values.add(0, 1);                           // Add initial frequency
-                    values.add(1, items[1]);                            // Append time stamp from disk
-                    searchHistory.put(items[0], values);                       // Rebuild the container
-                } else {                                                       // Otherwise the key is in the container
+                    values.add(1, items[1]);                            // Add time stamp of the first search
+                    searchHistory.put(items[0], values);                       // Rebuild the collection
+                } else {                                                       // Otherwise the key is in the collection
                     int frequency = (int) searchHistory.get(items[0]).get(0);
                     searchHistory.get(items[0]).set(0, ++frequency);           // Increment the frequency
-                    searchHistory.get(items[0]).add(items[1]);                 // Append the time stamp from disk
+                    searchHistory.get(items[0]).add(items[1]);                 // Add time stamp of subsequent searches
                 }
             }
         } catch (IOException e) {
