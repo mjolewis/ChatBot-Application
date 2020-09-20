@@ -1,9 +1,4 @@
-# PubMed Parser
-# Student Information
-Author: Michael Lewis\
-Course: CS 622\
-Date: September 18, 2020\
-Project: PubMed
+# XML Parsing Application with Java StAX API
 
 # Description
 This application can be used to merge XML documents and to search the merged file for a given search parameter. The 
@@ -54,7 +49,7 @@ was successfully parsed by the Parser.
 
 ***Storage***\
 The Storage class takes input from the Parser class and provides in-memory and disk storage solutions. Importantly, if 
-the application has previously stored data on disk, the application will first restore that data into memory to give  
+the application has previously stored data on disk, the application will first restore that data into memory to give 
 the user fast access to all previous search results.
 
 Finally, the application automatically persists search results onto disk. Despite the cost of I/O operations, storing 
