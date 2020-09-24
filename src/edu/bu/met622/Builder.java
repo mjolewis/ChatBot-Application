@@ -33,7 +33,7 @@ public class Builder {
         JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView());
         jFileChooser.setMultiSelectionEnabled(true);
 
-        File[] selectedFiles = null;
+        File[] selectedFiles;
         while (true) {
             int returnValue = jFileChooser.showOpenDialog(null);
 
