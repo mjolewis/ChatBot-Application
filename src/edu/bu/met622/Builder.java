@@ -26,21 +26,35 @@ public class Builder {
     public Builder() { }
 
     /**
-     * Get files using a file chooser dialog box and builds the simulation
+     * Gets files using a file chooser dialog box and builds the simulation. This method ensures that the user has
+     * selected more than one file to merge
      */
     public void build() {
         JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView());
         jFileChooser.setMultiSelectionEnabled(true);
-        int returnValue = jFileChooser.showOpenDialog(null);
 
         File[] selectedFiles = null;
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            selectedFiles = jFileChooser.getSelectedFiles();
+        while (true) {
+            int returnValue = jFileChooser.showOpenDialog(null);
 
-            mergeXML(selectedFiles);                                 // Start simulation only if files were selected
-            parseXML();
-        } else {                                                     // No files selected
-            System.out.println(Constants.FILE_SELECTION_ERROR);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                selectedFiles = jFileChooser.getSelectedFiles();
+
+                if (selectedFiles.length == 1) {                         // Only merge if more than one was selected
+                    System.out.println(Constants.FILE_SELECTION_ERROR);
+                } else {
+                    mergeXML(selectedFiles);
+                    parseXML();
+                    break;
+                }
+            } else {                                                     // No files selected
+                System.out.println(Constants.FILE_SELECTION_ERROR);
+
+                if (returnValue == JFileChooser.CANCEL_OPTION) {         // Break out of the selection process
+                    break;
+                }
+            }
+
         }
     }
 

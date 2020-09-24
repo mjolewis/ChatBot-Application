@@ -14,7 +14,7 @@ public class Constants {
     public static final String PUB_MED_ARTICLE = "PubmedArticle";
     public static final String ARTICLE_TITLE = "ArticleTitle";
     public static final String PUBLICATION_DATE = "PubDate";
-    public static final String FILE_SELECTION_ERROR = "Error. No files selected.";
+    public static final String FILE_SELECTION_ERROR = "Error. Please select more than one file";
 
     // Builder messages
     public static final String START_MESSAGE = "\nMET CS 622\nXML Parsing Engine\nAuthor: Michael Lewis";
