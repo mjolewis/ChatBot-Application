@@ -47,12 +47,12 @@ public class FileMerger {
      * @throws IOException Indicates an I/O error has occurred
      */
     public void merge() throws IOException {
-        readFile();                                                       // Process each file in the container
-        writeFile();                                                      // Merge files into master
+        readFile();                                                            // Process each file in the container
+        writeFile();                                                           // Merge files into master
     }
 
     /*
-     * Helper method that reads the content of multiple files
+     * Helper method that reads the content of multiple files into a StringBuilder
      *
      * @throws IOException Indicates an I/O error has occurred
      * @throws OutOfMemoryError Indicates insufficient memory
@@ -62,14 +62,14 @@ public class FileMerger {
         String fileContent;
         BufferedReader reader = null;
         try {
-            int x = 0;
+            int fileCount = 0;                                                 // Track which file is being processed
             for (String currentFile : filePaths) {
-                x++;                                                      // Track which file is being processed
+                fileCount++;
 
                 file = new File(currentFile);
                 reader = new BufferedReader(new FileReader(file));
 
-                if (x == 1) {                                             // Process first file
+                if (fileCount == 1) {                                          // Process first file
                     while ((fileContent = reader.readLine()) != null) {
 
                         // Only include a closing root tag when processing the last file
@@ -77,26 +77,37 @@ public class FileMerger {
                             stringBuilder.append(fileContent);
                         }
                     }
-                } else if (x > 1 && x < filePaths.size()) {               // Process [second file, last file)
-                    advanceRows(reader, 3);
-                    while ((fileContent = reader.readLine()) != null) {
+                } else if (fileCount > 1 && fileCount < filePaths.size()) {    // Process [second file, last file)
+                    while ((fileContent = reader.readLine()) != null &&
+                            !fileContent.equals(Constants.OPENING_ROOT_TAG)) {
+                        reader.readLine();
+                    }
 
-                        // Only include a closing root tag when processing the last file
+                    while ((fileContent = reader.readLine()) != null) {        // Read content (open tag, closing tag)
+
+                        // Closing tag only added after the last file is processed
                         if (!(fileContent.contains(Constants.CLOSING_ROOT_TAG))) {
                             stringBuilder.append(fileContent);
                         }
                     }
-                } else {                                                  // Process last file
-                    advanceRows(reader, 3);
-                    while ((fileContent = reader.readLine()) != null) {   // Includes closing root tag
+                } else {                                                       // Process last file
+                    while ((fileContent = reader.readLine()) != null &&
+                            !fileContent.equals(Constants.OPENING_ROOT_TAG)) {
+                        reader.readLine();
+                    }
+
+                    // Read content (open tag, closing tag]
+                    while ((fileContent = reader.readLine()) != null) {
                         stringBuilder.append(fileContent);
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         } finally {
-            reader.close();
+            if (reader != null) {
+                reader.close();
+            }
         }
     }
 
@@ -113,23 +124,10 @@ public class FileMerger {
             writer.write(stringBuilder.toString());
         } catch (NullPointerException | IOException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             if (writer != null) {
                 writer.close();
             }
-        }
-    }
-
-    /*
-     * Advances N rows in the document and discards them. This method can be used to avoid processing duplicate XML
-     * tags. For example, a well-formed XML document can only have one prolog tag, one opening root tag, and one
-     * closing root tag.
-     */
-    private void advanceRows(BufferedReader reader, int rows) throws IOException {
-        for (int i = 0; i < rows; ++i) {
-            reader.readLine();
         }
     }
 

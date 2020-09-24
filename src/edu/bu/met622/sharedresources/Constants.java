@@ -8,6 +8,7 @@ package edu.bu.met622.sharedresources;
 public class Constants {
 
     // Parser info
+    public static final String OPENING_ROOT_TAG = "<PubmedArticleSet>";
     public static final String CLOSING_ROOT_TAG =  "</PubmedArticleSet>";
     public static final String OUTPUT_FILE = "master_file.xml";
     public static final String PUB_MED_ARTICLE = "PubmedArticle";
