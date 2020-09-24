@@ -13,7 +13,8 @@ import javax.xml.stream.events.XMLEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**********************************************************************************************************************
@@ -116,7 +117,7 @@ public class Parser extends DefaultHandler {
      * @return The users search history
      * @note Each entry in the container stores the time stamps for all searches
      */
-    public Map<String, ArrayList<Object>> getSearchHistory() {
+    public Map<String, ArrayList<String>> getSearchHistory() {
         return storage.getSearchHistory();                 // Delegate to the storage object
     }
 
@@ -147,11 +148,12 @@ public class Parser extends DefaultHandler {
      * Store search history in-memory and on disk
      */
     private void save(String searchParam) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        LocalDateTime timestamp = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
 
-        storage.saveToMemory(searchParam, timestamp);
+        storage.saveToMemory(searchParam, timestamp.format(dateTimeFormatter));
         try {
-            storage.saveToDisk(searchParam, timestamp);
+            storage.saveToDisk(searchParam, timestamp.format(dateTimeFormatter));
         } catch (IOException e) {
             e.printStackTrace();
         }
