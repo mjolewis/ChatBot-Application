@@ -46,8 +46,9 @@ public class Storage {
 
     /**
      * Provides non-volatile storage for search history, search frequency, and time of search
-     * @param searchParam
-     * @param timestamp
+     *
+     * @param searchParam The search parameter entered by the user
+     * @param timestamp   The date and time of the search
      * @throws IOException
      */
     public void saveToDisk(String searchParam, String timestamp) throws IOException {
@@ -57,7 +58,7 @@ public class Storage {
             }
             bufferedWriter = new BufferedWriter(new FileWriter(file, true));
             bufferedWriter.write(searchParam.toLowerCase() + Constants.COMMA_DELIMITER +
-                                      timestamp + Constants.NEW_LINE_SEPARATOR);
+                    timestamp + Constants.NEW_LINE_SEPARATOR);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
