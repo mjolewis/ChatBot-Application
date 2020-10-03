@@ -11,6 +11,7 @@ public class Constants {
     public static final String OPENING_ROOT_TAG = "<PubmedArticleSet>";
     public static final String CLOSING_ROOT_TAG =  "</PubmedArticleSet>";
     public static final String OUTPUT_FILE = "master_file.xml";
+    public static final String PMID = "PMID";
     public static final String PUB_MED_ARTICLE = "PubmedArticle";
     public static final String ARTICLE_TITLE = "ArticleTitle";
     public static final String PUBLICATION_DATE = "PubDate";
@@ -25,4 +26,11 @@ public class Constants {
     public static final String SEARCH_HISTORY = "search_history.csv";
     public static final String COMMA_DELIMITER = ",";
     public static final String NEW_LINE_SEPARATOR = "\n";
+
+    // Lucene Indexing Info
+    public static final String INDEX_DIRECTORY = "index_directory";
+    public static final String PUBLICATION_YEAR = "pubYear";
+    public static final String PUBLICATION_MONTH = "pubMonth";
+    public static final String PUBLICATION_DAY = "pubDay";
+    public static final String PUB_ID = "pubID";
 }
