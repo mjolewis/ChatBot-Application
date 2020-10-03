@@ -1,6 +1,6 @@
 package edu.bu.met622.utils;
 
-import edu.bu.met622.searchengine.LuceneIndex;
+import edu.bu.met622.searchlib.Indexer;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
@@ -26,8 +26,9 @@ import java.util.*;
 public class XMLParser extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private List<Article> articles;                             // A container of PubMed articles
+    private List<Article> allArticles;                          // A container of every article in the input file
     private Storage storage;                                    // Persist search history
-    private LuceneIndex luceneIndex;                                    // Builds a Lucene Index
+    private Indexer indexer;                            // Builds a Lucene Index
 
     /**
      * Initialize a new Parser
@@ -38,8 +39,9 @@ public class XMLParser extends DefaultHandler {
 
         fileName = Constants.OUTPUT_FILE;
         articles = new ArrayList<>();
+        allArticles = new ArrayList<>();
         storage = new Storage();
-        luceneIndex = new LuceneIndex();
+        indexer = new Indexer();
     }
 
     /**
@@ -168,11 +170,12 @@ public class XMLParser extends DefaultHandler {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
-                        Article article = new Article(pubYear, pubMonth, pubDay, pubID, articleTitle);
-                        luceneIndex.createIndex(article);
+                         allArticles.add(new Article(pubYear, pubMonth, pubDay, pubID, articleTitle));
                     }
                 }
             }
+
+            indexer.createIndex(allArticles);
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
