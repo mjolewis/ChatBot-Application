@@ -2,7 +2,7 @@ package edu.bu.met622;
 
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.utils.FileMerger;
-import edu.bu.met622.utils.Parser;
+import edu.bu.met622.utils.XMLParser;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -97,18 +97,18 @@ public class Builder {
      * Search an XML document for a search parameter specified by the user
      */
     public void parseXML() {
-        Parser parser = new Parser();
+        XMLParser XMLParser = new XMLParser();
 
         while (true) {
 
             Scanner scanner = new Scanner(System.in);
             System.out.print("\nEnter search parameter: ");
 
-            parser.parse(scanner.nextLine());
+            XMLParser.parse(scanner.nextLine());
 
             System.out.print("\nDisplay search history (y/n)? ");
             if (scanner.nextLine().equalsIgnoreCase("y")) {
-                parser.print();
+                XMLParser.print();
             }
 
             System.out.print("\nSearch again (y/n)? ");

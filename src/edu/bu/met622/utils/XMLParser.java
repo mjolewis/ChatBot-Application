@@ -1,5 +1,6 @@
 package edu.bu.met622.utils;
 
+import edu.bu.met622.searchengine.LuceneIndex;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
@@ -22,21 +23,23 @@ import java.util.*;
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
-public class Parser extends DefaultHandler {
+public class XMLParser extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private List<Article> articles;                             // A container of PubMed articles
     private Storage storage;                                    // Persist search history
+    private LuceneIndex luceneIndex;                                    // Builds a Lucene Index
 
     /**
      * Initialize a new Parser
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public Parser() {
+    public XMLParser() {
 
         fileName = Constants.OUTPUT_FILE;
         articles = new ArrayList<>();
         storage = new Storage();
+        luceneIndex = new LuceneIndex();
     }
 
     /**
@@ -47,7 +50,7 @@ public class Parser extends DefaultHandler {
      * @param storage An object capable of storing data in memory and on disk
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public Parser(String fileName, ArrayList<Article> articles, Storage storage) {
+    public XMLParser(String fileName, ArrayList<Article> articles, Storage storage) {
 
         this.fileName = fileName;
         this.articles = articles;
@@ -55,13 +58,16 @@ public class Parser extends DefaultHandler {
     }
 
     /**
-     * Event-based processing of an XML document assigned to this objects fileName member variable
+     * Brute force event-based processing of an XML document assigned to this objects fileName member variable
      *
      * @param searchParam A value to be searched
      */
     public void parse(String searchParam) {
-        String year = "";
-        String title = "";
+        String pubYear = "";
+        String pubMonth = "";
+        String pubDay = "";
+        String pubID = "";
+        String articleTitle = "";
 
         save(searchParam);
 
@@ -78,23 +84,92 @@ public class Parser extends DefaultHandler {
                     StartElement startElement = xmlEvent.asStartElement();
 
                     switch (startElement.getName().getLocalPart()) {
+                        case Constants.PMID:
+                            xmlEvent = xmlEventReader.nextEvent();
+                            pubID = xmlEvent.asCharacters().toString();
                         case Constants.PUBLICATION_DATE:
                             xmlEventReader.nextTag();           // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
-                            year = xmlEvent.asCharacters().toString();
+                            pubYear = xmlEvent.asCharacters().toString();
+
+                            xmlEventReader.nextTag();           // <Year> is followed by <Month>
+                            xmlEvent = xmlEventReader.nextEvent();
+                            pubMonth = xmlEvent.asCharacters().toString();
+
+                            xmlEventReader.nextTag();           // <Month> is followed by <Day>
+                            xmlEvent = xmlEventReader.nextEvent();
+                            pubDay = xmlEvent.asCharacters().toString();
                             break;
                         case Constants.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
-                            title = xmlEvent.toString().toLowerCase();
+                            articleTitle = xmlEvent.toString().toLowerCase();
                             break;
                     }
                 } else if (xmlEvent.isEndElement()) {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
-                        if (title.contains(searchParam.toLowerCase())) {
-                            articles.add(new Article(year, title));
+                        if (articleTitle.contains(searchParam.toLowerCase())) {
+                            articles.add(new Article(pubYear, pubMonth, pubDay, pubID, articleTitle));
                         }
+                    }
+                }
+            }
+        } catch (FileNotFoundException | XMLStreamException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Parses an XML file for Articles and passes those Articles into a Lucene Index, which can be used for efficient
+     * searching
+     */
+    public void parse() {
+        String pubYear = "";
+        String pubMonth = "";
+        String pubDay = "";
+        String pubID = "";
+        String articleTitle = "";
+
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        try {
+            XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
+
+            while (xmlEventReader.hasNext()) {
+                XMLEvent xmlEvent = xmlEventReader.nextEvent();
+
+                if (xmlEvent.isStartElement()) {
+                    StartElement startElement = xmlEvent.asStartElement();
+
+                    switch (startElement.getName().getLocalPart()) {
+                        case Constants.PMID:
+                            xmlEvent = xmlEventReader.nextEvent();
+                            pubID = xmlEvent.asCharacters().toString();
+                            break;
+                        case Constants.PUBLICATION_DATE:
+                            xmlEventReader.nextTag();
+                            xmlEvent = xmlEventReader.nextEvent();
+                            pubYear = xmlEvent.asCharacters().toString();
+
+                            xmlEventReader.nextTag();
+                            xmlEvent = xmlEventReader.nextEvent();
+                            pubMonth = xmlEvent.asCharacters().toString();
+
+                            xmlEventReader.nextTag();
+                            xmlEvent = xmlEventReader.nextEvent();
+                            pubDay = xmlEvent.asCharacters().toString();
+                            break;
+                        case Constants.ARTICLE_TITLE:
+                            xmlEvent = xmlEventReader.nextEvent();
+                            articleTitle = xmlEvent.asCharacters().toString();
+                            break;
+                    }
+                } else if (xmlEvent.isEndElement()) {
+                    EndElement endElement = xmlEvent.asEndElement();
+
+                    if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
+                        Article article = new Article(pubYear, pubMonth, pubDay, pubID, articleTitle);
+                        luceneIndex.createIndex(article);
                     }
                 }
             }
@@ -118,7 +193,7 @@ public class Parser extends DefaultHandler {
      * @note Each entry in the container stores the time stamps for all searches
      */
     public Map<String, ArrayList<String>> getSearchHistory() {
-        return storage.getSearchHistory();                 // Delegate to the storage object
+        return storage.getSearchHistory();                      // Delegate to the storage object
     }
 
     /**
