@@ -6,10 +6,8 @@ package edu.bu.met622.model;
  * @author Michael Lewis
  *********************************************************************************************************************/
 public class Article {
-    private String pubYear;
-    private String pubMonth;
-    private String pubDay;
     private String pubID;
+    private String pubYear;
     private String articleTitle;
 
     /**
@@ -23,18 +21,14 @@ public class Article {
     /**
      * Initialize a new Article
      *
-     * @param pubYear      The publication year
-     * @param pubMonth     The publication month
-     * @param pubDay       The publication day
      * @param pubID        The publication ID
+     * @param pubYear      The publication year
      * @param articleTitle The title of the Article
      * @throws OutOfMemoryError Indicates insufficient memory for this Article
      */
-    public Article(String pubYear, String pubMonth, String pubDay, String pubID, String articleTitle) {
-        this.pubYear = pubYear;
-        this.pubMonth = pubMonth;
-        this.pubDay = pubDay;
+    public Article(String pubID, String pubYear, String articleTitle) {
         this.pubID = pubID;
+        this.pubYear = pubYear;
         this.articleTitle = articleTitle;
     }
 
@@ -54,42 +48,6 @@ public class Article {
      */
     public void setPubYear(String pubYear) {
         this.pubYear = pubYear;
-    }
-
-    /**
-     * Accessor method that returns the month this Article was published
-     *
-     * @return The month this Article was published
-     */
-    public String getPubMonth() {
-        return pubMonth;
-    }
-
-    /**
-     * Mutator method that sets the month this Article was published
-     *
-     * @param pubMonth The month this Article was published
-     */
-    public void setPubMonth(String pubMonth) {
-        this.pubMonth = pubMonth;
-    }
-
-    /**
-     * Accessor method that returns the day this article was published
-     *
-     * @return The day this article was published
-     */
-    public String getPubDay() {
-        return pubDay;
-    }
-
-    /**
-     * Mutator method that sets the day this Article was published
-     *
-     * @param pubDay The day this Article was published
-     */
-    public void setPubDay(String pubDay) {
-        this.pubDay = pubDay;
     }
 
     /**
@@ -136,10 +94,8 @@ public class Article {
     @Override
     public String toString() {
         return "Article{" +
-                "pubYear='" + pubYear + '\'' +
-                ", pubMonth='" + pubMonth + '\'' +
-                ", pubDay='" + pubDay + '\'' +
-                ", pubID='" + pubID + '\'' +
+                "pubID='" + pubID + '\'' +
+                ", pubYear='" + pubYear + '\'' +
                 ", articleTitle='" + articleTitle + '\'' +
                 '}';
     }

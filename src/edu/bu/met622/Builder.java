@@ -4,7 +4,6 @@ import edu.bu.met622.searchlib.SearchEngine;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;
-import org.apache.lucene.search.TopDocs;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -79,6 +78,10 @@ public class Builder {
         System.out.println("\n************************************************");
     }
 
+    //*****************************************************************************************************************
+    // Helper methods
+    //*****************************************************************************************************************
+
     /*
      * Merge multiple XML documents into one
      */
@@ -123,17 +126,27 @@ public class Builder {
         } while ("y".equalsIgnoreCase(performSearch(scanner)));
     }
 
+    /*
+     * Gets the search type from the user. If the user enters 0, then a brute force search is performed. Otherwise, a
+     * Lucene Index search is performed
+     */
     private String getSearchType(Scanner scanner) {
         System.out.println("\nEnter search type");
         System.out.print("0 for Brute Force; 1 for Lucene: ");
         return scanner.nextLine();
     }
 
+    /*
+     * Gets the search parameter from the user
+     */
     private String getSearchParam(Scanner scanner) {
         System.out.print("Enter search parameter: ");
         return scanner.nextLine();
     }
 
+    /*
+     * Gets the number of documents to return when doing a Lucene Index search
+     */
     private int getNumOfDocs(Scanner scanner) {
         while (true) {
             System.out.print("Number of docs: ");
@@ -145,16 +158,25 @@ public class Builder {
         }
     }
 
+    /*
+     * Ask the user whether or not to display documents from the Lucene search
+     */
     private String displayDocuments(Scanner scanner) {
         System.out.print("Display documents: (y/n)? ");
         return scanner.nextLine();
     }
 
+    /*
+     * Ask the user whether or not to display search history
+     */
     private String displaySearchHistory(Scanner scanner) {
         System.out.print("Display search history (y/n)? ");
         return scanner.nextLine();
     }
 
+    /*
+     * Ask the user whether or not to do another search
+     */
     private String performSearch(Scanner scanner) {
         System.out.print("Search again (y/n)? ");
         return scanner.nextLine();
