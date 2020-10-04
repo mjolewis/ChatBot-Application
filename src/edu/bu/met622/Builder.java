@@ -4,6 +4,7 @@ import edu.bu.met622.searchlib.SearchEngine;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;
+import org.apache.lucene.search.TopDocs;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -107,20 +108,16 @@ public class Builder {
         do {
 
             if ("0".equals(getSearchType(scanner))) {                     // Brute force search
-                XMLParser.parse(getSearchParam(scanner));
                 isParsed = true;
-            } else {                                                      // Rich text search w/ Lucene Index
-                if (isParsed) {                                           // Index already built, so don't parse again
-                    searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));
-                } else {
-                    XMLParser.parse();                                    // Parse and build index for the first time
-                    searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));
+                XMLParser.parse(getSearchParam(scanner));
+                if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { XMLParser.print(); }
+            } else {
+                if (!isParsed) {                                          // Lucene Index
                     isParsed = true;
+                    XMLParser.parse();
                 }
-            }
-
-            if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) {
-                XMLParser.print();
+                searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));
+                if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }
             }
 
         } while ("y".equalsIgnoreCase(performSearch(scanner)));
@@ -146,6 +143,11 @@ public class Builder {
                 System.out.print("Invalid input. Try Again.");
             }
         }
+    }
+
+    private String displayDocuments(Scanner scanner) {
+        System.out.print("Display documents: (y/n)? ");
+        return scanner.nextLine();
     }
 
     private String displaySearchHistory(Scanner scanner) {
