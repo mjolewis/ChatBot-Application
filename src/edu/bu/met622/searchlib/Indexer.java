@@ -56,10 +56,8 @@ public class Indexer {
                 doc.add(new TextField(Constants.ARTICLE_TITLE, article.getArticleTitle(), Field.Store.YES));
 
                 // Use StringField for a field with an atomic value that should not be tokenized
-                doc.add(new StringField(Constants.PUB_ID, article.getPubID(), Field.Store.YES));
-                doc.add(new StringField(Constants.PUBLICATION_YEAR, article.getPubYear(), Field.Store.YES));
-                doc.add(new StringField(Constants.PUBLICATION_MONTH, article.getPubMonth(), Field.Store.YES));
-                doc.add(new StringField(Constants.PUBLICATION_DAY, article.getPubDay(), Field.Store.YES));
+                doc.add(new StringField(Constants.PMID, article.getPubID(), Field.Store.YES));
+                doc.add(new StringField(Constants.PUBLICATION_DATE, article.getPubYear(), Field.Store.YES));
 
                 indexWriter.addDocument(doc);              // Add the document to the index
             } catch (IOException e) {

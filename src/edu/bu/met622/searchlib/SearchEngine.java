@@ -16,12 +16,13 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 /**********************************************************************************************************************
+ * Support user queries with full-text and efficient search capabilities
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
 public class SearchEngine {
     IndexSearcher searcher = null;
-    QueryParser parser = null;
+    QueryParser parser;
     TopDocs docs = null;
     ScoreDoc[] hits = null;
 
@@ -32,12 +33,7 @@ public class SearchEngine {
      * @throws OutOfMemoryError Indicates insufficient memory for this new SearchEngine
      */
     public SearchEngine() {
-        try {
-            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY))));
-            parser = new QueryParser(Constants.ARTICLE_TITLE, new StandardAnalyzer());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        parser = new QueryParser(Constants.ARTICLE_TITLE, new StandardAnalyzer());
     }
 
     /**
@@ -49,6 +45,7 @@ public class SearchEngine {
     public void search(String searchParam, int numOfDocs) {
         try {
             Query query = parser.parse(searchParam);
+            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY))));
             docs = searcher.search(query, numOfDocs);
             hits = docs.scoreDocs;
         } catch (ParseException | IOException e) {
@@ -56,23 +53,33 @@ public class SearchEngine {
         }
     }
 
+    /**
+     * Displays case-insensitive search results
+     *
+     * @throws IOException Indicates a failed or interrupted I/O operation
+     */
     public void displayHits() {
         for (int i = 0; i < hits.length; ++i) {
             int docId = hits[i].doc;
 
             try {
                 Document doc = searcher.doc(docId);
-                System.out.print(i + 1 + ") " + "Pub ID: " + doc.get(Constants.PUB_ID) + "\n" +
+                System.out.print(i + 1 + ") " + "Pub ID: " + doc.get(Constants.PMID) + "\n" +
                         "\tTitle: " + doc.get(Constants.ARTICLE_TITLE) + "\n" +
-                        "\tPub Year: " + doc.get(Constants.PUBLICATION_YEAR) + "\n" +
-                        "\tPub Month: " + doc.get(Constants.PUBLICATION_MONTH) + "\n" +
-                        "\tPub Day: " + doc.get(Constants.PUBLICATION_DAY) + "\n");
+                        "\tPub Year: " + doc.get(Constants.PUBLICATION_DATE) + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Accessor method that returns an array of search results
+     *
+     * @return An array of search results
+     * @note These search results cannot be used directly. Instead, the user must unwrap the search results into a
+     *         Document object
+     */
     public ScoreDoc[] getHits() {
         return hits;
     }

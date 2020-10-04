@@ -66,8 +66,6 @@ public class XMLParser extends DefaultHandler {
      */
     public void parse(String searchParam) {
         String pubYear = "";
-        String pubMonth = "";
-        String pubDay = "";
         String pubID = "";
         String articleTitle = "";
 
@@ -94,26 +92,19 @@ public class XMLParser extends DefaultHandler {
                             xmlEventReader.nextTag();           // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
                             pubYear = xmlEvent.asCharacters().toString();
-
-                            xmlEventReader.nextTag();           // <Year> is followed by <Month>
-                            xmlEvent = xmlEventReader.nextEvent();
-                            pubMonth = xmlEvent.asCharacters().toString();
-
-                            xmlEventReader.nextTag();           // <Month> is followed by <Day>
-                            xmlEvent = xmlEventReader.nextEvent();
-                            pubDay = xmlEvent.asCharacters().toString();
                             break;
                         case Constants.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
-                            articleTitle = xmlEvent.toString().toLowerCase();
+                            if (!xmlEvent.isCharacters()) { xmlEvent = xmlEventReader.nextEvent(); }
+                            articleTitle = xmlEvent.asCharacters().toString();
                             break;
                     }
                 } else if (xmlEvent.isEndElement()) {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
-                        if (articleTitle.contains(searchParam.toLowerCase())) {
-                            articles.add(new Article(pubYear, pubMonth, pubDay, pubID, articleTitle));
+                        if (articleTitle.toLowerCase().contains(searchParam.toLowerCase())) {
+                            articles.add(new Article(pubID, pubYear, articleTitle));
                         }
                     }
                 }
@@ -129,8 +120,6 @@ public class XMLParser extends DefaultHandler {
      */
     public void parse() {
         String pubYear = "";
-        String pubMonth = "";
-        String pubDay = "";
         String pubID = "";
         String articleTitle = "";
 
@@ -153,18 +142,10 @@ public class XMLParser extends DefaultHandler {
                             xmlEventReader.nextTag();
                             xmlEvent = xmlEventReader.nextEvent();
                             pubYear = xmlEvent.asCharacters().toString();
-
-                            xmlEventReader.nextTag();
-                            xmlEvent = xmlEventReader.nextEvent();
-                            pubMonth = xmlEvent.asCharacters().toString();
-
-                            xmlEventReader.nextTag();
-                            xmlEvent = xmlEventReader.nextEvent();
-                            pubDay = xmlEvent.asCharacters().toString();
                             break;
                         case Constants.ARTICLE_TITLE:
-                            System.out.println(pubID);
                             xmlEvent = xmlEventReader.nextEvent();
+                            if (!xmlEvent.isCharacters()) { xmlEvent = xmlEventReader.nextEvent(); }
                             articleTitle = xmlEvent.asCharacters().toString();
                             break;
                     }
@@ -172,7 +153,7 @@ public class XMLParser extends DefaultHandler {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
-                         allArticles.add(new Article(pubYear, pubMonth, pubDay, pubID, articleTitle));
+                         allArticles.add(new Article(pubID, pubYear, articleTitle));
                     }
                 }
             }
