@@ -32,7 +32,8 @@ public class Indexer {
      * @throws OutOfMemoryError Indicates insufficient memory for this new Indexer
      */
     public Indexer() {
-        try (Directory indexDir = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY))) {
+        try {
+            Directory indexDir = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
             IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
             indexWriter = new IndexWriter(indexDir, config);
         } catch (IOException e) {

@@ -1,5 +1,6 @@
 package edu.bu.met622;
 
+import edu.bu.met622.searchlib.SearchEngine;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;
@@ -23,7 +24,8 @@ public class Builder {
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this Builder
      */
-    public Builder() { }
+    public Builder() {
+    }
 
     /**
      * Gets files using a file chooser dialog box and builds the simulation. This method ensures that the user has
@@ -79,7 +81,7 @@ public class Builder {
     /*
      * Merge multiple XML documents into one
      */
-    public void mergeXML(File[] selectedFiles) {
+    private void mergeXML(File[] selectedFiles) {
         ArrayList<String> fileContainer = new ArrayList<>();
         for (File file : selectedFiles) {
             fileContainer.add(file.getPath());
@@ -96,25 +98,63 @@ public class Builder {
     /*
      * Search an XML document for a search parameter specified by the user
      */
-    public void parseXML() {
+    private void parseXML() {
+        Scanner scanner = new Scanner(System.in);
         XMLParser XMLParser = new XMLParser();
+        SearchEngine searchEngine = new SearchEngine();
+        boolean isParsed = false;
 
-        while (true) {
+        do {
 
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("\nEnter search parameter: ");
+            if ("0".equals(getSearchType(scanner))) {                     // Brute force search
+                XMLParser.parse(getSearchParam(scanner));
+                isParsed = true;
+            } else {                                                      // Rich text search w/ Lucene Index
+                if (isParsed) {                                           // Index already built, so don't parse again
+                    searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));
+                } else {
+                    XMLParser.parse();                                    // Parse and build index for the first time
+                    searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));
+                    isParsed = true;
+                }
+            }
 
-            XMLParser.parse(scanner.nextLine());
-
-            System.out.print("\nDisplay search history (y/n)? ");
-            if (scanner.nextLine().equalsIgnoreCase("y")) {
+            if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) {
                 XMLParser.print();
             }
 
-            System.out.print("\nSearch again (y/n)? ");
-            if (!scanner.nextLine().equalsIgnoreCase("y")) {
-                break;
+        } while ("y".equalsIgnoreCase(performSearch(scanner)));
+    }
+
+    private String getSearchType(Scanner scanner) {
+        System.out.println("\nEnter search type");
+        System.out.print("0 for Brute Force; 1 for Lucene: ");
+        return scanner.nextLine();
+    }
+
+    private String getSearchParam(Scanner scanner) {
+        System.out.print("Enter search parameter: ");
+        return scanner.nextLine();
+    }
+
+    private int getNumOfDocs(Scanner scanner) {
+        while (true) {
+            System.out.print("Number of docs: ");
+            try {
+                return Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Try Again.");
             }
         }
+    }
+
+    private String displaySearchHistory(Scanner scanner) {
+        System.out.print("Display search history (y/n)? ");
+        return scanner.nextLine();
+    }
+
+    private String performSearch(Scanner scanner) {
+        System.out.print("Search again (y/n)? ");
+        return scanner.nextLine();
     }
 }
