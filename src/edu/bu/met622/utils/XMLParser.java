@@ -89,6 +89,7 @@ public class XMLParser extends DefaultHandler {
                         case Constants.PMID:
                             xmlEvent = xmlEventReader.nextEvent();
                             pubID = xmlEvent.asCharacters().toString();
+                            break;
                         case Constants.PUBLICATION_DATE:
                             xmlEventReader.nextTag();           // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
@@ -162,6 +163,7 @@ public class XMLParser extends DefaultHandler {
                             pubDay = xmlEvent.asCharacters().toString();
                             break;
                         case Constants.ARTICLE_TITLE:
+                            System.out.println(pubID);
                             xmlEvent = xmlEventReader.nextEvent();
                             articleTitle = xmlEvent.asCharacters().toString();
                             break;

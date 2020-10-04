@@ -33,4 +33,5 @@ public class Constants {
     public static final String PUBLICATION_MONTH = "pubMonth";
     public static final String PUBLICATION_DAY = "pubDay";
     public static final String PUB_ID = "pubID";
+    public static final int DEFAULT_TOP_DOCS = 10;
 }
