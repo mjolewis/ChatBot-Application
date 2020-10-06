@@ -29,4 +29,7 @@ public class Constants {
 
     // Lucene Indexing Info
     public static final String INDEX_DIRECTORY = "index_directory";
+
+    // Conversions
+    public static final double MILLIS_TO_SECONDS = 1000.0;
 }

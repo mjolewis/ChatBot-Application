@@ -52,10 +52,10 @@ public class Indexer {
             try {
                 Document doc = new Document();             // Create documents that will be stored in the index
 
-                // Use TextField for a field that needs to be tokenized into a set of words
+                // Tokenize the Article Title
                 doc.add(new TextField(Constants.ARTICLE_TITLE, article.getArticleTitle(), Field.Store.YES));
 
-                // Use StringField for a field with an atomic value that should not be tokenized
+                // Add the article ID and publication date as atomic values
                 doc.add(new StringField(Constants.PMID, article.getPubID(), Field.Store.YES));
                 doc.add(new StringField(Constants.PUBLICATION_DATE, article.getPubYear(), Field.Store.YES));
 
