@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -18,6 +19,8 @@ import java.util.Scanner;
  * @author Michael Lewis
  *********************************************************************************************************************/
 public class Builder {
+    ArrayList<Long> bruteForceRunTimes;
+    ArrayList<Long> luceneRunTimes;
 
     /**
      * Initialize a new Builder
@@ -25,6 +28,8 @@ public class Builder {
      * @throws OutOfMemoryError Indicates insufficient memory for this Builder
      */
     public Builder() {
+        bruteForceRunTimes = new ArrayList<>();
+        luceneRunTimes = new ArrayList<>();
     }
 
     /**
@@ -112,16 +117,24 @@ public class Builder {
 
             if ("0".equals(getSearchType(scanner))) {                     // Brute force search
                 isParsed = true;
-                XMLParser.parse(getSearchParam(scanner));
+
+                // Perform search and keep track of the runtime
+                bruteForceRunTimes.add(XMLParser.parse(getSearchParam(scanner)));
+
                 if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { XMLParser.print(); }
             } else {
                 if (!isParsed) {                                          // Lucene Index
                     isParsed = true;
                     XMLParser.parse();
                 }
-                searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));
+
+                // Perform search and keep track of the runtime
+                luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));
+
                 if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }
             }
+
+            if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(); }
 
         } while ("y".equalsIgnoreCase(performSearch(scanner)));
     }
@@ -164,6 +177,24 @@ public class Builder {
     private String displayDocuments(Scanner scanner) {
         System.out.print("Display documents: (y/n)? ");
         return scanner.nextLine();
+    }
+
+    private String displaySearchTimes(Scanner scanner) {
+        System.out.print("Display run times: (y/n)? ");
+        return scanner.nextLine();
+    }
+
+    private void printSearchTimes() {
+
+        System.out.println("Run time results for Brute force: ");
+        for (Long runTime : bruteForceRunTimes) {
+            System.out.println(runTime/Constants.MILLIS_TO_SECONDS + " seconds");
+        }
+
+        System.out.println("Run time results for Lucene search: ");
+        for (Long runTime : luceneRunTimes) {
+            System.out.println(runTime/Constants.MILLIS_TO_SECONDS + " seconds");
+        }
     }
 
     /*

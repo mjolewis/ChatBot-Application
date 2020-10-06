@@ -41,22 +41,31 @@ public class SearchEngine {
      *
      * @param searchParam A user specified search string
      * @param numOfDocs   The maximum number of documents to return when the search parameter is found
+     * @return The runtime of the current search
      */
-    public void search(String searchParam, int numOfDocs) {
+    public long search(String searchParam, int numOfDocs) {
+        long startTime = 0;
+        long endTime = 0;
+
         try {
+            startTime = System.currentTimeMillis();
+
             Query query = parser.parse(searchParam);
             searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY))));
             docs = searcher.search(query, numOfDocs);
+
+            endTime = System.currentTimeMillis();
+
             hits = docs.scoreDocs;
         } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
+
+        return endTime - startTime;                                       // Run time of this search
     }
 
     /**
      * Displays case-insensitive search results
-     *
-     * @throws IOException Indicates a failed or interrupted I/O operation
      */
     public void displayHits() {
         for (int i = 0; i < hits.length; ++i) {

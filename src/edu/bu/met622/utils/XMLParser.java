@@ -49,7 +49,7 @@ public class XMLParser extends DefaultHandler {
      *
      * @param fileName Name and extension of the file to parse
      * @param articles A list of articles
-     * @param storage An object capable of storing data in memory and on disk
+     * @param storage  An object capable of storing data in memory and on disk
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
     public XMLParser(String fileName, ArrayList<Article> articles, Storage storage) {
@@ -63,14 +63,18 @@ public class XMLParser extends DefaultHandler {
      * Brute force event-based processing of an XML document assigned to this objects fileName member variable
      *
      * @param searchParam A value to be searched
+     * @return The runtime of the current search
      */
-    public void parse(String searchParam) {
+    public long parse(String searchParam) {
         String pubYear = "";
         String pubID = "";
         String articleTitle = "";
+        long startTime = 0;
+        long endTime = 0;
 
         save(searchParam);
 
+        startTime = System.currentTimeMillis();
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
             XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
@@ -95,7 +99,9 @@ public class XMLParser extends DefaultHandler {
                             break;
                         case Constants.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
-                            if (!xmlEvent.isCharacters()) { xmlEvent = xmlEventReader.nextEvent(); }
+                            if (!xmlEvent.isCharacters()) {
+                                xmlEvent = xmlEventReader.nextEvent();
+                            }
                             articleTitle = xmlEvent.asCharacters().toString();
                             break;
                     }
@@ -109,9 +115,13 @@ public class XMLParser extends DefaultHandler {
                     }
                 }
             }
+
+            endTime = System.currentTimeMillis();
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
+
+        return endTime - startTime;                                       // Runtime of current search
     }
 
     /**
@@ -145,7 +155,9 @@ public class XMLParser extends DefaultHandler {
                             break;
                         case Constants.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
-                            if (!xmlEvent.isCharacters()) { xmlEvent = xmlEventReader.nextEvent(); }
+                            if (!xmlEvent.isCharacters()) {
+                                xmlEvent = xmlEventReader.nextEvent();
+                            }
                             articleTitle = xmlEvent.asCharacters().toString();
                             break;
                     }
@@ -153,7 +165,7 @@ public class XMLParser extends DefaultHandler {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
-                         allArticles.add(new Article(pubID, pubYear, articleTitle));
+                        allArticles.add(new Article(pubID, pubYear, articleTitle));
                     }
                 }
             }
