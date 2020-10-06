@@ -1,4 +1,4 @@
-# XML Parsing Application with Java StAX API
+# ChatBot Application with Java StAX and Lucene
 
 # Description
 This application can be used to merge XML documents and to search the merged file for a given search parameter. The 
