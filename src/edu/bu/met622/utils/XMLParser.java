@@ -63,14 +63,17 @@ public class XMLParser extends DefaultHandler {
      * Brute force event-based processing of an XML document assigned to this objects fileName member variable
      *
      * @param searchParam A value to be searched
+     * @param hits        The maximum number of hits allowed. A hit occurs when the searchParam is found while parsing the
+     *                    document
      * @return The runtime of the current search
      */
-    public long parse(String searchParam) {
+    public long parse(String searchParam, int hits) {
         String pubYear = "";
         String pubID = "";
         String articleTitle = "";
         long startTime = 0;
         long endTime = 0;
+        int hitCount = 0;
 
         save(searchParam);
 
@@ -79,7 +82,7 @@ public class XMLParser extends DefaultHandler {
         try {
             XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
 
-            while (xmlEventReader.hasNext()) {
+            while (xmlEventReader.hasNext() && hitCount < hits) {
 
                 XMLEvent xmlEvent = xmlEventReader.nextEvent();
 
@@ -93,7 +96,7 @@ public class XMLParser extends DefaultHandler {
                             pubID = xmlEvent.asCharacters().toString();
                             break;
                         case Constants.PUBLICATION_DATE:
-                            xmlEventReader.nextTag();           // <PubDate> is followed by the <Year>
+                            xmlEventReader.nextTag();                          // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
                             pubYear = xmlEvent.asCharacters().toString();
                             break;
@@ -110,7 +113,8 @@ public class XMLParser extends DefaultHandler {
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
                         if (articleTitle.toLowerCase().contains(searchParam.toLowerCase())) {
-                            articles.add(new Article(pubID, pubYear, articleTitle));
+                            ++hitCount;                                                  // Track the number of hits
+                            articles.add(new Article(pubID, pubYear, articleTitle));     // Track articles in container
                         }
                     }
                 }
@@ -121,12 +125,12 @@ public class XMLParser extends DefaultHandler {
             e.printStackTrace();
         }
 
-        return endTime - startTime;                                       // Runtime of current search
+        return endTime - startTime;                                            // Runtime of current search
     }
 
     /**
      * Parses an XML file for Articles and passes those Articles into a Lucene Index, which can be used for efficient
-     * searching
+     * searching.
      */
     public void parse() {
         String pubYear = "";
@@ -180,7 +184,7 @@ public class XMLParser extends DefaultHandler {
      * Prints the search history to the console
      */
     public void print() {
-        storage.print();                      // Delegate to the storage object
+        storage.print();                                                       // Delegate to the storage object
     }
 
     /**
@@ -191,7 +195,7 @@ public class XMLParser extends DefaultHandler {
      * @note Each entry in the container stores the time stamps for all searches
      */
     public Map<String, ArrayList<String>> getSearchHistory() {
-        return storage.getSearchHistory();                      // Delegate to the storage object
+        return storage.getSearchHistory();                                     // Delegate to the storage object
     }
 
     /**
