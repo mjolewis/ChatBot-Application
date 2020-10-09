@@ -119,7 +119,7 @@ public class Builder {
                 isParsed = true;
 
                 // Perform search and keep track of the runtime
-                bruteForceRunTimes.add(XMLParser.parse(getSearchParam(scanner)));
+                bruteForceRunTimes.add(XMLParser.parse(getSearchParam(scanner), getNumOfDocs(scanner)));
 
                 if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { XMLParser.print(); }
             } else {
@@ -158,7 +158,7 @@ public class Builder {
     }
 
     /*
-     * Gets the number of documents to return when doing a Lucene Index search
+     * Gets the number of documents to return from the document search
      */
     private int getNumOfDocs(Scanner scanner) {
         while (true) {
