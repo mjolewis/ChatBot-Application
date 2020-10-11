@@ -18,12 +18,13 @@ import java.util.List;
 
 
 /**********************************************************************************************************************
+ * Creates a Lucene Index to support full-text efficient searching mechanisms
  *
  * @author Michael Lewis
  * @version October 1, 2020 - Kickoff
  *********************************************************************************************************************/
 public class Indexer {
-    IndexWriter indexWriter = null;
+    private IndexWriter indexWriter = null;
 
     /**
      * Initialize a new Lucene Index. After using this Lucene Index, you must manually clean up system resources by

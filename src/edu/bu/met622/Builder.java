@@ -9,7 +9,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -19,8 +18,8 @@ import java.util.Scanner;
  * @author Michael Lewis
  *********************************************************************************************************************/
 public class Builder {
-    ArrayList<Long> bruteForceRunTimes;
-    ArrayList<Long> luceneRunTimes;
+    private ArrayList<Long> bruteForceRunTimes;
+    private ArrayList<Long> luceneRunTimes;
 
     /**
      * Initialize a new Builder

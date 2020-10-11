@@ -21,10 +21,9 @@ import java.nio.file.Paths;
  * @author Michael Lewis
  *********************************************************************************************************************/
 public class SearchEngine {
-    IndexSearcher searcher = null;
-    QueryParser parser;
-    TopDocs docs = null;
-    ScoreDoc[] hits = null;
+    private IndexSearcher searcher = null;
+    private QueryParser parser;
+    private ScoreDoc[] hits = null;
 
 
     /**
@@ -52,7 +51,7 @@ public class SearchEngine {
 
             Query query = parser.parse(searchParam);
             searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY))));
-            docs = searcher.search(query, numOfDocs);
+            TopDocs docs = searcher.search(query, numOfDocs);
 
             endTime = System.currentTimeMillis();
 
