@@ -49,7 +49,7 @@ public class Storage {
      *
      * @param searchParam The search parameter entered by the user
      * @param timestamp   The date and time of the search
-     * @throws IOException
+     * @throws IOException Indicates a failed or interrupted I/O operation
      */
     public void saveToDisk(String searchParam, String timestamp) throws IOException {
         try {

@@ -1,8 +1,11 @@
 # ChatBot Application with Java StAX and Lucene
 
 # Description
-This application can be used to merge XML documents and to search the merged file for a given search parameter. The 
-search parameter can be fixed within the system or be fed into the program by the user. 
+The ChatBot application is used to respond to user queries. The underlying knowledge base is represented as a single XML 
+document that can be created from multiple source XML documents being fed into the system.  
+
+For sample purposes, the application provides both a brute force searching mechanism as well as ultra-fast search 
+capabilities via the Lucene search library.
 
 The current application logic follows a classification logic, that is, it groups file objects into one master aggregate 
 and then uses that aggregate file to search for a keyword. When the searching is complete, the simulation results are 
@@ -32,20 +35,29 @@ can only contain one Prolog tag and one closing Root tag.
 The FileMerger core functionality resides in the merge method. The remaining public methods are simple Accessor and 
 Mutators provided for convenience. 
 
-***Parser***\
+***XMLParser***\
 The Parser has been specialized to parse XML documents from ftp://ftp.ncbi.nlm.nih.gov/pubmed/. However, the class
 can easily be extended to parse XML documents from any source. Please see the Usage section for more information.
 
-The Parser's sole job is to receive a search parameter and parse the XML document to search for the specified search 
-parameter. Once found, an Article object will be created with the the title of the article and it's publication
-date. 
+The XMLParser's sole job is to receive a search parameter and parse the XML document in search of the specified search 
+parameter. Once found, an Article object will be created with the the title of the article, it's publication date, and 
+publication ID.
 
-Note that the Parser relies on the Java StAX API, which exposes method for iterative, event-based processing of XML 
+Note that the Parser relies on the Java StAX API, which exposes methods for iterative, event-based processing of XML 
 documents. Please visit https://docs.oracle.com/javase/tutorial/jaxp/stax/api.html for more information.
+
+For illustrative purposes, the XMLParser has both brute force and Lucene search mechanisms. These searching capabilities 
+are for instructional purposes only to highlight why efficient search capabilities are a necessary requirement for 
+production systems. As a result, ensure that the brute force searching method is removed prior to deploying the 
+application to production.
+
+For more details on Lucene, please see the Indexer class or visit https://lucene.apache.org/core/.
 
 ***Article***\
 The Article class provides a simplified data model of the XML documents. It's sole job is to represent an article that
 was successfully parsed by the Parser. 
+
+Importantly, this class must be updated to accurately reflect the data model if the underlying knowledge base changes. 
 
 ***Storage***\
 The Storage class takes input from the Parser class and provides in-memory and disk storage solutions. Importantly, if 
@@ -56,16 +68,27 @@ Finally, the application automatically persists search results onto disk. Despit
 the search results to disk happens immediately to ensure system integrity. This approach prevents data loss if an event 
 that causes a loss of volatile storage occurs while the application is still running.
 
+***Indexer***\
+
+
+Finally, Lucene builds an inverted index data structure to provide efficient search capabilities over a corpus of 
+documents. This is similar to how a textbook provides an index at the end of the book as a way to efficiently identify 
+pages that contain keywords. In contrast, brute force search is analogous to reading every word in the body of the text 
+as a way to identify keywords. This inverted index is stored on disk within the index_directory sub-folder.
+
 # System Design
 The system architecture is based on SOLID principles. Each class within the application has a well-defined 
 single-responsibility, which has been highlighted in the System Components section. Additionally, each class is open
 for extension, but closed for modification to ensure system integrity (e.g. invariants always remain true).
 
 UML Diagram:
-![PubMed (1)](https://user-images.githubusercontent.com/12025538/93641173-d8d80580-f9c9-11ea-9ddd-929ad83683fd.png)
+![ChatBot](https://user-images.githubusercontent.com/12025538/95683670-b6956a00-0bba-11eb-9f25-e5905266f108.png)
 
 # Extreme Scenarios and Limitations
 Depending on the JVM and XML files sizes, this application has limitations. For example, the heap size may be exceeded
 for extremely large files. To handle this issue, either manually increase the heap size or ensure that the XML documents
 do not exceed the capacity of the heap.
+
+# Output Analysis
+Please check the search_history file for sample output in .csv format
 
