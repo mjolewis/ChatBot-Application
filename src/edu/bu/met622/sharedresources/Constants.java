@@ -34,7 +34,7 @@ public class Constants {
     public static final double MILLIS_TO_SECONDS = 1000.0;
 
     // MySQL Database
-    public static final String SQL_PATH = "jdbc:mysql://localhost:3306/met622?useTimezone=true&serverTimezone=UTC";
+    public static final String SQL_DB = "jdbc:mysql://localhost:3306/met622?useTimezone=true&serverTimezone=UTC";
     public static final String SQL_USER = "root";
     public static final String SQL_PWD = "root";
     public static final String TABLE_NAME = "articles";
@@ -48,4 +48,10 @@ public class Constants {
     public static final String CREATED_TABLE = "Created table successfully...";
     public static final String CLOSE = "Closing connection...";
     public static final String CLOSED = "Connection closed...";
+
+    // Search types
+    public static String BF_SEARCH = "Brute Force (y/n): ";
+    public static String LUCENE_SEARCH = "Lucene Index (y/n): ";
+    public static String SQL_DB_SEARCH = "SQL Database (y/n): ";
+    public static String MONGODB_SEARCH = "MongoDB (y/n): ";
 }

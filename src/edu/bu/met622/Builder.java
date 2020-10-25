@@ -1,8 +1,8 @@
 package edu.bu.met622;
 
-import edu.bu.met622.database.MySQL;
 import edu.bu.met622.searchlib.SearchEngine;
 import edu.bu.met622.sharedresources.Constants;
+import edu.bu.met622.utils.BFParser;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;
 
@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,7 +19,7 @@ import java.util.Scanner;
  * @author Michael Lewis
  *********************************************************************************************************************/
 public class Builder {
-    private ArrayList<Long> bruteForceRunTimes;
+    private ArrayList<Long> bfRunTimes;
     private ArrayList<Long> luceneRunTimes;
 
     /**
@@ -29,7 +28,7 @@ public class Builder {
      * @throws OutOfMemoryError Indicates insufficient memory for this Builder
      */
     public Builder() {
-        bruteForceRunTimes = new ArrayList<>();
+        bfRunTimes = new ArrayList<>();
         luceneRunTimes = new ArrayList<>();
     }
 
@@ -66,37 +65,6 @@ public class Builder {
         }
     }
 
-    public void buildDB() {
-        MySQL db = MySQL.getInstance();
-
-        // Connect to the database
-        System.out.println(Constants.CONNECTING);
-        Connection connection = db.getConnection();
-        System.out.println(Constants.CONNECTED);
-
-        try {
-            Statement statement = connection.createStatement();
-            // TODO: 10/24/20 do i need to build that database after power off e.g. met622
-            // Create table if it doesn't exist
-            DatabaseMetaData metaData = connection.getMetaData();
-            //ResultSet table = metaData.getTables(null, null, Constants.TABLE_NAME, null);
-            if (true) {
-                System.out.println(Constants.CREATING_TABLE);
-                statement.execute(Constants.CREATE_TABLE);
-                System.out.println(Constants.CREATED_TABLE);
-            } else {
-                ResultSet rs = statement.executeQuery("SELECT * FROM articles");
-                while (rs.next()) {
-                    //statement.execute(Constants.CREATE_TABLE);
-                    System.out.println(rs.getString(1));
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Write a welcome message to the console
      */
@@ -116,7 +84,7 @@ public class Builder {
     }
 
     //*****************************************************************************************************************
-    // Helper methods
+    // Helper methods for merging and parsing
     //*****************************************************************************************************************
 
     /*
@@ -141,44 +109,70 @@ public class Builder {
      */
     private void parseXML() {
         Scanner scanner = new Scanner(System.in);
-        XMLParser XMLParser = new XMLParser();
+        BFParser bfParser = new BFParser();                               // Parse and match at same time
+        XMLParser parser = new XMLParser();                               // Parse entire document and then search
         SearchEngine searchEngine = new SearchEngine();
         boolean isParsed = false;
 
         do {
 
-            if ("0".equals(getSearchType(scanner))) {                     // Brute force search
-                isParsed = true;
-
-                // Perform search and keep track of the runtime
-                bruteForceRunTimes.add(XMLParser.parse(getSearchParam(scanner), getNumOfDocs(scanner)));
-
-                if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { XMLParser.print(); }
-            } else {
-                if (!isParsed) {                                          // Lucene Index
-                    isParsed = true;
-                    XMLParser.parse();
-                }
-
-                // Perform search and keep track of the runtime
-                luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));
-
-                if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }
+            String searchType = getSearchType(scanner);
+            switch (searchType) {
+                case "0":
+                    bfRunTimes.add(bfParser.parse(getSearchParam(scanner), getNumOfDocs(scanner)));    // Brute force search
+                    if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { parser.print(); }       // Display search history
+                    break;
+                case "1":
+                    if (!isParsed) {                                          // If document hasn't been parsed then...
+                        isParsed = true;                                      // Ensure index is only built once
+                        parser.parse();                                       // Parse the entire document
+                        parser.createIndex();                                 // Build Lucene Index
+                    }
+                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
+                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
+                    break;
+                case "2":
+                    if (!isParsed) {                                          // If document hasn't been parsed then...
+                        isParsed = true;                                      // Ensure index is only built once
+                        parser.parse();                                       // Parse the entire document
+                        parser.createSQLDB();                                 // Build Lucene Index
+                    }
+//                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
+//                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
+                    break;
+                case "3":
+                    if (!isParsed) {                                          // If document hasn't been parsed then...
+                        isParsed = true;                                      // Ensure index is only built once
+                        parser.parse();                                       // Parse the entire document
+                        parser.createMongoDB();                                 // Build Lucene Index
+                    }
+//                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
+//                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
+                    break;
             }
 
-            if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(); }
-
-        } while ("y".equalsIgnoreCase(performSearch(scanner)));
+            if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(); }    // Display search times
+        } while ("y".equalsIgnoreCase(performSearch(scanner)));                               // Perform another search?
     }
 
     /*
-     * Gets the search type from the user. If the user enters 0, then a brute force search is performed. Otherwise, a
-     * Lucene Index search is performed
+     * Gets the search type from the user
      */
     private String getSearchType(Scanner scanner) {
-        System.out.println("\nEnter search type");
-        System.out.print("0 for Brute Force; 1 for Lucene: ");
-        return scanner.nextLine();
+
+        System.out.print(Constants.BF_SEARCH);
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "0"; }
+
+        System.out.print(Constants.LUCENE_SEARCH);
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "1"; }
+
+        System.out.print(Constants.SQL_DB_SEARCH);
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "2"; }
+
+        System.out.print(Constants.MONGODB_SEARCH);
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "3"; }
+
+        return "-1";                                            // Indicates invalid input
     }
 
     /*
@@ -219,7 +213,7 @@ public class Builder {
     private void printSearchTimes() {
 
         System.out.println("Run time results for Brute force: ");
-        for (Long runTime : bruteForceRunTimes) {
+        for (Long runTime : bfRunTimes) {
             System.out.println(runTime/Constants.MILLIS_TO_SECONDS + " seconds");
         }
 

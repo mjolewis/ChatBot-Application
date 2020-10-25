@@ -1,7 +1,5 @@
 package edu.bu.met622.utils;
 
-import edu.bu.met622.database.MySQL;
-import edu.bu.met622.searchlib.Indexer;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
@@ -20,27 +18,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**********************************************************************************************************************
- * Parse XML trees using pull parsing, which allows the client to control the application thread.
+ * Illustration of brute force XML parsing
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
-public class XMLParser extends DefaultHandler {
+public class BFParser extends DefaultHandler {
     private String fileName;                                    // File to be searched
-    private List<Article> articles;                             // A collection of every article in the input file
+    private List<Article> articles;                             // A container of PubMed articles
     private Storage storage;                                    // Persist search history
-    private Indexer indexer;                                    // Builds a Lucene Index
 
     /**
      * Initialize a new Parser
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public XMLParser() {
+    public BFParser() {
 
         fileName = Constants.OUTPUT_FILE;
         articles = new ArrayList<>();
         storage = new Storage();
-        indexer = new Indexer();
     }
 
     /**
@@ -51,7 +47,7 @@ public class XMLParser extends DefaultHandler {
      * @param storage  An object capable of storing data in memory and on disk
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public XMLParser(String fileName, ArrayList<Article> articles, Storage storage) {
+    public BFParser(String fileName, ArrayList<Article> articles, Storage storage) {
 
         this.fileName = fileName;
         this.articles = articles;
@@ -59,22 +55,34 @@ public class XMLParser extends DefaultHandler {
     }
 
     /**
-     * Parses an XML file for Articles and passes those Articles into a Lucene Index, which can be used for efficient
-     * searching.
+     * Brute force event-based processing of an XML document assigned to this objects fileName member variable
+     *
+     * @param searchParam A value to be searched
+     * @param hits        The maximum number of hits allowed. A hit occurs when the searchParam is found while parsing the
+     *                    document
+     * @return The runtime of the current search
      */
-    public void parse() {
+    public long parse(String searchParam, int hits) {
         String pubYear = "";
         String pubID = "";
         String articleTitle = "";
+        long startTime = 0;
+        long endTime = 0;
+        int hitCount = 0;
 
+        save(searchParam);
+
+        startTime = System.currentTimeMillis();
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
             XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
 
-            while (xmlEventReader.hasNext()) {
+            while (xmlEventReader.hasNext() && hitCount < hits) {
+
                 XMLEvent xmlEvent = xmlEventReader.nextEvent();
 
                 if (xmlEvent.isStartElement()) {
+
                     StartElement startElement = xmlEvent.asStartElement();
 
                     switch (startElement.getName().getLocalPart()) {
@@ -83,7 +91,7 @@ public class XMLParser extends DefaultHandler {
                             pubID = xmlEvent.asCharacters().toString();
                             break;
                         case Constants.PUBLICATION_DATE:
-                            xmlEventReader.nextTag();
+                            xmlEventReader.nextTag();                          // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
                             pubYear = xmlEvent.asCharacters().toString();
                             break;
@@ -99,36 +107,24 @@ public class XMLParser extends DefaultHandler {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
-                        articles.add(new Article(pubID, pubYear, articleTitle));
+                        if (articleTitle.toLowerCase().contains(searchParam.toLowerCase())) {
+                            ++hitCount;                                                  // Track the number of hits
+                            articles.add(new Article(pubID, pubYear, articleTitle));     // Track articles in container
+                        }
                     }
                 }
             }
+
+            endTime = System.currentTimeMillis();
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
+
+        return endTime - startTime;                                            // Runtime of current search
     }
 
     /**
-     * Add articles into the SQL database
-     */
-    public void createSQLDB() {
-        MySQL db = MySQL.getInstance();
-        db.buildDB(articles);
-    }
-
-    public void createMongoDB() {
-
-    }
-
-    /**
-     * Builds a Lucene Index
-     */
-    public void createIndex() {
-        indexer.createIndex(articles);
-    }
-
-    /**
-     * Prints the search history to the console
+     * Prints search history to the console
      */
     public void print() {
         storage.print();                                                       // Delegate to the storage object
@@ -146,7 +142,7 @@ public class XMLParser extends DefaultHandler {
     }
 
     /**
-     * Accessor method that returns the list of all articles
+     * Accessor method that returns the list of articles containing the search string
      *
      * @return A list of articles
      */
