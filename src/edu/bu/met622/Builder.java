@@ -1,5 +1,6 @@
 package edu.bu.met622;
 
+import edu.bu.met622.database.MySQL;
 import edu.bu.met622.searchlib.SearchEngine;
 import edu.bu.met622.sharedresources.Constants;
 import edu.bu.met622.utils.FileMerger;
@@ -9,6 +10,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -61,6 +63,37 @@ public class Builder {
                 }
             }
 
+        }
+    }
+
+    public void buildDB() {
+        MySQL db = MySQL.getInstance();
+
+        // Connect to the database
+        System.out.println(Constants.CONNECTING);
+        Connection connection = db.getConnection();
+        System.out.println(Constants.CONNECTED);
+
+        try {
+            Statement statement = connection.createStatement();
+            // TODO: 10/24/20 do i need to build that database after power off e.g. met622
+            // Create table if it doesn't exist
+            DatabaseMetaData metaData = connection.getMetaData();
+            //ResultSet table = metaData.getTables(null, null, Constants.TABLE_NAME, null);
+            if (true) {
+                System.out.println(Constants.CREATING_TABLE);
+                statement.execute(Constants.CREATE_TABLE);
+                System.out.println(Constants.CREATED_TABLE);
+            } else {
+                ResultSet rs = statement.executeQuery("SELECT * FROM articles");
+                while (rs.next()) {
+                    //statement.execute(Constants.CREATE_TABLE);
+                    System.out.println(rs.getString(1));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

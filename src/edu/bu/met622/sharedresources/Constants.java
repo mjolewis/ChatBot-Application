@@ -32,4 +32,20 @@ public class Constants {
 
     // Conversions
     public static final double MILLIS_TO_SECONDS = 1000.0;
+
+    // MySQL Database
+    public static final String SQL_PATH = "jdbc:mysql://localhost:3306/met622?useTimezone=true&serverTimezone=UTC";
+    public static final String SQL_USER = "root";
+    public static final String SQL_PWD = "root";
+    public static final String TABLE_NAME = "articles";
+    public static final String CREATE_TABLE = "CREATE TABLE articles" +
+                                              "(id VARCHAR(20)," +
+                                              "pubDate VARCHAR(20), " +
+                                              "title VARCHAR(1000));";
+    public static final String CONNECTING = "Connecting to the database...";
+    public static final String CONNECTED = "Connection successful...";
+    public static final String CREATING_TABLE = "Creating table in the database...";
+    public static final String CREATED_TABLE = "Created table successfully...";
+    public static final String CLOSE = "Closing connection...";
+    public static final String CLOSED = "Connection closed...";
 }
