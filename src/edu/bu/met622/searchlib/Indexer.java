@@ -1,7 +1,7 @@
 package edu.bu.met622.searchlib;
 
 import edu.bu.met622.model.Article;
-import edu.bu.met622.sharedresources.Constants;
+import edu.bu.met622.resources.Config;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -34,7 +34,7 @@ public class Indexer {
      */
     public Indexer() {
         try {
-            Directory indexDir = FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY));
+            Directory indexDir = FSDirectory.open(Paths.get(Config.INDEX_DIRECTORY));
             IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
             indexWriter = new IndexWriter(indexDir, config);
         } catch (IOException e) {
@@ -54,11 +54,11 @@ public class Indexer {
                 Document doc = new Document();             // Create documents that will be stored in the index
 
                 // Tokenize the Article Title
-                doc.add(new TextField(Constants.ARTICLE_TITLE, article.getArticleTitle(), Field.Store.YES));
+                doc.add(new TextField(Config.ARTICLE_TITLE, article.getArticleTitle(), Field.Store.YES));
 
                 // Add the article ID and publication date as atomic values
-                doc.add(new StringField(Constants.PMID, article.getPubID(), Field.Store.YES));
-                doc.add(new StringField(Constants.PUBLICATION_DATE, article.getPubYear(), Field.Store.YES));
+                doc.add(new StringField(Config.PMID, article.getPubID(), Field.Store.YES));
+                doc.add(new StringField(Config.PUBLICATION_DATE, article.getPubYear(), Field.Store.YES));
 
                 indexWriter.addDocument(doc);              // Add the document to the index
             } catch (IOException e) {

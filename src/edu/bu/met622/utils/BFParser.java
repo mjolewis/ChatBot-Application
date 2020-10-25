@@ -1,6 +1,6 @@
 package edu.bu.met622.utils;
 
-import edu.bu.met622.sharedresources.Constants;
+import edu.bu.met622.resources.Config;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -34,7 +34,7 @@ public class BFParser extends DefaultHandler {
      */
     public BFParser() {
 
-        fileName = Constants.OUTPUT_FILE;
+        fileName = Config.OUTPUT_FILE;
         articles = new ArrayList<>();
         storage = new Storage();
     }
@@ -86,16 +86,16 @@ public class BFParser extends DefaultHandler {
                     StartElement startElement = xmlEvent.asStartElement();
 
                     switch (startElement.getName().getLocalPart()) {
-                        case Constants.PMID:
+                        case Config.PMID:
                             xmlEvent = xmlEventReader.nextEvent();
                             pubID = xmlEvent.asCharacters().toString();
                             break;
-                        case Constants.PUBLICATION_DATE:
+                        case Config.PUBLICATION_DATE:
                             xmlEventReader.nextTag();                          // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
                             pubYear = xmlEvent.asCharacters().toString();
                             break;
-                        case Constants.ARTICLE_TITLE:
+                        case Config.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
                             if (!xmlEvent.isCharacters()) {
                                 xmlEvent = xmlEventReader.nextEvent();
@@ -106,7 +106,7 @@ public class BFParser extends DefaultHandler {
                 } else if (xmlEvent.isEndElement()) {
                     EndElement endElement = xmlEvent.asEndElement();
 
-                    if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
+                    if (endElement.getName().getLocalPart().equals(Config.PUB_MED_ARTICLE)) {
                         if (articleTitle.toLowerCase().contains(searchParam.toLowerCase())) {
                             ++hitCount;                                                  // Track the number of hits
                             articles.add(new Article(pubID, pubYear, articleTitle));     // Track articles in container
@@ -169,7 +169,7 @@ public class BFParser extends DefaultHandler {
      */
     private void save(String searchParam) {
         LocalDateTime timestamp = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Config.DATE_FORMAT);
 
         storage.saveToMemory(searchParam, timestamp.format(dateTimeFormatter));
         try {

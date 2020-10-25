@@ -1,7 +1,7 @@
 package edu.bu.met622;
 
 import edu.bu.met622.searchlib.SearchEngine;
-import edu.bu.met622.sharedresources.Constants;
+import edu.bu.met622.resources.Config;
 import edu.bu.met622.utils.BFParser;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;
@@ -48,14 +48,14 @@ public class Builder {
                 selectedFiles = jFileChooser.getSelectedFiles();
 
                 if (selectedFiles.length == 1) {                         // Only merge if more than one was selected
-                    System.out.println(Constants.FILE_SELECTION_ERROR);
+                    System.out.println(Config.FILE_SELECTION_ERROR);
                 } else {
                     mergeXML(selectedFiles);
                     parseXML();
                     break;
                 }
             } else {                                                     // No files selected
-                System.out.println(Constants.FILE_SELECTION_ERROR);
+                System.out.println(Config.FILE_SELECTION_ERROR);
 
                 if (returnValue == JFileChooser.CANCEL_OPTION) {         // Break out of the selection process
                     break;
@@ -70,7 +70,7 @@ public class Builder {
      */
     public void startMessage() {
         System.out.println("\n\n************************************************");
-        System.out.println(Constants.START_MESSAGE);
+        System.out.println(Config.START_MESSAGE);
         System.out.println("\n************************************************\n");
     }
 
@@ -79,7 +79,7 @@ public class Builder {
      */
     public void endMessage() {
         System.out.println("\n\n************************************************");
-        System.out.println(Constants.END_MESSAGE);
+        System.out.println(Config.END_MESSAGE);
         System.out.println("\n************************************************");
     }
 
@@ -96,7 +96,7 @@ public class Builder {
             fileContainer.add(file.getPath());
         }
 
-        FileMerger fileMerger = new FileMerger(fileContainer, Constants.OUTPUT_FILE);
+        FileMerger fileMerger = new FileMerger(fileContainer, Config.OUTPUT_FILE);
         try {
             fileMerger.merge();
         } catch (IOException e) {
@@ -160,16 +160,16 @@ public class Builder {
      */
     private String getSearchType(Scanner scanner) {
 
-        System.out.print(Constants.BF_SEARCH);
+        System.out.print(Config.BF_SEARCH);
         if (scanner.nextLine().equalsIgnoreCase("y")) { return  "0"; }
 
-        System.out.print(Constants.LUCENE_SEARCH);
+        System.out.print(Config.LUCENE_SEARCH);
         if (scanner.nextLine().equalsIgnoreCase("y")) { return  "1"; }
 
-        System.out.print(Constants.SQL_DB_SEARCH);
+        System.out.print(Config.SQL_DB_SEARCH);
         if (scanner.nextLine().equalsIgnoreCase("y")) { return  "2"; }
 
-        System.out.print(Constants.MONGODB_SEARCH);
+        System.out.print(Config.MONGODB_SEARCH);
         if (scanner.nextLine().equalsIgnoreCase("y")) { return  "3"; }
 
         return "-1";                                            // Indicates invalid input
@@ -214,12 +214,12 @@ public class Builder {
 
         System.out.println("Run time results for Brute force: ");
         for (Long runTime : bfRunTimes) {
-            System.out.println(runTime/Constants.MILLIS_TO_SECONDS + " seconds");
+            System.out.println(runTime/ Config.MILLIS_TO_SECONDS + " seconds");
         }
 
         System.out.println("Run time results for Lucene search: ");
         for (Long runTime : luceneRunTimes) {
-            System.out.println(runTime/Constants.MILLIS_TO_SECONDS + " seconds");
+            System.out.println(runTime/ Config.MILLIS_TO_SECONDS + " seconds");
         }
     }
 
