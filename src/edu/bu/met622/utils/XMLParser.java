@@ -2,7 +2,7 @@ package edu.bu.met622.utils;
 
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.searchlib.Indexer;
-import edu.bu.met622.sharedresources.Constants;
+import edu.bu.met622.resources.Config;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -37,7 +37,7 @@ public class XMLParser extends DefaultHandler {
      */
     public XMLParser() {
 
-        fileName = Constants.OUTPUT_FILE;
+        fileName = Config.OUTPUT_FILE;
         articles = new ArrayList<>();
         storage = new Storage();
         indexer = new Indexer();
@@ -78,16 +78,16 @@ public class XMLParser extends DefaultHandler {
                     StartElement startElement = xmlEvent.asStartElement();
 
                     switch (startElement.getName().getLocalPart()) {
-                        case Constants.PMID:
+                        case Config.PMID:
                             xmlEvent = xmlEventReader.nextEvent();
                             pubID = xmlEvent.asCharacters().toString();
                             break;
-                        case Constants.PUBLICATION_DATE:
+                        case Config.PUBLICATION_DATE:
                             xmlEventReader.nextTag();
                             xmlEvent = xmlEventReader.nextEvent();
                             pubYear = xmlEvent.asCharacters().toString();
                             break;
-                        case Constants.ARTICLE_TITLE:
+                        case Config.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
                             if (!xmlEvent.isCharacters()) {
                                 xmlEvent = xmlEventReader.nextEvent();
@@ -98,7 +98,7 @@ public class XMLParser extends DefaultHandler {
                 } else if (xmlEvent.isEndElement()) {
                     EndElement endElement = xmlEvent.asEndElement();
 
-                    if (endElement.getName().getLocalPart().equals(Constants.PUB_MED_ARTICLE)) {
+                    if (endElement.getName().getLocalPart().equals(Config.PUB_MED_ARTICLE)) {
                         articles.add(new Article(pubID, pubYear, articleTitle));
                     }
                 }
@@ -173,7 +173,7 @@ public class XMLParser extends DefaultHandler {
      */
     private void save(String searchParam) {
         LocalDateTime timestamp = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Config.DATE_FORMAT);
 
         storage.saveToMemory(searchParam, timestamp.format(dateTimeFormatter));
         try {

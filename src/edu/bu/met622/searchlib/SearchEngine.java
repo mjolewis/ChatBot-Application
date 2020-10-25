@@ -1,6 +1,6 @@
 package edu.bu.met622.searchlib;
 
-import edu.bu.met622.sharedresources.Constants;
+import edu.bu.met622.resources.Config;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -32,7 +32,7 @@ public class SearchEngine {
      * @throws OutOfMemoryError Indicates insufficient memory for this new SearchEngine
      */
     public SearchEngine() {
-        parser = new QueryParser(Constants.ARTICLE_TITLE, new StandardAnalyzer());
+        parser = new QueryParser(Config.ARTICLE_TITLE, new StandardAnalyzer());
     }
 
     /**
@@ -50,7 +50,7 @@ public class SearchEngine {
             startTime = System.currentTimeMillis();
 
             Query query = parser.parse(searchParam);
-            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Constants.INDEX_DIRECTORY))));
+            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Config.INDEX_DIRECTORY))));
             TopDocs docs = searcher.search(query, numOfDocs);
 
             endTime = System.currentTimeMillis();
@@ -72,9 +72,9 @@ public class SearchEngine {
 
             try {
                 Document doc = searcher.doc(docId);
-                System.out.print(i + 1 + ") " + "Pub ID: " + doc.get(Constants.PMID) + "\n" +
-                        "\tTitle: " + doc.get(Constants.ARTICLE_TITLE) + "\n" +
-                        "\tPub Year: " + doc.get(Constants.PUBLICATION_DATE) + "\n");
+                System.out.print(i + 1 + ") " + "Pub ID: " + doc.get(Config.PMID) + "\n" +
+                        "\tTitle: " + doc.get(Config.ARTICLE_TITLE) + "\n" +
+                        "\tPub Year: " + doc.get(Config.PUBLICATION_DATE) + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }

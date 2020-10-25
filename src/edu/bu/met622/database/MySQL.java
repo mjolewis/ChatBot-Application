@@ -1,7 +1,7 @@
 package edu.bu.met622.database;
 
 import edu.bu.met622.model.Article;
-import edu.bu.met622.sharedresources.Constants;
+import edu.bu.met622.resources.Config;
 
 import java.sql.*;
 import java.util.List;
@@ -60,7 +60,7 @@ public class MySQL {
 
         try {
             // A connection (session) with a specific database
-            con = DriverManager.getConnection(Constants.SQL_DB, Constants.SQL_USER, Constants.SQL_PWD);
+            con = DriverManager.getConnection(Config.SQL_DB, Config.SQL_USER, Config.SQL_PWD);
 
             // A statement object holds SQL commands
             Statement stmt = con.createStatement();
@@ -69,11 +69,11 @@ public class MySQL {
             DatabaseMetaData metaData = con.getMetaData();
 
             // A description of the table represented by the catalog, schema, table name, and types
-            ResultSet table = metaData.getTables(null, null, Constants.TABLE_NAME, null);
+            ResultSet table = metaData.getTables(null, null, Config.TABLE_NAME, null);
             if (!table.next()) {
-                System.out.println(Constants.CREATING_TABLE);
-                stmt.execute(Constants.CREATE_TABLE);                    // Create table if it doesn't exist
-                System.out.println(Constants.CREATED_TABLE);
+                System.out.println(Config.CREATING_TABLE);
+                stmt.execute(Config.CREATE_TABLE);                    // Create table if it doesn't exist
+                System.out.println(Config.CREATED_TABLE);
 
             } else {
                 for (Article article : articlesList) {

@@ -1,11 +1,11 @@
-package edu.bu.met622.sharedresources;
+package edu.bu.met622.resources;
 
 /**********************************************************************************************************************
  * Application constants
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
-public class Constants {
+public class Config {
 
     // Parser info
     public static final String OPENING_ROOT_TAG = "<PubmedArticleSet>";
