@@ -1,17 +1,14 @@
-package edu.bu.met622;
+package edu.bu.met622.resources;
 
 /**********************************************************************************************************************
- * Main entry point
+ * Predefined search types allowed by the system
  *
  * @author Michael Lewis
+ * @version October 25, 2020 - Kickoff
  *********************************************************************************************************************/
-public class Main {
-
-    public static void main(String[] args) {
-        Builder builder = new Builder();
-        builder.startMessage();
-        builder.build();
-        builder.cleanup();
-        builder.endMessage();
-    }
+public enum SearchTypes {
+    BRUTE_FORCE,
+    LUCENE,
+    SQL_DB,
+    MONGO_DB
 }
