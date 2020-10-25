@@ -114,7 +114,6 @@ public class BFParser extends DefaultHandler {
                     }
                 }
             }
-
             endTime = System.currentTimeMillis();
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();

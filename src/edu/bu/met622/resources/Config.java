@@ -7,7 +7,24 @@ package edu.bu.met622.resources;
  *********************************************************************************************************************/
 public class Config {
 
-    // Parser info
+    // Start up messages
+    public static final String START_MESSAGE = "\nLaunching ChatBot...";
+    public static String BF_SEARCH = "Brute Force (y/n): ";
+    public static String LUCENE_SEARCH = "Lucene Index (y/n): ";
+    public static String SQL_DB_SEARCH = "SQL Database (y/n): ";
+    public static String MONGODB_SEARCH = "MongoDB (y/n): ";
+
+    // User input
+    public static final String ENTER_KEYWORD = "Enter search parameter: ";
+    public static final String ENTER_YEAR = "Enter year of search: ";
+    public static final String ENTER_NUM_OF_DOCS = "Number of docs: ";
+    public static final String INVALID_INPUT = "Invalid input. Try Again.";
+    public static final String DISPLAY_DOCUMENTS = "Display documents (y/n)? ";
+    public static final String DISPLAY_RUNTIMES = "Display run times (y/n)? ";
+    public static final String DISPLAY_SEARCH_HISTORY = "Display search history (y/n)? ";
+    public static final String SEARCH_AGAIN = "Search again (y/n)? ";
+
+    // Parser
     public static final String OPENING_ROOT_TAG = "<PubmedArticleSet>";
     public static final String CLOSING_ROOT_TAG =  "</PubmedArticleSet>";
     public static final String OUTPUT_FILE = "master_file.xml";
@@ -18,16 +35,12 @@ public class Config {
     public static final String FILE_SELECTION_ERROR = "Error. Please select more than one file";
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.mm";
 
-    // Builder messages
-    public static final String START_MESSAGE = "\nMET CS 622\nXML Parsing Engine\nAuthor: Michael Lewis";
-    public static final String END_MESSAGE = "\nSimulation Complete\nMerged File Name: " + OUTPUT_FILE;
-
     // Disk storage
     public static final String SEARCH_HISTORY = "search_history.csv";
     public static final String COMMA_DELIMITER = ",";
     public static final String NEW_LINE_SEPARATOR = "\n";
 
-    // Lucene Indexing Info
+    // Lucene Indexing
     public static final String INDEX_DIRECTORY = "index_directory";
 
     // Conversions
@@ -37,21 +50,21 @@ public class Config {
     public static final String SQL_DB = "jdbc:mysql://localhost:3306/met622?useTimezone=true&serverTimezone=UTC";
     public static final String SQL_USER = "root";
     public static final String SQL_PWD = "root";
+    public static final String CONNECTING = "Connecting to the database...";
+    public static final String CONNECTED = "Connection successful...";
+    public static final String CREATING_TABLE = "Creating table in the database...";
+    public static final String CREATED_TABLE = "Created table successfully...";
+    public static final String RECORDS_INSERTED = " records inserted";
     public static final String TABLE_NAME = "articles";
     public static final String CREATE_TABLE = "CREATE TABLE articles" +
                                               "(id VARCHAR(20)," +
                                               "pubDate VARCHAR(20), " +
                                               "title VARCHAR(1000));";
-    public static final String CONNECTING = "Connecting to the database...";
-    public static final String CONNECTED = "Connection successful...";
-    public static final String CREATING_TABLE = "Creating table in the database...";
-    public static final String CREATED_TABLE = "Created table successfully...";
-    public static final String CLOSE = "Closing connection...";
-    public static final String CLOSED = "Connection closed...";
 
-    // Search types
-    public static String BF_SEARCH = "Brute Force (y/n): ";
-    public static String LUCENE_SEARCH = "Lucene Index (y/n): ";
-    public static String SQL_DB_SEARCH = "SQL Database (y/n): ";
-    public static String MONGODB_SEARCH = "MongoDB (y/n): ";
+    // MongoDB
+
+    // Cleanup messages
+    public static final String CLOSING_CONNECTIONS = "\nClosing Database Connections...";
+    public static final String CLOSED_CONNECTIONS = "\nDatabase Connections Closed...";
+    public static final String END_MESSAGE = "\nTerminated ChatBot Session";
 }

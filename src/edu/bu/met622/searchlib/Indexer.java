@@ -25,6 +25,7 @@ import java.util.List;
  *********************************************************************************************************************/
 public class Indexer {
     private IndexWriter indexWriter = null;
+    private static boolean exists = false;                      // True if the table has been built; Otherwise false
 
     /**
      * Initialize a new Lucene Index. After using this Lucene Index, you must manually clean up system resources by
@@ -61,6 +62,7 @@ public class Indexer {
                 doc.add(new StringField(Config.PUBLICATION_DATE, article.getPubYear(), Field.Store.YES));
 
                 indexWriter.addDocument(doc);              // Add the document to the index
+                exists = true;                             // Prevents the XML document from being re-parsed
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -68,6 +70,15 @@ public class Indexer {
 
         // Opening and closing the index is expensive, so only do it after the entire batch updates
         closeIndexWriter();
+    }
+
+    /**
+     * Accessor method to determine whether or not the indexer has been built
+     *
+     * @return True if the index has been created; Otherwise false
+     */
+    public static boolean exists() {
+        return exists;
     }
 
     /**

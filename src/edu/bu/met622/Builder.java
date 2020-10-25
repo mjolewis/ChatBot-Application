@@ -1,5 +1,8 @@
 package edu.bu.met622;
 
+import edu.bu.met622.database.MySQL;
+import edu.bu.met622.resources.SearchTypes;
+import edu.bu.met622.searchlib.Indexer;
 import edu.bu.met622.searchlib.SearchEngine;
 import edu.bu.met622.resources.Config;
 import edu.bu.met622.utils.BFParser;
@@ -30,6 +33,13 @@ public class Builder {
     public Builder() {
         bfRunTimes = new ArrayList<>();
         luceneRunTimes = new ArrayList<>();
+    }
+
+    /**
+     * Write a welcome message to the console
+     */
+    public void startMessage() {
+        System.out.println(Config.START_MESSAGE);
     }
 
     /**
@@ -65,22 +75,19 @@ public class Builder {
         }
     }
 
-    /**
-     * Write a welcome message to the console
-     */
-    public void startMessage() {
-        System.out.println("\n\n************************************************");
-        System.out.println(Config.START_MESSAGE);
-        System.out.println("\n************************************************\n");
+    public void cleanup() {
+        System.out.print(Config.CLOSING_CONNECTIONS);                   // Notify client about closing connections
+        MySQL.closeConnection();                                          // Close the database connection
+        MySQL.closeStatement();                                           // Close the SQL statement object
+        MySQL.closePreparedStatement();                                   // Close the PreparedStatement object
+        System.out.print(Config.CLOSED_CONNECTIONS);                      // Notify client that connections are closed
     }
 
     /**
      * Write an ending message to the console
      */
     public void endMessage() {
-        System.out.println("\n\n************************************************");
-        System.out.println(Config.END_MESSAGE);
-        System.out.println("\n************************************************");
+        System.out.print(Config.END_MESSAGE);                            // Terminate ChatBot message for the client
     }
 
     //*****************************************************************************************************************
@@ -111,41 +118,42 @@ public class Builder {
         Scanner scanner = new Scanner(System.in);
         BFParser bfParser = new BFParser();                               // Parse and match at same time
         XMLParser parser = new XMLParser();                               // Parse entire document and then search
+        MySQL db = MySQL.getInstance();
         SearchEngine searchEngine = new SearchEngine();
-        boolean isParsed = false;
 
         do {
 
-            String searchType = getSearchType(scanner);
+            SearchTypes searchType = getSearchType(scanner);
             switch (searchType) {
-                case "0":
+                case BRUTE_FORCE:
                     bfRunTimes.add(bfParser.parse(getSearchParam(scanner), getNumOfDocs(scanner)));    // Brute force search
                     if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { parser.print(); }       // Display search history
                     break;
-                case "1":
-                    if (!isParsed) {                                          // If document hasn't been parsed then...
-                        isParsed = true;                                      // Ensure index is only built once
+                case LUCENE:
+                    if (Indexer.exists()) {                                   // If document hasn't been parsed then...
                         parser.parse();                                       // Parse the entire document
                         parser.createIndex();                                 // Build Lucene Index
                     }
                     luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
                     if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
                     break;
-                case "2":
-                    if (!isParsed) {                                          // If document hasn't been parsed then...
-                        isParsed = true;                                      // Ensure index is only built once
-                        parser.parse();                                       // Parse the entire document
-                        parser.createSQLDB();                                 // Build Lucene Index
+                case SQL_DB:
+                    if (!MySQL.exists()) {                                    // If database hasn't been built then...
+                        parser.parse();                                       // Parse the entire XML document
+                        parser.createSQLDB();                                 // Build the database and insert content
                     }
+
+                    int hits = db.query(getSearchParam(scanner), getYear(scanner));
+                    System.out.println("keyword found " + hits + " times");
 //                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
 //                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
                     break;
-                case "3":
-                    if (!isParsed) {                                          // If document hasn't been parsed then...
-                        isParsed = true;                                      // Ensure index is only built once
-                        parser.parse();                                       // Parse the entire document
-                        parser.createMongoDB();                                 // Build Lucene Index
-                    }
+                case MONGO_DB:
+//                    if (!isParsed) {                                          // If document hasn't been parsed then...
+//                        isParsed = true;                                      // Ensure index is only built once
+//                        parser.parse();                                       // Parse the entire document
+//                        parser.createMongoDB();                                // Build Lucene Index
+//                    }
 //                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
 //                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
                     break;
@@ -158,28 +166,33 @@ public class Builder {
     /*
      * Gets the search type from the user
      */
-    private String getSearchType(Scanner scanner) {
+    private SearchTypes getSearchType(Scanner scanner) {
 
         System.out.print(Config.BF_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "0"; }
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return SearchTypes.BRUTE_FORCE; }
 
         System.out.print(Config.LUCENE_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "1"; }
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.LUCENE; }
 
         System.out.print(Config.SQL_DB_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "2"; }
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.SQL_DB; }
 
         System.out.print(Config.MONGODB_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return  "3"; }
+        if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.MONGO_DB; }
 
-        return "-1";                                            // Indicates invalid input
+        return SearchTypes.SQL_DB;                              // Default search type
     }
 
     /*
      * Gets the search parameter from the user
      */
     private String getSearchParam(Scanner scanner) {
-        System.out.print("Enter search parameter: ");
+        System.out.print(Config.ENTER_KEYWORD);
+        return scanner.nextLine();
+    }
+
+    private String getYear(Scanner scanner) {
+        System.out.print(Config.ENTER_YEAR);
         return scanner.nextLine();
     }
 
@@ -188,11 +201,11 @@ public class Builder {
      */
     private int getNumOfDocs(Scanner scanner) {
         while (true) {
-            System.out.print("Number of docs: ");
+            System.out.print(Config.ENTER_NUM_OF_DOCS);
             try {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Try Again.");
+                System.out.print(Config.INVALID_INPUT);
             }
         }
     }
@@ -201,12 +214,12 @@ public class Builder {
      * Ask the user whether or not to display documents from the Lucene search
      */
     private String displayDocuments(Scanner scanner) {
-        System.out.print("Display documents: (y/n)? ");
+        System.out.print(Config.DISPLAY_DOCUMENTS);
         return scanner.nextLine();
     }
 
     private String displaySearchTimes(Scanner scanner) {
-        System.out.print("Display run times: (y/n)? ");
+        System.out.print(Config.DISPLAY_RUNTIMES);
         return scanner.nextLine();
     }
 
@@ -227,7 +240,7 @@ public class Builder {
      * Ask the user whether or not to display search history
      */
     private String displaySearchHistory(Scanner scanner) {
-        System.out.print("Display search history (y/n)? ");
+        System.out.print(Config.DISPLAY_SEARCH_HISTORY);
         return scanner.nextLine();
     }
 
@@ -235,7 +248,7 @@ public class Builder {
      * Ask the user whether or not to do another search
      */
     private String performSearch(Scanner scanner) {
-        System.out.print("Search again (y/n)? ");
+        System.out.print(Config.SEARCH_AGAIN);
         return scanner.nextLine();
     }
 }
