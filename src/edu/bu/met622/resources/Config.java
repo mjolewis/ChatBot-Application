@@ -59,8 +59,9 @@ public class Config {
     public static final String RECORDS_INSERTED = " records inserted";
     public static final String TABLE_NAME = "articles";
     public static final String CREATE_TABLE = "CREATE TABLE articles" +
-                                              "(id VARCHAR(20)," +
-                                              "pubDate VARCHAR(20), " +
+                                              "(id VARCHAR(20) PRIMARY KEY," +
+                                              "month VARCHAR(20)," +
+                                              "year VARCHAR(20), " +
                                               "title VARCHAR(1000));";
 
     // MongoDB
