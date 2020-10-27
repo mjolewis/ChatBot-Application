@@ -130,7 +130,7 @@ public class Builder {
                     if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { parser.print(); }       // Display search history
                     break;
                 case LUCENE:
-                    if (Indexer.exists()) {                                   // If document hasn't been parsed then...
+                    if (!Indexer.exists()) {                                  // If document hasn't been parsed then...
                         parser.parse();                                       // Parse the entire document
                         parser.createIndex();                                 // Build Lucene Index
                     }
@@ -168,19 +168,21 @@ public class Builder {
      */
     private SearchTypes getSearchType(Scanner scanner) {
 
-        System.out.print(Config.BF_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return SearchTypes.BRUTE_FORCE; }
+        while (true) {
+            System.out.print(Config.BF_SEARCH);
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return SearchTypes.BRUTE_FORCE; }
 
-        System.out.print(Config.LUCENE_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.LUCENE; }
+            System.out.print(Config.LUCENE_SEARCH);
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.LUCENE; }
 
-        System.out.print(Config.SQL_DB_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.SQL_DB; }
+            System.out.print(Config.SQL_DB_SEARCH);
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.SQL_DB; }
 
-        System.out.print(Config.MONGODB_SEARCH);
-        if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.MONGO_DB; }
+            System.out.print(Config.MONGODB_SEARCH);
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.MONGO_DB; }
 
-        return SearchTypes.SQL_DB;                              // Default search type
+            System.out.println(Config.NO_SELECTION);            // Try again. No selection made
+        }
     }
 
     /*

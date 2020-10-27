@@ -74,7 +74,8 @@ public class SearchEngine {
                 Document doc = searcher.doc(docId);
                 System.out.print(i + 1 + ") " + "Pub ID: " + doc.get(Config.PMID) + "\n" +
                         "\tTitle: " + doc.get(Config.ARTICLE_TITLE) + "\n" +
-                        "\tPub Year: " + doc.get(Config.PUBLICATION_DATE) + "\n");
+                        "\tMonth: " + doc.get(Config.MONTH) + "\n" +
+                        "\tYear: " + doc.get(Config.YEAR) + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }

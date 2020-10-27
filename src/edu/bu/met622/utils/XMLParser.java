@@ -8,7 +8,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -63,9 +65,14 @@ public class XMLParser extends DefaultHandler {
      * searching.
      */
     public void parse() {
-        String pubYear = "";
-        String pubID = "";
-        String articleTitle = "";
+        boolean isID = false;
+        boolean isMonth = false;
+        boolean isYear = false;
+        boolean isTitle = false;
+        String id = "";
+        String month = "";
+        String year = "";
+        String title = "";
 
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
@@ -74,33 +81,46 @@ public class XMLParser extends DefaultHandler {
             while (xmlEventReader.hasNext()) {
                 XMLEvent xmlEvent = xmlEventReader.nextEvent();
 
-                if (xmlEvent.isStartElement()) {
-                    StartElement startElement = xmlEvent.asStartElement();
+                switch(xmlEvent.getEventType()) {
 
-                    switch (startElement.getName().getLocalPart()) {
-                        case Config.PMID:
-                            xmlEvent = xmlEventReader.nextEvent();
-                            pubID = xmlEvent.asCharacters().toString();
-                            break;
-                        case Config.PUBLICATION_DATE:
-                            xmlEventReader.nextTag();
-                            xmlEvent = xmlEventReader.nextEvent();
-                            pubYear = xmlEvent.asCharacters().toString();
-                            break;
-                        case Config.ARTICLE_TITLE:
-                            xmlEvent = xmlEventReader.nextEvent();
-                            if (!xmlEvent.isCharacters()) {
-                                xmlEvent = xmlEventReader.nextEvent();
-                            }
-                            articleTitle = xmlEvent.asCharacters().toString();
-                            break;
-                    }
-                } else if (xmlEvent.isEndElement()) {
-                    EndElement endElement = xmlEvent.asEndElement();
+                    case XMLStreamConstants.START_ELEMENT:
+                        StartElement startElement = xmlEvent.asStartElement();
+                        String qName = startElement.getName().getLocalPart();
 
-                    if (endElement.getName().getLocalPart().equals(Config.PUB_MED_ARTICLE)) {
-                        articles.add(new Article(pubID, pubYear, articleTitle));
-                    }
+                        if (qName.equalsIgnoreCase(Config.PMID)) {
+                            isID = true;
+                        } else if (qName.equalsIgnoreCase(Config.MONTH)) {
+                            isMonth = true;
+                        } else if (qName.equalsIgnoreCase(Config.YEAR)) {
+                            isYear = true;
+                        } else if (qName.equalsIgnoreCase(Config.ARTICLE_TITLE)) {
+                            isTitle = true;
+                        }
+                        break;
+                    case XMLStreamConstants.CHARACTERS:
+                        Characters characters = xmlEvent.asCharacters();
+
+                        if (isID) {
+                            id = characters.getData();
+                            isID = false;
+                        } else if (isMonth) {
+                            month = characters.getData();
+                            isMonth = false;
+                        } else if (isYear) {
+                            year = characters.getData();
+                            isYear = false;
+                        } else if (isTitle) {
+                            title = characters.getData();
+                            isTitle = false;
+                        }
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        EndElement endElement = xmlEvent.asEndElement();
+
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE)) {
+                            articles.add(new Article(id, month, year, title));
+                        }
+                        break;
                 }
             }
         } catch (FileNotFoundException | XMLStreamException e) {

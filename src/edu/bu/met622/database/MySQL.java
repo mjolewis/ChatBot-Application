@@ -74,13 +74,14 @@ public class MySQL {
 
             // Insert data into the database only if the ID doesn't already exist
             for (Article article : articlesList) {
-                String sqlInsert = "INSERT IGNORE INTO articles values(?, ?, ?)";
+                String sqlInsert = "INSERT IGNORE INTO articles values(?, ?, ?, ?)";
 
                 // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
                 pStmt = con.prepareStatement(sqlInsert);
-                pStmt.setString(1, article.getPubID());
-                pStmt.setString(2, article.getPubYear());
-                pStmt.setString(3, article.getArticleTitle());
+                pStmt.setString(1, article.getId());
+                pStmt.setString(2, article.getMonth());
+                pStmt.setString(3, article.getYear());
+                pStmt.setString(4, article.getTitle());
                 countInserted += pStmt.executeUpdate();
             }
 
@@ -110,7 +111,7 @@ public class MySQL {
      */
     public int query(String keyword, String year) {
         int hits = 0;
-        String sqlQuery = "SELECT * FROM articles WHERE title LIKE ? AND pubDate LIKE ?";
+        String sqlQuery = "SELECT * FROM articles WHERE title LIKE ? AND year LIKE ?";
         try {
             // A Statement object holds SQL commands
             stmt = con.createStatement();
@@ -121,7 +122,53 @@ public class MySQL {
             pStmt.setString(2, "%" + year + "%");
 
             ResultSet rs = pStmt.executeQuery();
-            while (rs != null && rs.next()) { ++hits; }
+            while (rs != null && rs.next()) {
+                ++hits;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return hits;
+    }
+
+    /**
+     * A query to count the number of times the given keyword appears in the specified date range. For example, “flu”,
+     * “obesity" in the range June 2018 - December 2020
+     *
+     * @param keyword    A value to be searched
+     * @param startMonth The first month within the search range
+     * @param startYear  The first year within the search range
+     * @param endMonth   The last month within the search range
+     * @param endYear    The last year within the search range
+     * @return The number of times the keyword was found in the specified year
+     */
+    public int query(String keyword, String startMonth, String startYear, String endMonth, String endYear) {
+        int hits = 0;
+        String sqlQuery = "SELECT * FROM articles " +
+                "WHERE title LIKE ? " +
+                "AND month LIKE ? " +
+                "AND year LIKE ? " +
+                "AND month LIKE ? " +
+                "AND year LIKE ?";
+
+        try {
+            // A Statement object holds SQL commands
+            stmt = con.createStatement();
+
+            // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
+            pStmt = con.prepareStatement(sqlQuery);
+            pStmt.setString(1, "%" + keyword + "%");
+            pStmt.setString(2, "%" + startMonth + "%");
+            pStmt.setString(3, "%" + startYear + "%");
+            pStmt.setString(4, "%" + endMonth + "%");
+            pStmt.setString(5, "%" + endYear + "%");
+
+            ResultSet rs = pStmt.executeQuery();
+            while (rs != null && rs.next()) {
+                ++hits;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

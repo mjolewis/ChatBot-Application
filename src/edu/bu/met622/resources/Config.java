@@ -13,6 +13,7 @@ public class Config {
     public static String LUCENE_SEARCH = "Lucene Index (y/n): ";
     public static String SQL_DB_SEARCH = "SQL Database (y/n): ";
     public static String MONGODB_SEARCH = "MongoDB (y/n): ";
+    public static String NO_SELECTION = "No selection made. Try again...";
 
     // User input
     public static final String ENTER_KEYWORD = "Enter search parameter: ";
@@ -31,7 +32,8 @@ public class Config {
     public static final String PMID = "PMID";
     public static final String PUB_MED_ARTICLE = "PubmedArticle";
     public static final String ARTICLE_TITLE = "ArticleTitle";
-    public static final String PUBLICATION_DATE = "PubDate";
+    public static final String YEAR = "Year";
+    public static final String MONTH = "Month";
     public static final String FILE_SELECTION_ERROR = "Error. Please select more than one file";
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.mm";
 
@@ -66,5 +68,5 @@ public class Config {
     // Cleanup messages
     public static final String CLOSING_CONNECTIONS = "\nClosing Database Connections...";
     public static final String CLOSED_CONNECTIONS = "\nDatabase Connections Closed...";
-    public static final String END_MESSAGE = "\nTerminated ChatBot Session";
+    public static final String END_MESSAGE = "\nTerminated ChatBot Session\n";
 }
