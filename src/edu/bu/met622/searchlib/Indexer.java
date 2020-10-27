@@ -55,11 +55,12 @@ public class Indexer {
                 Document doc = new Document();             // Create documents that will be stored in the index
 
                 // Tokenize the Article Title
-                doc.add(new TextField(Config.ARTICLE_TITLE, article.getArticleTitle(), Field.Store.YES));
+                doc.add(new TextField(Config.ARTICLE_TITLE, article.getTitle(), Field.Store.YES));
 
                 // Add the article ID and publication date as atomic values
-                doc.add(new StringField(Config.PMID, article.getPubID(), Field.Store.YES));
-                doc.add(new StringField(Config.PUBLICATION_DATE, article.getPubYear(), Field.Store.YES));
+                doc.add(new StringField(Config.PMID, article.getId(), Field.Store.YES));
+                doc.add(new StringField(Config.MONTH, article.getMonth(), Field.Store.YES));
+                doc.add(new StringField(Config.YEAR, article.getYear(), Field.Store.YES));
 
                 indexWriter.addDocument(doc);              // Add the document to the index
                 exists = true;                             // Prevents the XML document from being re-parsed

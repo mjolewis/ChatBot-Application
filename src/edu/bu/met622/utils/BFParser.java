@@ -63,9 +63,13 @@ public class BFParser extends DefaultHandler {
      * @return The runtime of the current search
      */
     public long parse(String searchParam, int hits) {
-        String pubYear = "";
-        String pubID = "";
-        String articleTitle = "";
+
+        // TODO: 10/26/20 mimic parsing from XMLParser...just ensure the else block is correct
+
+        String id = "";
+        String year = "";
+        String month = "";
+        String title = "";
         long startTime = 0;
         long endTime = 0;
         int hitCount = 0;
@@ -88,28 +92,32 @@ public class BFParser extends DefaultHandler {
                     switch (startElement.getName().getLocalPart()) {
                         case Config.PMID:
                             xmlEvent = xmlEventReader.nextEvent();
-                            pubID = xmlEvent.asCharacters().toString();
+                            id = xmlEvent.asCharacters().toString();
                             break;
-                        case Config.PUBLICATION_DATE:
+                        case Config.MONTH:
+                            xmlEvent = xmlEventReader.nextEvent();
+                            month = xmlEvent.asCharacters().toString();
+                            break;
+                        case Config.YEAR:
                             xmlEventReader.nextTag();                          // <PubDate> is followed by the <Year>
                             xmlEvent = xmlEventReader.nextEvent();
-                            pubYear = xmlEvent.asCharacters().toString();
+                            year = xmlEvent.asCharacters().toString();
                             break;
                         case Config.ARTICLE_TITLE:
                             xmlEvent = xmlEventReader.nextEvent();
                             if (!xmlEvent.isCharacters()) {
                                 xmlEvent = xmlEventReader.nextEvent();
                             }
-                            articleTitle = xmlEvent.asCharacters().toString();
+                            title = xmlEvent.asCharacters().toString();
                             break;
                     }
                 } else if (xmlEvent.isEndElement()) {
                     EndElement endElement = xmlEvent.asEndElement();
 
                     if (endElement.getName().getLocalPart().equals(Config.PUB_MED_ARTICLE)) {
-                        if (articleTitle.toLowerCase().contains(searchParam.toLowerCase())) {
+                        if (title.toLowerCase().contains(searchParam.toLowerCase())) {
                             ++hitCount;                                                  // Track the number of hits
-                            articles.add(new Article(pubID, pubYear, articleTitle));     // Track articles in container
+                            articles.add(new Article(id, month, year, title));     // Track articles in container
                         }
                     }
                 }
