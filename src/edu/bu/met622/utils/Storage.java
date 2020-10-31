@@ -78,7 +78,7 @@ public class Storage {
 
         if (!searchHistory.containsKey(searchParam)) {                         // If the key isn't in the collection
             ArrayList<String> values = new ArrayList<>();
-            values.add(0, String.valueOf(1));                                   // Add initial frequency
+            values.add(0, String.valueOf(1));                           // Add initial frequency
             values.add(timestamp);                                             // Add time stamp of the search
             searchHistory.put(searchParam.toLowerCase(), values);
         } else {                                                               // Otherwise the key is in the collection

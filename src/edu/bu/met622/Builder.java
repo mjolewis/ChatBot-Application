@@ -1,7 +1,9 @@
 package edu.bu.met622;
 
+import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
-import edu.bu.met622.resources.SearchTypes;
+import edu.bu.met622.resources.DatabaseOptions;
+import edu.bu.met622.resources.QueryOptions;
 import edu.bu.met622.searchlib.Indexer;
 import edu.bu.met622.searchlib.SearchEngine;
 import edu.bu.met622.resources.Config;
@@ -118,24 +120,28 @@ public class Builder {
         Scanner scanner = new Scanner(System.in);
         BFParser bfParser = new BFParser();                               // Parse and match at same time
         XMLParser parser = new XMLParser();                               // Parse entire document and then search
-        MySQL db = MySQL.getInstance();
+        MySQL mySQLDB = MySQL.getInstance();
+        MongoDB mongoDB = MongoDB.getInstance();
         SearchEngine searchEngine = new SearchEngine();
+        double runTime = 0.0;
 
         do {
 
-            SearchTypes searchType = getSearchType(scanner);
+            DatabaseOptions searchType = getSearchType(scanner);
             switch (searchType) {
                 case BRUTE_FORCE:
-                    bfRunTimes.add(bfParser.parse(getSearchParam(scanner), getNumOfDocs(scanner)));    // Brute force search
-                    if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { parser.print(); }       // Display search history
+                    runTime = bfParser.parse(getSearchParam(scanner), getNumOfDocs(scanner));            // Brute force search
+                    if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { bfParser.print(); }       // Display search history
+                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }    // Display search times
                     break;
                 case LUCENE:
                     if (!Indexer.exists()) {                                  // If document hasn't been parsed then...
                         parser.parse();                                       // Parse the entire document
                         parser.createIndex();                                 // Build Lucene Index
                     }
-                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
+                    runTime = searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));            // Lucene search
                     if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
+                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }     // Display search times
                     break;
                 case SQL_DB:
                     if (!MySQL.exists()) {                                    // If database hasn't been built then...
@@ -143,43 +149,72 @@ public class Builder {
                         parser.createSQLDB();                                 // Build the database and insert content
                     }
 
-                    int hits = db.query(getSearchParam(scanner), getYear(scanner));
-                    System.out.println("keyword found " + hits + " times");
-//                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
-//                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
+                    String keyword = getSearchParam(scanner);
+                    QueryOptions queryOptions = getQueryType(scanner);
+                    int hits;
+                    switch (queryOptions) {
+                        case IN_YEAR_QUERY:
+                            String year = getYear(scanner);
+                            hits = mySQLDB.query(keyword, year);
+                            System.out.println(year + ":" + hits);
+                            break;
+                        case RANGE_QUERY:
+                            System.out.println(Config.RANGE_NOTIFICATION);
+                            String startMonth = getStartMonth(scanner);
+                            String startYear = getStartYear(scanner);
+                            String endMonth = getEndMonth(scanner);
+                            String endYear = getEndYear(scanner);
+                            hits = mySQLDB.query(keyword, startMonth, startYear, endMonth, endYear);
+                            System.out.println(startMonth + "/" + startYear + "-" + endMonth + "/" + endYear + ": " + hits);
+                            break;
+                    }
+
+                    runTime = mySQLDB.getRunTime();
+                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }     // Display search times
                     break;
                 case MONGO_DB:
-//                    if (!isParsed) {                                          // If document hasn't been parsed then...
-//                        isParsed = true;                                      // Ensure index is only built once
-//                        parser.parse();                                       // Parse the entire document
-//                        parser.createMongoDB();                                // Build Lucene Index
-//                    }
-//                    luceneRunTimes.add(searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner)));  // Lucene search
-//                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
+                    if (!MongoDB.exists()) {                                   // If document hasn't been parsed then...
+                        parser.parse();                                        // Parse the entire document
+                        parser.createMongoDB();                                // Build Lucene Index
+                    }
+
+                    runTime = mongoDB.getRunTime();
+                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }     // Display search times
                     break;
             }
-
-            if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(); }    // Display search times
-        } while ("y".equalsIgnoreCase(performSearch(scanner)));                               // Perform another search?
+        } while ("y".equalsIgnoreCase(performSearch(scanner)));                // Perform another search?
     }
 
     /*
      * Gets the search type from the user
      */
-    private SearchTypes getSearchType(Scanner scanner) {
+    private DatabaseOptions getSearchType(Scanner scanner) {
 
         while (true) {
             System.out.print(Config.BF_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return SearchTypes.BRUTE_FORCE; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return DatabaseOptions.BRUTE_FORCE; }
 
             System.out.print(Config.LUCENE_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.LUCENE; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DatabaseOptions.LUCENE; }
 
             System.out.print(Config.SQL_DB_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.SQL_DB; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DatabaseOptions.SQL_DB; }
 
             System.out.print(Config.MONGODB_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return  SearchTypes.MONGO_DB; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DatabaseOptions.MONGO_DB; }
+
+            System.out.println(Config.NO_SELECTION);            // Try again. No selection made
+        }
+    }
+
+    private QueryOptions getQueryType(Scanner scanner) {
+
+        while (true) {
+            System.out.print(Config.IN_YEAR_QUERY);
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return QueryOptions.IN_YEAR_QUERY; }
+
+            System.out.print(Config.RANGE_QUERY);
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return QueryOptions.RANGE_QUERY; }
 
             System.out.println(Config.NO_SELECTION);            // Try again. No selection made
         }
@@ -193,6 +228,41 @@ public class Builder {
         return scanner.nextLine();
     }
 
+    /*
+     * Gets the starting month for a range based query
+     */
+    private String getStartMonth(Scanner scanner) {
+        System.out.print(Config.ENTER_START_MONTH);
+        return scanner.nextLine();
+    }
+
+    /*
+     * Gets the ending month for a range based query
+     */
+    private String getEndMonth(Scanner scanner) {
+        System.out.print(Config.ENTER_END_MONTH);
+        return scanner.nextLine();
+    }
+
+    /*
+     * Gets the start year for a range based query
+     */
+    private String getStartYear(Scanner scanner) {
+        System.out.print(Config.ENTER_START_YEAR);
+        return scanner.nextLine();
+    }
+
+    /*
+     * Gets the ending year for a range based query
+     */
+    private String getEndYear(Scanner scanner) {
+        System.out.print(Config.ENTER_END_YEAR);
+        return scanner.nextLine();
+    }
+
+    /*
+     * Gets the year to search in for a single year query
+     */
     private String getYear(Scanner scanner) {
         System.out.print(Config.ENTER_YEAR);
         return scanner.nextLine();
@@ -220,22 +290,20 @@ public class Builder {
         return scanner.nextLine();
     }
 
+    /*
+     * Ask the user whether or not to display the length of the search
+     */
     private String displaySearchTimes(Scanner scanner) {
         System.out.print(Config.DISPLAY_RUNTIMES);
         return scanner.nextLine();
     }
 
-    private void printSearchTimes() {
-
-        System.out.println("Run time results for Brute force: ");
-        for (Long runTime : bfRunTimes) {
-            System.out.println(runTime/ Config.MILLIS_TO_SECONDS + " seconds");
-        }
-
-        System.out.println("Run time results for Lucene search: ");
-        for (Long runTime : luceneRunTimes) {
-            System.out.println(runTime/ Config.MILLIS_TO_SECONDS + " seconds");
-        }
+    /*
+     * Print the length of the search to the console
+     */
+    private void printSearchTimes(double searchTime) {
+        System.out.print("Run time results: ");
+        System.out.println(searchTime / Config.MILLIS_TO_SECONDS + " seconds");
     }
 
     /*

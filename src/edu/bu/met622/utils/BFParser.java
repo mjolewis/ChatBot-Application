@@ -6,7 +6,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -65,10 +67,13 @@ public class BFParser extends DefaultHandler {
     public long parse(String searchParam, int hits) {
 
         // TODO: 10/26/20 mimic parsing from XMLParser...just ensure the else block is correct
-
+        boolean isID = false;
+        boolean isMonth = false;
+        boolean isYear = false;
+        boolean isTitle = false;
         String id = "";
-        String year = "";
         String month = "";
+        String year = "";
         String title = "";
         long startTime = 0;
         long endTime = 0;
@@ -76,58 +81,65 @@ public class BFParser extends DefaultHandler {
 
         save(searchParam);
 
+
         startTime = System.currentTimeMillis();
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
             XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
 
-            while (xmlEventReader.hasNext() && hitCount < hits) {
-
+            while (xmlEventReader.hasNext()) {
                 XMLEvent xmlEvent = xmlEventReader.nextEvent();
 
-                if (xmlEvent.isStartElement()) {
+                switch (xmlEvent.getEventType()) {
 
-                    StartElement startElement = xmlEvent.asStartElement();
+                    case XMLStreamConstants.START_ELEMENT:
+                        StartElement startElement = xmlEvent.asStartElement();
+                        String qName = startElement.getName().getLocalPart();
 
-                    switch (startElement.getName().getLocalPart()) {
-                        case Config.PMID:
-                            xmlEvent = xmlEventReader.nextEvent();
-                            id = xmlEvent.asCharacters().toString();
-                            break;
-                        case Config.MONTH:
-                            xmlEvent = xmlEventReader.nextEvent();
-                            month = xmlEvent.asCharacters().toString();
-                            break;
-                        case Config.YEAR:
-                            xmlEventReader.nextTag();                          // <PubDate> is followed by the <Year>
-                            xmlEvent = xmlEventReader.nextEvent();
-                            year = xmlEvent.asCharacters().toString();
-                            break;
-                        case Config.ARTICLE_TITLE:
-                            xmlEvent = xmlEventReader.nextEvent();
-                            if (!xmlEvent.isCharacters()) {
-                                xmlEvent = xmlEventReader.nextEvent();
-                            }
-                            title = xmlEvent.asCharacters().toString();
-                            break;
-                    }
-                } else if (xmlEvent.isEndElement()) {
-                    EndElement endElement = xmlEvent.asEndElement();
-
-                    if (endElement.getName().getLocalPart().equals(Config.PUB_MED_ARTICLE)) {
-                        if (title.toLowerCase().contains(searchParam.toLowerCase())) {
-                            ++hitCount;                                                  // Track the number of hits
-                            articles.add(new Article(id, month, year, title));     // Track articles in container
+                        if (qName.equalsIgnoreCase(Config.PMID)) {
+                            isID = true;
+                        } else if (qName.equalsIgnoreCase(Config.MONTH)) {
+                            isMonth = true;
+                        } else if (qName.equalsIgnoreCase(Config.YEAR)) {
+                            isYear = true;
+                        } else if (qName.equalsIgnoreCase(Config.ARTICLE_TITLE)) {
+                            isTitle = true;
                         }
-                    }
+                        break;
+                    case XMLStreamConstants.CHARACTERS:
+                        Characters characters = xmlEvent.asCharacters();
+
+                        if (isID) {
+                            id = characters.getData();
+                            isID = false;
+                        } else if (isMonth) {
+                            month = characters.getData();
+                            isMonth = false;
+                        } else if (isYear) {
+                            year = characters.getData();
+                            isYear = false;
+                        } else if (isTitle) {
+                            title = characters.getData();
+                            isTitle = false;
+                        }
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        EndElement endElement = xmlEvent.asEndElement();
+
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE)) {
+                            if (title.toLowerCase().contains(searchParam.toLowerCase())) {
+                                ++hitCount;                                          // Track the number of hits
+                                articles.add(new Article(id, month, year, title));   // Track articles in container
+                            }
+                        }
+                        break;
                 }
             }
             endTime = System.currentTimeMillis();
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
-
-        return endTime - startTime;                                            // Runtime of current search
+        return endTime - startTime;                                                 // Runtime of current search
     }
 
     /**

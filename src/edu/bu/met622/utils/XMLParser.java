@@ -1,5 +1,6 @@
 package edu.bu.met622.utils;
 
+import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.searchlib.Indexer;
 import edu.bu.met622.resources.Config;
@@ -129,15 +130,19 @@ public class XMLParser extends DefaultHandler {
     }
 
     /**
-     * Add articles into the SQL database
+     * Add articles into the relational database
      */
     public void createSQLDB() {
         MySQL db = MySQL.getInstance();
         db.buildDB(articles);
     }
 
+    /**
+     * Add articles into the document database
+     */
     public void createMongoDB() {
-
+        MongoDB db = MongoDB.getInstance();
+        db.buildDB(articles);
     }
 
     /**
