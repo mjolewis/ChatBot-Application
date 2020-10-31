@@ -77,14 +77,15 @@ public class MySQL {
 
             // Insert data into the database only if the ID doesn't already exist
             for (Article article : articlesList) {
-                String sqlInsert = "INSERT IGNORE INTO articles values(?, ?, ?, ?)";
+                String sqlInsert = "INSERT IGNORE INTO articles values(?, ?, ?, ?, ?)";
 
                 // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
                 pStmt = con.prepareStatement(sqlInsert);
                 pStmt.setString(1, article.getId());
                 pStmt.setString(2, article.getMonth());
                 pStmt.setString(3, article.getYear());
-                pStmt.setString(4, article.getTitle());
+                pStmt.setDate(4, java.sql.Date.valueOf(article.getYear() + "-" + article.getMonth() + "-" + "1"));
+                pStmt.setString(5, article.getTitle());
                 countInserted += pStmt.executeUpdate();
             }
 
@@ -155,12 +156,11 @@ public class MySQL {
      */
     public int query(String keyword, String startMonth, String startYear, String endMonth, String endYear) {
         int hits = 0;
+        String startDate = startYear + "-" + startMonth + "-" + "1";
+        String endDate = endYear + "-" + endMonth + "-" + "1";
         String sqlQuery = "SELECT * FROM articles " +
                 "WHERE title LIKE ? " +
-                "AND month LIKE ? " +
-                "AND year LIKE ? " +
-                "AND month LIKE ? " +
-                "AND year LIKE ?";
+                "AND date >= ? AND date <= ? ";
 
         try {
             startTime = System.currentTimeMillis();                       // Start the run time clock
@@ -170,10 +170,8 @@ public class MySQL {
             // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
             pStmt = con.prepareStatement(sqlQuery);
             pStmt.setString(1, "%" + keyword + "%");
-            pStmt.setString(2, "%" + startMonth + "%");
-            pStmt.setString(3, "%" + startYear + "%");
-            pStmt.setString(4, "%" + endMonth + "%");
-            pStmt.setString(5, "%" + endYear + "%");
+            pStmt.setString(2, startDate);
+            pStmt.setString(3, endDate);
 
             ResultSet rs = pStmt.executeQuery();                          // Execute the query
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
