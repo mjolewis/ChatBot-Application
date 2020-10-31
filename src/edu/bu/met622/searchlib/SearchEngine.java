@@ -42,9 +42,9 @@ public class SearchEngine {
      * @param numOfDocs   The maximum number of documents to return when the search parameter is found
      * @return The runtime of the current search
      */
-    public long search(String searchParam, int numOfDocs) {
-        long startTime = 0;
-        long endTime = 0;
+    public double search(String searchParam, int numOfDocs) {
+        double startTime = 0;
+        double endTime = 0;
 
         try {
             startTime = System.currentTimeMillis();

@@ -15,9 +15,12 @@ import java.util.List;
 public class MySQL {
     private static MySQL db;                                    // A MySQL database
     private static Connection con;                              // A connection (session) with a specific database
-    private static Statement stmt;
-    private static PreparedStatement pStmt;
+    private static Statement stmt;                              // Holds a SQL command
+    private static PreparedStatement pStmt;                     // A wrapper for a Statement object to prevent injection
     private static boolean exists = false;                      // True if the table has been built; Otherwise false
+    double startTime;                                           // Tracks the runtime of the query
+    double endTime;                                             // Tracks the runtime of the query
+    double runtime;                                              // The total runtime of the query
 
     /**
      * Initializes a new MySQL object
@@ -111,25 +114,31 @@ public class MySQL {
      */
     public int query(String keyword, String year) {
         int hits = 0;
+
         String sqlQuery = "SELECT * FROM articles WHERE title LIKE ? AND year LIKE ?";
         try {
-            // A Statement object holds SQL commands
-            stmt = con.createStatement();
+            startTime = System.currentTimeMillis();                       // Start the runtime clock
+
+            stmt = con.createStatement();                                 // A Statement object holds SQL commands
 
             // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
             pStmt = con.prepareStatement(sqlQuery);
             pStmt.setString(1, "%" + keyword + "%");
             pStmt.setString(2, "%" + year + "%");
 
-            ResultSet rs = pStmt.executeQuery();
+            ResultSet rs = pStmt.executeQuery();                          // Execute the query
+            endTime = System.currentTimeMillis();                         // Stop the runtime clock
+            runtime = endTime - startTime;                                // The total runtime of the query
+
+            // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
                 ++hits;
             }
 
         } catch (SQLException e) {
+            // TODO: 10/31/20 write to log file
             e.printStackTrace();
         }
-
         return hits;
     }
 
@@ -154,8 +163,9 @@ public class MySQL {
                 "AND year LIKE ?";
 
         try {
-            // A Statement object holds SQL commands
-            stmt = con.createStatement();
+            startTime = System.currentTimeMillis();                       // Start the run time clock
+
+            stmt = con.createStatement();                                 // A Statement object holds SQL commands
 
             // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
             pStmt = con.prepareStatement(sqlQuery);
@@ -165,16 +175,29 @@ public class MySQL {
             pStmt.setString(4, "%" + endMonth + "%");
             pStmt.setString(5, "%" + endYear + "%");
 
-            ResultSet rs = pStmt.executeQuery();
+            ResultSet rs = pStmt.executeQuery();                          // Execute the query
+            endTime = System.currentTimeMillis();                         // Stop the runtime clock
+            runtime = endTime - startTime;                                // The total runtime of the query
+
+            // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
                 ++hits;
             }
 
         } catch (SQLException e) {
+            // TODO: 10/31/20 write to log file
             e.printStackTrace();
         }
 
         return hits;
+    }
+
+    /**
+     * Accessor method that return the total runtime of the query
+     * @return The runtime of the query
+     */
+    public double getRunTime() {
+        return runtime;
     }
 
     /**

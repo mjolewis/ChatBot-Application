@@ -9,6 +9,8 @@ public class Config {
 
     // Start up messages
     public static final String START_MESSAGE = "\nLaunching ChatBot...";
+
+    // Database selection
     public static String BF_SEARCH = "Brute Force (y/n): ";
     public static String LUCENE_SEARCH = "Lucene Index (y/n): ";
     public static String SQL_DB_SEARCH = "SQL Database (y/n): ";
@@ -24,6 +26,12 @@ public class Config {
     public static final String DISPLAY_RUNTIMES = "Display run times (y/n)? ";
     public static final String DISPLAY_SEARCH_HISTORY = "Display search history (y/n)? ";
     public static final String SEARCH_AGAIN = "Search again (y/n)? ";
+    public static final String RANGE_QUERY = "Range search (y/n): ";
+    public static final String RANGE_NOTIFICATION = "You selected a range based search. Enter start month, start year, end month, end year";
+    public static final String ENTER_START_MONTH = "Enter start month: ";
+    public static final String ENTER_START_YEAR = "Enter start year: ";
+    public static final String ENTER_END_MONTH = "Enter end month: ";
+    public static final String ENTER_END_YEAR = "Enter end year: ";
 
     // Parser
     public static final String OPENING_ROOT_TAG = "<PubmedArticleSet>";
@@ -57,6 +65,7 @@ public class Config {
     public static final String CREATING_TABLE = "Creating table in the database...";
     public static final String CREATED_TABLE = "Created table successfully...";
     public static final String RECORDS_INSERTED = " records inserted";
+    public static final String IN_YEAR_QUERY = "Single year search (y/n): ";
     public static final String TABLE_NAME = "articles";
     public static final String CREATE_TABLE = "CREATE TABLE articles" +
                                               "(id VARCHAR(20) PRIMARY KEY," +

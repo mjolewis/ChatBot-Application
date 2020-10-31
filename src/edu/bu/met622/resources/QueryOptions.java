@@ -1,14 +1,12 @@
 package edu.bu.met622.resources;
 
 /**********************************************************************************************************************
- * Predefined search types allowed by the system
+ * Predefined query types allowed by the system
  *
  * @author Michael Lewis
  * @version October 25, 2020 - Kickoff
  *********************************************************************************************************************/
-public enum SearchTypes {
-    BRUTE_FORCE,
-    LUCENE,
-    SQL_DB,
-    MONGO_DB
+public enum QueryOptions {
+    IN_YEAR_QUERY,
+    RANGE_QUERY
 }
