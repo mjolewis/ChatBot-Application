@@ -156,7 +156,7 @@ public class Builder {
                         case IN_YEAR_QUERY:
                             String year = getYear(scanner);
                             hits = mySQLDB.query(keyword, year);
-                            System.out.println(year + ":" + hits);
+                            System.out.println(year + ": " + hits);
                             break;
                         case RANGE_QUERY:
                             System.out.println(Config.RANGE_NOTIFICATION);
