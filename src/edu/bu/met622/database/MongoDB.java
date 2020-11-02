@@ -5,9 +5,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-import static com.mongodb.client.model.Filters.*;
-
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import org.bson.Document;
@@ -15,11 +12,7 @@ import edu.bu.met622.model.Article;
 import edu.bu.met622.resources.Config;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 /**********************************************************************************************************************
  * A document database provided by MongoDB

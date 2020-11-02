@@ -66,7 +66,6 @@ public class BFParser extends DefaultHandler {
      */
     public long parse(String searchParam, int hits) {
 
-        // TODO: 10/26/20 mimic parsing from XMLParser...just ensure the else block is correct
         boolean isID = false;
         boolean isMonth = false;
         boolean isYear = false;
@@ -80,7 +79,6 @@ public class BFParser extends DefaultHandler {
         int hitCount = 0;
 
         save(searchParam);
-
 
         startTime = System.currentTimeMillis();
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -126,7 +124,7 @@ public class BFParser extends DefaultHandler {
                     case XMLStreamConstants.END_ELEMENT:
                         EndElement endElement = xmlEvent.asEndElement();
 
-                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE)) {
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE) && hitCount < hits) {
                             if (title.toLowerCase().contains(searchParam.toLowerCase())) {
                                 ++hitCount;                                          // Track the number of hits
                                 articles.add(new Article(id, month, year, title));   // Track articles in container
