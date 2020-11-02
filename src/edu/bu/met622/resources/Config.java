@@ -56,6 +56,9 @@ public class Config {
     // Conversions
     public static final double MILLIS_TO_SECONDS = 1000.0;
 
+    // Shared DB
+    public static final String POPULATING_DB = "Populating database...";
+
     // MySQL Database
     public static final String SQL_DB = "jdbc:mysql://localhost:3306/met622?useTimezone=true&serverTimezone=UTC";
     public static final String SQL_USER = "root";
@@ -74,6 +77,14 @@ public class Config {
                                               "title VARCHAR(1000));";
 
     // MongoDB
+    public static final String MONGO_DB = "met622";
+    public static final String COLLECTION = "articles";
+    public static final String DOCUMENT_ID = "id";
+    public static final String DOCUMENT_MONTH = "month";
+    public static final String DOCUMENT_YEAR = "year";
+    public static final String DOCUMENT_DATE = "date";
+    public static final String DOCUMENT_TITLE = "title";
+    public static final String DUPLICATE_ENTRY = "Duplicate entry";
 
     // Cleanup messages
     public static final String CLOSING_CONNECTIONS = "\nClosing Database Connections...";

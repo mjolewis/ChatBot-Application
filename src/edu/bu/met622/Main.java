@@ -8,7 +8,7 @@ package edu.bu.met622;
 public class Main {
 
     public static void main(String[] args) {
-        Builder builder = new Builder();
+        edu.bu.met622.Builder builder = new edu.bu.met622.Builder();
         builder.startMessage();
         builder.build();
         builder.cleanup();

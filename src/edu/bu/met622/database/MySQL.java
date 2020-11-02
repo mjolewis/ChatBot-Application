@@ -18,9 +18,9 @@ public class MySQL {
     private static Statement stmt;                              // Holds a SQL command
     private static PreparedStatement pStmt;                     // A wrapper for a Statement object to prevent injection
     private static boolean exists = false;                      // True if the table has been built; Otherwise false
-    double startTime;                                           // Tracks the runtime of the query
-    double endTime;                                             // Tracks the runtime of the query
-    double runtime;                                              // The total runtime of the query
+    private double startTime;                                   // Tracks the runtime of the query
+    private double endTime;                                     // Tracks the runtime of the query
+    private double runtime;                                     // The total runtime of the query
 
     /**
      * Initializes a new MySQL object
@@ -53,7 +53,6 @@ public class MySQL {
      * @note The article is only inserted if its ID is not already contained in the table
      */
     public void buildDB(List<Article> articlesList) {
-        int countInserted = 0;
 
         try {
             // A connection (session) with a specific database
@@ -86,11 +85,10 @@ public class MySQL {
                 pStmt.setString(3, article.getYear());
                 pStmt.setDate(4, java.sql.Date.valueOf(article.getYear() + "-" + article.getMonth() + "-" + "1"));
                 pStmt.setString(5, article.getTitle());
-                countInserted += pStmt.executeUpdate();
+                pStmt.executeUpdate();
             }
 
-            System.out.println(countInserted + Config.RECORDS_INSERTED);
-            exists = true;                                      // Prevents the XML document from being re-parsed
+            exists = true;                                           // Prevents the XML document from being re-parsed
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -106,11 +104,11 @@ public class MySQL {
     }
 
     /**
-     * A query to count the number of times the given keywords per appears in the specified year. For example, “flu”,
+     * A query to count the number of times the given keyword appears in the specified year. For example, “flu”,
      * “obesity"
      *
-     * @param keyword A value to be searched
-     * @param year    The year to search in
+     * @param keyword A value to be searched for
+     * @param year    The year to search within
      * @return The number of times the keyword was found in the specified year
      */
     public int query(String keyword, String year) {

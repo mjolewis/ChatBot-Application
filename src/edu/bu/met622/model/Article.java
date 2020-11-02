@@ -1,7 +1,9 @@
 package edu.bu.met622.model;
 
+import java.util.Objects;
+
 /**********************************************************************************************************************
- * Data model for PubMed articles
+ * Data model - POJO
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
@@ -120,5 +122,21 @@ public class Article {
                 ", pubYear='" + year + '\'' +
                 ", articleTitle='" + title + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Article)) return false;
+        Article article = (Article) o;
+        return Objects.equals(getId(), article.getId()) &&
+                Objects.equals(getMonth(), article.getMonth()) &&
+                Objects.equals(getYear(), article.getYear()) &&
+                Objects.equals(getTitle(), article.getTitle());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getMonth(), getYear(), getTitle());
     }
 }
