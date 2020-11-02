@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**********************************************************************************************************************
  * Mediator class to build the simulation
@@ -24,8 +25,6 @@ import java.util.Scanner;
  * @author Michael Lewis
  *********************************************************************************************************************/
 public class Builder {
-    private ArrayList<Long> bfRunTimes;
-    private ArrayList<Long> luceneRunTimes;
 
     /**
      * Initialize a new Builder
@@ -33,12 +32,10 @@ public class Builder {
      * @throws OutOfMemoryError Indicates insufficient memory for this Builder
      */
     public Builder() {
-        bfRunTimes = new ArrayList<>();
-        luceneRunTimes = new ArrayList<>();
     }
 
     /**
-     * Write a welcome message to the console
+     * Notify the user that the ChatBot session is initiating
      */
     public void startMessage() {
         System.out.println(Config.START_MESSAGE);
@@ -66,10 +63,10 @@ public class Builder {
                     parseXML();
                     break;
                 }
-            } else {                                                     // No files selected
+            } else {                                                      // No files selected
                 System.out.println(Config.FILE_SELECTION_ERROR);
 
-                if (returnValue == JFileChooser.CANCEL_OPTION) {         // Break out of the selection process
+                if (returnValue == JFileChooser.CANCEL_OPTION) {          // Break out of the selection process
                     break;
                 }
             }
@@ -77,23 +74,29 @@ public class Builder {
         }
     }
 
+    /**
+     * Close all database resources
+     */
     public void cleanup() {
-        System.out.print(Config.CLOSING_CONNECTIONS);                   // Notify client about closing connections
+        System.out.print(Config.CLOSING_CONNECTIONS);                     // Notify user that connections are closing
+
         MySQL.closeConnection();                                          // Close the database connection
         MySQL.closeStatement();                                           // Close the SQL statement object
         MySQL.closePreparedStatement();                                   // Close the PreparedStatement object
-        System.out.print(Config.CLOSED_CONNECTIONS);                      // Notify client that connections are closed
+        MongoDB.closeConnection();                                                  // Close the MongoDB client
+
+        System.out.print(Config.CLOSED_CONNECTIONS);                      // Notify user that connections are closed
     }
 
     /**
-     * Write an ending message to the console
+     * Notify the user that the ChatBot session has terminated
      */
     public void endMessage() {
         System.out.print(Config.END_MESSAGE);                            // Terminate ChatBot message for the client
     }
 
     //*****************************************************************************************************************
-    // Helper methods for merging and parsing
+    // Helper methods
     //*****************************************************************************************************************
 
     /*
@@ -121,9 +124,12 @@ public class Builder {
         BFParser bfParser = new BFParser();                               // Parse and match at same time
         XMLParser parser = new XMLParser();                               // Parse entire document and then search
         MySQL mySQLDB = MySQL.getInstance();
-        MongoDB mongoDB = MongoDB.getInstance();
+        MongoDB mongoDB;
         SearchEngine searchEngine = new SearchEngine();
-        double runTime = 0.0;
+        String keyword;
+        QueryOptions queryOptions;
+        int hits;
+        double runTime;
 
         do {
 
@@ -132,26 +138,25 @@ public class Builder {
                 case BRUTE_FORCE:
                     runTime = bfParser.parse(getSearchParam(scanner), getNumOfDocs(scanner));            // Brute force search
                     if ("y".equalsIgnoreCase(displaySearchHistory(scanner))) { bfParser.print(); }       // Display search history
-                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }    // Display search times
+                    if ("y".equalsIgnoreCase(displayRunTime(scanner))) { printRunTime(runTime); }    // Display search times
                     break;
                 case LUCENE:
-                    if (!Indexer.exists()) {                                  // If document hasn't been parsed then...
-                        parser.parse();                                       // Parse the entire document
-                        parser.createIndex();                                 // Build Lucene Index
+                    if (!Indexer.exists()) {                              // If document hasn't been parsed then...
+                        parser.parse();                                   // Parse the entire document
+                        parser.createIndex();                             // Build Lucene Index
                     }
                     runTime = searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));            // Lucene search
                     if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
-                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }     // Display search times
+                    if ("y".equalsIgnoreCase(displayRunTime(scanner))) { printRunTime(runTime); }     // Display search times
                     break;
                 case SQL_DB:
-                    if (!MySQL.exists()) {                                    // If database hasn't been built then...
-                        parser.parse();                                       // Parse the entire XML document
-                        parser.createSQLDB();                                 // Build the database and insert content
+                    if (!MySQL.exists()) {                                // If database hasn't been built then...
+                        parser.parse();                                   // Parse the entire XML document
+                        parser.createSQLDB();                             // Build the database and insert content
                     }
 
-                    String keyword = getSearchParam(scanner);
-                    QueryOptions queryOptions = getQueryType(scanner);
-                    int hits;
+                    keyword = getSearchParam(scanner);
+                    queryOptions = getQueryType(scanner);
                     switch (queryOptions) {
                         case IN_YEAR_QUERY:
                             String year = getYear(scanner);
@@ -170,19 +175,39 @@ public class Builder {
                     }
 
                     runTime = mySQLDB.getRunTime();
-                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }     // Display search times
+                    if ("y".equalsIgnoreCase(displayRunTime(scanner))) { printRunTime(runTime); }     // Display search times
                     break;
                 case MONGO_DB:
-                    if (!MongoDB.exists()) {                                   // If document hasn't been parsed then...
-                        parser.parse();                                        // Parse the entire document
-                        parser.createMongoDB();                                // Build Lucene Index
+                    mongoDB = MongoDB.getInstance();
+                    if (!mongoDB.exists()) {                              // If document hasn't been parsed then...
+                        parser.parse();                                   // Parse the entire XML document
+                        parser.createMongoDB();                           // Build the database and insert content
+                    }
+
+                    keyword = getSearchParam(scanner);
+                    queryOptions = getQueryType(scanner);
+                    switch (queryOptions) {
+                        case IN_YEAR_QUERY:
+                            String year = getYear(scanner);
+                            hits = mongoDB.query(keyword, year);
+                            System.out.println(year + ": " + hits);
+                            break;
+                        case RANGE_QUERY:
+                            System.out.println(Config.RANGE_NOTIFICATION);
+                            String startMonth = getStartMonth(scanner);
+                            String startYear = getStartYear(scanner);
+                            String endMonth = getEndMonth(scanner);
+                            String endYear = getEndYear(scanner);
+                            hits = mongoDB.query(keyword, startMonth, startYear, endMonth, endYear);
+                            System.out.println(startMonth + "/" + startYear + "-" + endMonth + "/" + endYear + ": " + hits);
+                            break;
                     }
 
                     runTime = mongoDB.getRunTime();
-                    if ("y".equalsIgnoreCase(displaySearchTimes(scanner))) { printSearchTimes(runTime); }     // Display search times
+                    if ("y".equalsIgnoreCase(displayRunTime(scanner))) { printRunTime(runTime); }     // Display search times
                     break;
             }
-        } while ("y".equalsIgnoreCase(performSearch(scanner)));                // Perform another search?
+        } while ("y".equalsIgnoreCase(performSearch(scanner)));           // Perform another search?
     }
 
     /*
@@ -203,7 +228,7 @@ public class Builder {
             System.out.print(Config.MONGODB_SEARCH);
             if (scanner.nextLine().equalsIgnoreCase("y")) { return  DatabaseOptions.MONGO_DB; }
 
-            System.out.println(Config.NO_SELECTION);            // Try again. No selection made
+            System.out.println(Config.NO_SELECTION);                      // Try again. No selection made
         }
     }
 
@@ -216,7 +241,7 @@ public class Builder {
             System.out.print(Config.RANGE_QUERY);
             if (scanner.nextLine().equalsIgnoreCase("y")) { return QueryOptions.RANGE_QUERY; }
 
-            System.out.println(Config.NO_SELECTION);            // Try again. No selection made
+            System.out.println(Config.NO_SELECTION);                      // Try again. No selection made
         }
     }
 
@@ -293,7 +318,7 @@ public class Builder {
     /*
      * Ask the user whether or not to display the length of the search
      */
-    private String displaySearchTimes(Scanner scanner) {
+    private String displayRunTime(Scanner scanner) {
         System.out.print(Config.DISPLAY_RUNTIMES);
         return scanner.nextLine();
     }
@@ -301,8 +326,8 @@ public class Builder {
     /*
      * Print the length of the search to the console
      */
-    private void printSearchTimes(double searchTime) {
-        System.out.print("Run time results: ");
+    private void printRunTime(double searchTime) {
+        System.out.print("Run time: ");
         System.out.println(searchTime / Config.MILLIS_TO_SECONDS + " seconds");
     }
 
