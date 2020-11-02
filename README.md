@@ -69,12 +69,34 @@ the search results to disk happens immediately to ensure system integrity. This 
 that causes a loss of volatile storage occurs while the application is still running.
 
 ***Indexer***\
+The Indexer class is the core functionality of the Lucene index. It builds an inverted index data structure to provide 
+efficient search capabilities over a corpus of documents. This is similar to how a textbook provides an index at the 
+end of the book as a way to efficiently identify pages that contain keywords. In contrast, brute force search is 
+analogous to reading every word in the body of the text as a way to identify keywords. This inverted index is stored on 
+disk within the index_directory sub-folder.
 
+***SearchEngine***\
+The SearchEngine class is the final component of the Lucene index. Its sole responsibility is to search through the 
+previously created index for a specified keyword. If the keyword is found, the class will print relevant information 
+for the user. The information includes the article id, article title, article publication date.
 
-Finally, Lucene builds an inverted index data structure to provide efficient search capabilities over a corpus of 
-documents. This is similar to how a textbook provides an index at the end of the book as a way to efficiently identify 
-pages that contain keywords. In contrast, brute force search is analogous to reading every word in the body of the text 
-as a way to identify keywords. This inverted index is stored on disk within the index_directory sub-folder.
+***DatabaseOptions***\
+An enum containing constants that define a collection of database options. For example, a user can select between the 
+following options: bruteforce, lucene, MySQL, mongoDB.
+
+***QueryOptions***\
+An enum containing constants the define a collection of search options. For example, a user can select between the 
+following options when querying the databases: in-year search or range-based search
+
+***MySQL***\
+The MySQL class is responsible for building a relational database and providing the user various query options. This 
+class supplements the various other databases that are provided to demonstrate how to use MySQL in a Java application. 
+In particular, to demonstrate the differences between a relational database and a document database.
+
+***MongoDB***\
+The MongoDB class is responsible for building a document database and providing the user various query options. This 
+class supplements the various other databases that are provided to demonstrate how to use MongoDB in a Java 
+application. In particular, to demonstrate the differences between a relational database and a document database.
 
 # System Design
 The system architecture is based on SOLID principles. Each class within the application has a well-defined 
@@ -82,7 +104,7 @@ single-responsibility, which has been highlighted in the System Components secti
 for extension, but closed for modification to ensure system integrity (e.g. invariants always remain true).
 
 UML Diagram:
-![ChatBot](https://user-images.githubusercontent.com/12025538/95683670-b6956a00-0bba-11eb-9f25-e5905266f108.png)
+![Chatbot](https://user-images.githubusercontent.com/12025538/97821659-3d50da80-1c81-11eb-9ae7-465a232e6c0a.png)
 
 # Extreme Scenarios and Limitations
 Depending on the JVM and XML files sizes, this application has limitations. For example, the heap size may be exceeded
