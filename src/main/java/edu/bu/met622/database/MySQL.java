@@ -1,7 +1,7 @@
-package edu.bu.met622.database;
+package main.java.edu.bu.met622.database;
 
-import edu.bu.met622.model.Article;
-import edu.bu.met622.resources.Config;
+import main.java.edu.bu.met622.model.Article;
+import main.java.edu.bu.met622.resources.Config;
 
 import java.sql.*;
 import java.util.List;

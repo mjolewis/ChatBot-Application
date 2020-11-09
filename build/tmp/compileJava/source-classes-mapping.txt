@@ -1,29 +1,29 @@
 main/java/edu/bu/met622/database/MySQL.java
- edu.bu.met622.database.MySQL
+ main.java.edu.bu.met622.database.MySQL
 main/java/edu/bu/met622/resources/Config.java
- edu.bu.met622.resources.Config
+ main.java.edu.bu.met622.resources.Config
 main/java/edu/bu/met622/utils/FileMerger.java
- edu.bu.met622.utils.FileMerger
+ main.java.edu.bu.met622.utils.FileMerger
 main/java/edu/bu/met622/model/Article.java
- edu.bu.met622.model.Article
+ main.java.edu.bu.met622.model.Article
 main/java/edu/bu/met622/resources/QueryOptions.java
- edu.bu.met622.resources.QueryOptions
+ main.java.edu.bu.met622.resources.QueryOptions
 main/java/edu/bu/met622/utils/Storage.java
- edu.bu.met622.utils.Storage
+ main.java.edu.bu.met622.utils.Storage
 main/java/edu/bu/met622/utils/XMLParser.java
- edu.bu.met622.utils.XMLParser
+ main.java.edu.bu.met622.utils.XMLParser
 main/java/edu/bu/met622/resources/DatabaseOptions.java
- edu.bu.met622.resources.DatabaseOptions
+ main.java.edu.bu.met622.resources.DatabaseOptions
 main/java/edu/bu/met622/searchlib/SearchEngine.java
- edu.bu.met622.searchlib.SearchEngine
+ main.java.edu.bu.met622.searchlib.SearchEngine
 main/java/edu/bu/met622/database/MongoDB.java
- edu.bu.met622.database.MongoDB
+ main.java.edu.bu.met622.database.MongoDB
 main/java/edu/bu/met622/utils/BFParser.java
- edu.bu.met622.utils.BFParser
+ main.java.edu.bu.met622.utils.BFParser
 main/java/edu/bu/met622/Builder.java
- edu.bu.met622.Builder
- edu.bu.met622.Builder$1
+ main.java.edu.bu.met622.Builder
+ main.java.edu.bu.met622.Builder$1
 main/java/edu/bu/met622/searchlib/Indexer.java
- edu.bu.met622.searchlib.Indexer
+ main.java.edu.bu.met622.searchlib.Indexer
 main/java/edu/bu/met622/Main.java
- edu.bu.met622.Main
+ main.java.edu.bu.met622.Main

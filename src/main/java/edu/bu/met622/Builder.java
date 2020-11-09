@@ -1,15 +1,15 @@
-package edu.bu.met622;
+package main.java.edu.bu.met622;
 
-import edu.bu.met622.database.MongoDB;
-import edu.bu.met622.database.MySQL;
-import edu.bu.met622.resources.DatabaseOptions;
-import edu.bu.met622.resources.QueryOptions;
-import edu.bu.met622.searchlib.Indexer;
-import edu.bu.met622.searchlib.SearchEngine;
-import edu.bu.met622.resources.Config;
-import edu.bu.met622.utils.BFParser;
-import edu.bu.met622.utils.FileMerger;
-import edu.bu.met622.utils.XMLParser;
+import main.java.edu.bu.met622.database.MongoDB;
+import main.java.edu.bu.met622.database.MySQL;
+import main.java.edu.bu.met622.resources.DatabaseOptions;
+import main.java.edu.bu.met622.resources.QueryOptions;
+import main.java.edu.bu.met622.searchlib.Indexer;
+import main.java.edu.bu.met622.searchlib.SearchEngine;
+import main.java.edu.bu.met622.resources.Config;
+import main.java.edu.bu.met622.utils.BFParser;
+import main.java.edu.bu.met622.utils.FileMerger;
+import main.java.edu.bu.met622.utils.XMLParser;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**********************************************************************************************************************
  * Mediator class to build the simulation
