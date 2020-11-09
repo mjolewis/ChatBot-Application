@@ -42,7 +42,7 @@ jar {
 
 task customFatJar(type: Jar) {
     manifest {
-        attributes 'Main-Class': 'edu.bu.met622.Main'
+        attributes 'Main-Class': 'main.java.edu.bu.met622.Main'
     }
     baseName = 'all-in-one-jar'
     from {

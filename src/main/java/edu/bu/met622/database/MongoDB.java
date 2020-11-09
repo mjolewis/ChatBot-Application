@@ -1,4 +1,4 @@
-package edu.bu.met622.database;
+package main.java.edu.bu.met622.database;
 
 import com.mongodb.*;
 import com.mongodb.client.FindIterable;
@@ -8,8 +8,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import org.bson.Document;
-import edu.bu.met622.model.Article;
-import edu.bu.met622.resources.Config;
+import main.java.edu.bu.met622.model.Article;
+import main.java.edu.bu.met622.resources.Config;
 
 import java.util.ArrayList;
 import java.util.List;
