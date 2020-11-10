@@ -15,7 +15,11 @@ console or otherwise repacked into an output file.
 Finally, all search data is persisted onto disk.
 
 # Usage
-For demonstration purposes, this application has been specialized to work with files from 
+Download the JAR file to your computer and then run it. You can select the JAR file from either the Gradle build or the 
+Maven build. Both are provided for demonstration purposes. These executables can be found in either 
+./build/libs/ChatBot-1.0-SNAPSHOT.jar or ./target/ChatBot-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+Since this code is for demonstration only, the application has been specialized to work with files from 
 ftp://ftp.ncbi.nlm.nih.gov/pubmed/ but can easily be extended to work with XML files from any source. Keep in mind, 
 that working with files from other sources will require minor modifications to the program. In particular, several 
 variables in the Constants class need to be updated, along with the data model class (Articles in this case).

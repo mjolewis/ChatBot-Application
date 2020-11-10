@@ -1,6 +1,6 @@
-package edu.bu.met622.utils;
+package main.java.edu.bu.met622.utils;
 
-import edu.bu.met622.resources.Config;
+import main.java.edu.bu.met622.resources.Config;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+group 'edu.bu.met622'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+dependencies {
+    compile 'junit:junit:4.12'
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.6.3'
+    compile group: 'org.apache.lucene', name: 'lucene-demo', version: '8.6.2'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.6.2'
+
+    compile group: 'org.mongodb', name: 'bson', version: '4.1.1'
+    compile group: 'org.mongodb', name: 'mongodb-driver-core', version: '4.1.1'
+    compile group: 'org.mongodb', name: 'mongodb-driver-legacy', version: '4.1.1'
+    compile group: 'org.mongodb', name: 'mongodb-driver-sync', version: '4.1.1'
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
+    compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.11.4'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "edu.bu.met622.Main"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'main.java.edu.bu.met622.Main'
+    }
+    baseName = 'all-in-one-jar'
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}

@@ -1,4 +1,4 @@
-package edu.bu.met622.resources;
+package main.java.edu.bu.met622.resources;
 
 /**********************************************************************************************************************
  * Application constants

@@ -1,7 +1,7 @@
-package edu.bu.met622.searchlib;
+package main.java.edu.bu.met622.searchlib;
 
-import edu.bu.met622.model.Article;
-import edu.bu.met622.resources.Config;
+import main.java.edu.bu.met622.model.Article;
+import main.java.edu.bu.met622.resources.Config;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
