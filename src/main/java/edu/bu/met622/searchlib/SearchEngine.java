@@ -1,6 +1,6 @@
-package main.java.edu.bu.met622.searchlib;
+package edu.bu.met622.searchlib;
 
-import main.java.edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.Config;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
