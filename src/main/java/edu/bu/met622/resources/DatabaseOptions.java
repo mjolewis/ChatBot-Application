@@ -1,4 +1,4 @@
-package main.java.edu.bu.met622.resources;
+package edu.bu.met622.resources;
 
 /**********************************************************************************************************************
  * Predefined search types allowed by the system

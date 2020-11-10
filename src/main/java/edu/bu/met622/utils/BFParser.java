@@ -1,7 +1,7 @@
-package main.java.edu.bu.met622.utils;
+package edu.bu.met622.utils;
 
-import main.java.edu.bu.met622.resources.Config;
-import main.java.edu.bu.met622.model.Article;
+import edu.bu.met622.resources.Config;
+import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.stream.XMLEventReader;

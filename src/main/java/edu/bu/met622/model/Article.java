@@ -1,4 +1,4 @@
-package main.java.edu.bu.met622.model;
+package edu.bu.met622.model;
 
 import java.util.Objects;
 
