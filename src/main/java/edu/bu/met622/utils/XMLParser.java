@@ -2,7 +2,7 @@ package edu.bu.met622.utils;
 
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
-import edu.bu.met622.searchlib.Indexer;
+import edu.bu.met622.database.LuceneIndex;
 import edu.bu.met622.resources.Config;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
@@ -31,7 +31,7 @@ public class XMLParser extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private List<Article> articles;                             // A collection of every article in the input file
     private Storage storage;                                    // Persist search history
-    private Indexer indexer;                                    // Builds a Lucene Index
+    private LuceneIndex luceneIndex;                                    // Builds a Lucene Index
 
     /**
      * Initialize a new Parser
@@ -43,7 +43,7 @@ public class XMLParser extends DefaultHandler {
         fileName = Config.OUTPUT_FILE;
         articles = new ArrayList<>();
         storage = new Storage();
-        indexer = new Indexer();
+        luceneIndex = new LuceneIndex();
     }
 
     /**
@@ -149,7 +149,7 @@ public class XMLParser extends DefaultHandler {
      * Builds a Lucene Index
      */
     public void createIndex() {
-        indexer.createIndex(articles);
+        luceneIndex.createIndex(articles);
     }
 
     /**

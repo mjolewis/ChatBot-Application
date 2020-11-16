@@ -10,6 +10,10 @@ public class Config {
     // Start up messages
     public static final String START_MESSAGE = "\nLaunching ChatBot...";
 
+    // Files
+    public static final String FILE_1 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1334.xml";
+    public static final String FILE_2 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1335.xml";
+
     // Database selection
     public static String BF_SEARCH = "Brute Force (y/n): ";
     public static String LUCENE_SEARCH = "Lucene Index (y/n): ";

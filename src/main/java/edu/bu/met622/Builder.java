@@ -2,18 +2,15 @@ package edu.bu.met622;
 
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
-import edu.bu.met622.resources.DatabaseOptions;
-import edu.bu.met622.resources.QueryOptions;
-import edu.bu.met622.searchlib.Indexer;
-import edu.bu.met622.searchlib.SearchEngine;
+import edu.bu.met622.resources.DbSelector;
+import edu.bu.met622.resources.QuerySelector;
+import edu.bu.met622.database.LuceneIndex;
+import edu.bu.met622.database.LuceneSearch;
 import edu.bu.met622.resources.Config;
 import edu.bu.met622.utils.BFParser;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -45,32 +42,38 @@ public class Builder {
      * selected more than one file to merge
      */
     public void build() {
-        JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-        jFileChooser.setMultiSelectionEnabled(true);
+        ArrayList<String> selectedFiles = new ArrayList<>();
+        selectedFiles.add(Config.FILE_1);
+        selectedFiles.add(Config.FILE_2);
 
-        File[] selectedFiles;
-        while (true) {
-            int returnValue = jFileChooser.showOpenDialog(null);
-
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                selectedFiles = jFileChooser.getSelectedFiles();
-
-                if (selectedFiles.length == 1) {                         // Only merge if more than one was selected
-                    System.out.println(Config.FILE_SELECTION_ERROR);
-                } else {
-                    mergeXML(selectedFiles);
-                    parseXML();
-                    break;
-                }
-            } else {                                                      // No files selected
-                System.out.println(Config.FILE_SELECTION_ERROR);
-
-                if (returnValue == JFileChooser.CANCEL_OPTION) {          // Break out of the selection process
-                    break;
-                }
-            }
-
-        }
+        mergeXML(selectedFiles);
+        parseXML();
+//        JFileChooser jFileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+//        jFileChooser.setMultiSelectionEnabled(true);
+//
+//        File[] selectedFiles;
+//        while (true) {
+//            int returnValue = jFileChooser.showOpenDialog(null);
+//
+//            if (returnValue == JFileChooser.APPROVE_OPTION) {
+//                selectedFiles = jFileChooser.getSelectedFiles();
+//
+//                if (selectedFiles.length == 1) {                         // Only merge if more than one was selected
+//                    System.out.println(Config.FILE_SELECTION_ERROR);
+//                } else {
+//                    mergeXML(selectedFiles);
+//                    parseXML();
+//                    break;
+//                }
+//            } else {                                                      // No files selected
+//                System.out.println(Config.FILE_SELECTION_ERROR);
+//
+//                if (returnValue == JFileChooser.CANCEL_OPTION) {          // Break out of the selection process
+//                    break;
+//                }
+//            }
+//
+//        }
     }
 
     /**
@@ -101,13 +104,13 @@ public class Builder {
     /*
      * Merge multiple XML documents into one
      */
-    private void mergeXML(File[] selectedFiles) {
-        ArrayList<String> fileContainer = new ArrayList<>();
-        for (File file : selectedFiles) {
-            fileContainer.add(file.getPath());
-        }
+    private void mergeXML(ArrayList<String> selectedFiles) {
+//        ArrayList<String> fileContainer = new ArrayList<>();
+//        for (File file : selectedFiles) {
+//            fileContainer.add(file.getPath());
+//        }
 
-        FileMerger fileMerger = new FileMerger(fileContainer, Config.OUTPUT_FILE);
+        FileMerger fileMerger = new FileMerger(selectedFiles, Config.OUTPUT_FILE);
         try {
             fileMerger.merge();
         } catch (IOException e) {
@@ -124,15 +127,15 @@ public class Builder {
         XMLParser parser = new XMLParser();                               // Parse entire document and then search
         MySQL mySQLDB = MySQL.getInstance();
         MongoDB mongoDB;
-        SearchEngine searchEngine = new SearchEngine();
+        LuceneSearch luceneSearch = new LuceneSearch();
         String keyword;
-        QueryOptions queryOptions;
+        QuerySelector querySelector;
         int hits;
         double runTime;
 
         do {
 
-            DatabaseOptions searchType = getSearchType(scanner);
+            DbSelector searchType = getSearchType(scanner);
             switch (searchType) {
                 case BRUTE_FORCE:
                     runTime = bfParser.parse(getSearchParam(scanner), getNumOfDocs(scanner));            // Brute force search
@@ -140,12 +143,12 @@ public class Builder {
                     if ("y".equalsIgnoreCase(displayRunTime(scanner))) { printRunTime(runTime); }    // Display search times
                     break;
                 case LUCENE:
-                    if (!Indexer.exists()) {                              // If document hasn't been parsed then...
+                    if (!LuceneIndex.exists()) {                              // If document hasn't been parsed then...
                         parser.parse();                                   // Parse the entire document
                         parser.createIndex();                             // Build Lucene Index
                     }
-                    runTime = searchEngine.search(getSearchParam(scanner), getNumOfDocs(scanner));            // Lucene search
-                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { searchEngine.displayHits(); }      // Display search history
+                    runTime = luceneSearch.search(getSearchParam(scanner), getNumOfDocs(scanner));            // Lucene search
+                    if ("y".equalsIgnoreCase(displayDocuments(scanner))) { luceneSearch.displayHits(); }      // Display search history
                     if ("y".equalsIgnoreCase(displayRunTime(scanner))) { printRunTime(runTime); }     // Display search times
                     break;
                 case SQL_DB:
@@ -155,8 +158,8 @@ public class Builder {
                     }
 
                     keyword = getSearchParam(scanner);
-                    queryOptions = getQueryType(scanner);
-                    switch (queryOptions) {
+                    querySelector = getQueryType(scanner);
+                    switch (querySelector) {
                         case IN_YEAR_QUERY:
                             String year = getYear(scanner);
                             hits = mySQLDB.query(keyword, year);
@@ -184,8 +187,8 @@ public class Builder {
                     }
 
                     keyword = getSearchParam(scanner);
-                    queryOptions = getQueryType(scanner);
-                    switch (queryOptions) {
+                    querySelector = getQueryType(scanner);
+                    switch (querySelector) {
                         case IN_YEAR_QUERY:
                             String year = getYear(scanner);
                             hits = mongoDB.query(keyword, year);
@@ -212,33 +215,33 @@ public class Builder {
     /*
      * Gets the search type from the user
      */
-    private DatabaseOptions getSearchType(Scanner scanner) {
+    private DbSelector getSearchType(Scanner scanner) {
 
         while (true) {
             System.out.print(Config.BF_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return DatabaseOptions.BRUTE_FORCE; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return DbSelector.BRUTE_FORCE; }
 
             System.out.print(Config.LUCENE_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DatabaseOptions.LUCENE; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DbSelector.LUCENE; }
 
             System.out.print(Config.SQL_DB_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DatabaseOptions.SQL_DB; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DbSelector.SQL_DB; }
 
             System.out.print(Config.MONGODB_SEARCH);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DatabaseOptions.MONGO_DB; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return  DbSelector.MONGO_DB; }
 
             System.out.println(Config.NO_SELECTION);                      // Try again. No selection made
         }
     }
 
-    private QueryOptions getQueryType(Scanner scanner) {
+    private QuerySelector getQueryType(Scanner scanner) {
 
         while (true) {
             System.out.print(Config.IN_YEAR_QUERY);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return QueryOptions.IN_YEAR_QUERY; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return QuerySelector.IN_YEAR_QUERY; }
 
             System.out.print(Config.RANGE_QUERY);
-            if (scanner.nextLine().equalsIgnoreCase("y")) { return QueryOptions.RANGE_QUERY; }
+            if (scanner.nextLine().equalsIgnoreCase("y")) { return QuerySelector.RANGE_QUERY; }
 
             System.out.println(Config.NO_SELECTION);                      // Try again. No selection made
         }
