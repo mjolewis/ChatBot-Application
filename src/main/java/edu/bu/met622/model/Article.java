@@ -1,5 +1,7 @@
 package edu.bu.met622.model;
 
+//import javax.persistence.Entity;
+//import javax.persistence.Id;
 import java.util.Objects;
 
 /**********************************************************************************************************************
@@ -7,7 +9,9 @@ import java.util.Objects;
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
+//@Entity
 public class Article {
+
     private String id;
     private String month;
     private String year;
@@ -117,10 +121,10 @@ public class Article {
     @Override
     public String toString() {
         return "Article{" +
-                "pubID='" + id + '\'' +
+                "id='" + id + '\'' +
                 ", month='" + month + '\'' +
-                ", pubYear='" + year + '\'' +
-                ", articleTitle='" + title + '\'' +
+                ", year='" + year + '\'' +
+                ", title='" + title + '\'' +
                 '}';
     }
 
