@@ -3,6 +3,7 @@
 ../*.iml
 *.xml
 masterFile.xml
+./target/ChatBot-1.0-SNAPSHOT.war
 pubmed20n1335.xml
 pubmed20n1334.xml
 pubmed20n1335 copy.xml
