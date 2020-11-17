@@ -1,5 +1,5 @@
 var stompClient = null;
-
+var botui = null;
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
@@ -13,23 +13,24 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/gs-guide-websocket');
+    //botui = new BotUI('botui-app');
+    var socket = new SockJS('/chatbot');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {
-            showResults(JSON.parse(greeting.body));
+        stompClient.subscribe('/query/response', function (response) {
+            showResults(JSON.parse(response.body));
         });
     });
 }
 
 function disconnect() {
     if (stompClient !== null) {
+        stompClient.send("/app/disconnect", {});
         stompClient.disconnect();
     }
     setConnected(false);
-    console.log("Disconnected");
 }
 
 function search() {
@@ -65,16 +66,7 @@ $(function () {
 
 
 // var botui = new BotUI('botui-app');                                  // id of container
-// //var wss;
-// var searchType;
-// var keyword;
-// var time;
-// //botui.send("test");
-//
-// //function connect() {
-// //ws = new WebSocket('ws://localhost:8080/user');
-// //wss = new WebSocket('wss://localhost:8080/');
-//
+
 // botui.message.add({                                                  // first message
 //     delay: 200,
 //     content: 'Welcome to ChatBot'
@@ -160,57 +152,3 @@ $(function () {
 //         content: `You are feeling ${res.text}!`
 //     })
 // });
-//
-//
-//
-//
-//
-//
-//
-// // var ws;
-// // function setConnected(connected) {
-// //     $("#connect").prop("disabled", connected);
-// //     $("#disconnect").prop("disabled", !connected);
-// // }
-// //
-// // function connect() {
-// //     ws = new WebSocket('ws://localhost:8080/user');
-// //     ws.onmessage = function(data) {
-// //         helloWorld(data.data);
-// //     }
-// //     setConnected(true);
-// // }
-// //
-// // function disconnect() {
-// //     if (ws != null) {
-// //         ws.close();
-// //     }
-// //     setConnected(false);
-// //     console.log("Websocket is in disconnected state");
-// // }
-// //
-// // function sendData() {
-// //     var data = JSON.stringify({
-// //         'user' : $("#user").val()
-// //     })
-// //     ws.send(data);
-// // }
-// //
-// // function helloWorld(message) {
-// //     $("#helloworldmessage").append(" " + message + "");
-// // }
-// //
-// // $(function() {
-// //     $("form").on('submit', function(e) {
-// //         e.preventDefault();
-// //     });
-// //     $("#connect").click(function() {
-// //         connect();
-// //     });
-// //     $("#disconnect").click(function() {
-// //         disconnect();
-// //     });
-// //     $("#send").click(function() {
-// //         sendData();
-// //     });
-// // });

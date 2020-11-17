@@ -12,12 +12,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ChatBotApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ChatBotApplication.class, args);
 
-//        Builder builder = new Builder();
-//        builder.startMessage();
-//        builder.build();
-//        builder.cleanup();
-//        builder.endMessage();
+        Builder builder = new Builder();
+        builder.startMessage();
+        builder.build();
+
+        SpringApplication.run(ChatBotApplication.class, args);
     }
 }
