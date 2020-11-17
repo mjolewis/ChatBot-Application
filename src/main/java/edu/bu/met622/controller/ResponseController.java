@@ -1,5 +1,6 @@
 package edu.bu.met622.controller;
 
+import edu.bu.met622.Builder;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.model.ClientMessage;
 import edu.bu.met622.model.ServerResponse;
@@ -25,18 +26,19 @@ public class ResponseController {
     }
 
     @MessageMapping("/search")
-    @SendTo("/topic/greetings")
+    @SendTo("/query/response")
     public ServerResponse serverResponse() throws Exception {
-        XMLParser parser = new XMLParser();
         MySQL mySQLDB = MySQL.getInstance();
-
-        if (!MySQL.exists()) {                                // If database hasn't been built then...
-            parser.parse();                                   // Parse the entire XML document
-            parser.createSQLDB();                             // Build the database and insert content
-        }
 
         int hits = mySQLDB.query(keyword, year);
         return new ServerResponse(keyword, year, hits);
+    }
+
+    @MessageMapping("/disconnect")
+    public void disconnect() throws Exception {
+        Builder builder = new Builder();
+        builder.cleanup();
+        builder.endMessage();
     }
 
 }
