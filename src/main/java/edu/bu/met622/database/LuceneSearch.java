@@ -24,6 +24,9 @@ public class LuceneSearch {
     private IndexSearcher searcher = null;
     private QueryParser parser;
     private ScoreDoc[] hits = null;
+    private double startTime;                                   // Tracks the runtime of the query
+    private double endTime;                                     // Tracks the runtime of the query
+    private double runtime;                                     // The total runtime of the query
 
 
     /**
@@ -43,8 +46,6 @@ public class LuceneSearch {
      * @return The runtime of the current search
      */
     public double search(String searchParam, int numOfDocs) {
-        double startTime = 0;
-        double endTime = 0;
 
         try {
             startTime = System.currentTimeMillis();
@@ -60,7 +61,8 @@ public class LuceneSearch {
             e.printStackTrace();
         }
 
-        return endTime - startTime;                                       // Run time of this search
+        runtime = endTime - startTime;
+        return hits.length;                                     // The number of times the keyword was found
     }
 
     /**
@@ -83,13 +85,11 @@ public class LuceneSearch {
     }
 
     /**
-     * Accessor method that returns an array of search results
+     * Accessor method that return the total runtime of the query
      *
-     * @return An array of search results
-     * @note These search results cannot be used directly. Instead, the user must unwrap the search results into a
-     *         Document object
+     * @return The runtime of the query
      */
-    public ScoreDoc[] getHits() {
-        return hits;
+    public double getRunTime() {
+        return runtime;
     }
 }

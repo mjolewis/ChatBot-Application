@@ -111,8 +111,8 @@ public class MySQL {
      * @param year    The year to search within
      * @return The number of times the keyword was found in the specified year
      */
-    public int query(String keyword, String year) {
-        int hits = 0;
+    public double query(String keyword, String year) {
+        double hits = 0;
 
         String sqlQuery = "SELECT * FROM articles WHERE title LIKE ? AND year LIKE ?";
         try {
@@ -152,8 +152,8 @@ public class MySQL {
      * @param endYear    The last year within the search range
      * @return The number of times the keyword was found in the specified year
      */
-    public int query(String keyword, String startMonth, String startYear, String endMonth, String endYear) {
-        int hits = 0;
+    public double query(String keyword, String startMonth, String startYear, String endMonth, String endYear) {
+        double hits = 0;
         String startDate = startYear + "-" + startMonth + "-" + "1";
         String endDate = endYear + "-" + endMonth + "-" + "1";
         String sqlQuery = "SELECT * FROM articles " +

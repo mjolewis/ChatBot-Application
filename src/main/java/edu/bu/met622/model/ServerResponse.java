@@ -4,26 +4,30 @@ public class ServerResponse {
 
     private String keyword;
     private String year;
-    private int hits;
+    private double hits;
+    private double runtime;
 
     public ServerResponse() {}
 
-    public ServerResponse(String keyword, String year, int hits) {
+    public ServerResponse(String keyword, String year, double hits, double runtime) {
 
         this.keyword = keyword;
         this.year = year;
         this.hits = hits;
+        this.runtime = runtime;
     }
 
     public String getKeyword() {
         return keyword;
     }
 
-    public int getHits() {
-        return hits;
-    }
-
     public String getYear() {
         return year;
     }
+
+    public double getHits() {
+        return hits;
+    }
+
+    public double getRuntime() { return  runtime; }
 }
