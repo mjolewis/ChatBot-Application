@@ -1,7 +1,5 @@
 package edu.bu.met622.controller;
 
-import edu.bu.met622.Builder;
-import edu.bu.met622.database.LuceneIndex;
 import edu.bu.met622.database.LuceneSearch;
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
@@ -20,19 +18,35 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ResponseController {
 
-    String keyword;
-    String year;
+    String keyword;                                                  // The user entered keyword
+    String year;                                                     // The user entered year to search within
 
+    /**
+     * Maps messages to the /keyword endpoint by matching the declared patterns to a destination extracted from the
+     * message
+     *
+     * @param keyword The keyword entered by the user
+     */
     @MessageMapping("/keyword")
     public void keyword(ClientMessage keyword) {
         this.keyword = keyword.getKeyword();
     }
 
+    /**
+     * Maps messages to the /year endpoint by matching the declared patterns to a destination extracted from the
+     * message
+     *
+     * @param year The keyword entered by the user
+     */
     @MessageMapping("/year")
     public void year(ClientMessage year) {
         this.year = year.getYear();
     }
 
+    /**
+     * Maps messages to the /mysql/search endpoint by matching the declared patterns to a destination extracted from
+     * the message. Sends the response to the /query/response endpoint
+     */
     @MessageMapping("/mysql/search")
     @SendTo("/query/response")
     public ServerResponse mySqlResponse() {
@@ -44,6 +58,10 @@ public class ResponseController {
         return new ServerResponse(keyword, year, hits, runtime);
     }
 
+    /**
+     * Maps messages to the /mongodb/search endpoint by matching the declared patterns to a destination extracted from
+     * the message. Sends the response to the /query/response endpoint
+     */
     @MessageMapping("/mongodb/search")
     @SendTo("/query/response")
     public ServerResponse mongoDBResponse() {
@@ -55,6 +73,10 @@ public class ResponseController {
         return new ServerResponse(keyword, year, hits, runtime);
     }
 
+    /**
+     * Maps messages to the /lucene/search endpoint by matching the declared patterns to a destination extracted from
+     * the message. Sends the response to the /query/response endpoint
+     */
     @MessageMapping("/lucene/search")
     @SendTo("/query/response")
     public ServerResponse luceneResponse() {

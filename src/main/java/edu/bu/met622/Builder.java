@@ -94,22 +94,22 @@ public class Builder {
      * Build up the databases if they don't exist
      */
     private void initDabases() {
-        XMLParser parser = new XMLParser();                               // Parse entire document and then search
+        XMLParser parser = new XMLParser();                     // Parse entire document and then search
 
-        if (!LuceneIndex.exists()) {                           // If document hasn't been parsed then...
-            parser.parse();                                   // Parse the entire document
-            parser.createIndex();                             // Build Lucene Index
+        if (!LuceneIndex.exists()) {                            // If document hasn't been parsed then...
+            parser.parse();                                     // Parse the entire document
+            parser.createIndex();                               // Build Lucene Index
         }
 
-        if (!MySQL.exists()) {                                // If database hasn't been built then...
-            parser.parse();                                   // Parse the entire XML document
-            parser.createSQLDB();                             // Build the database and insert content
+        if (!MySQL.exists()) {                                  // If database hasn't been built then...
+            parser.parse();                                     // Parse the entire XML document
+            parser.createSQLDB();                               // Build the database and insert content
         }
 
         MongoDB mongoDB = MongoDB.getInstance();
-        if (!mongoDB.exists()) {                              // If document hasn't been parsed then...
-            parser.parse();                                   // Parse the entire XML document
-            parser.createMongoDB();                           // Build the database and insert content
+        if (!mongoDB.exists()) {                                // If document hasn't been parsed then...
+            parser.parse();                                     // Parse the entire XML document
+            parser.createMongoDB();                             // Build the database and insert content
         }
     }
 }

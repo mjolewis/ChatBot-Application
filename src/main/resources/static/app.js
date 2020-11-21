@@ -1,3 +1,10 @@
+
+/**********************************************************************************************************************
+ * Conversational ChatBot managed by BotUI and full duplex communication with WebSockets
+ *
+ * @author Michael Lewis
+ *********************************************************************************************************************/
+
 var socket = new SockJS('/chatbot');
 var stompClient = Stomp.over(socket);
 var botui = new BotUI('botui-app');
@@ -58,60 +65,60 @@ botui.message.add({                                                  // first me
     content: 'Welcome to ChatBot'
 }).then(() => {
     return botui.message.add({                                       // second message
-        delay: 2000,                                                 // wait 1 sec.
+        delay: 2000,
         loading: true,
         content: "I'll help you search through PubMed! Let's start with this...",
     })
-}).then(() => {                                                      // Bot continues the conversation
+}).then(() => {                                                      // third message
     return botui.message.add( {
-        delay: 2000,                                                 // wait 1 sec.
+        delay: 2000,
         loading: true,
         content: "What year should I search in?"
     })
-}).then(() => {
+}).then(() => {                                                      // fourth message
     return botui.action.text({
         action: {
             placeholder: "Enter a year"
         }
     })
-}).then(function(res) {                                                      // Bot continues the conversation
+}).then(function(res) {                                   // fifth message
     year = res.value;
     sendYear(year);
 
     return botui.message.add( {
-        delay: 2000,                                                 // wait 1 sec.
+        delay: 2000,
         loading: true,
         content: "Sounds good! Just one more question...",
     })
-}).then(() => {                                                      // Bot continues the conversation
+}).then(() => {                                                      // sixth message
     return botui.message.add( {
-        delay: 2000,                                                 // wait 1 sec
+        delay: 2000,
         loading: true,
         content: "What do you want to search for? You can enter a keyword like 'Flu'?"
     })
 }).then(() => {
-    return botui.action.text({
+    return botui.action.text({                                       // seventh message
         action: {
             placeholder: "Enter a keyword"
         }
     })
-}).then(function (res) {                                   // Called after user enters a keyword
+}).then(function (res) {                                   // eighth message
     keyword = res.value;
     sendKeyword(keyword);
 
     return botui.message.add( {
-        delay: 2000,                                                 // wait 1 sec
+        delay: 2000,
         loading: true,
         content: "Ok, I'll search for " + keyword + " in " + year + "..."
     })
-}).then(() => {
+}).then(() => {                                                      // ninth message
     return botui.message.add({
         delay: 2000,
         loading: true,
         content: "For simulation purposes, I am going to search multiple databases so you can compare the runtime " +
             "performance. I will search a MySQL database, a MongoDB database, a Lucene Index, and using Brute Force..."
     })
-}).then(() => {
+}).then(() => {                                                      // tenth message
     mySqlSearch();
 
     return botui.message.add({
@@ -119,14 +126,14 @@ botui.message.add({                                                  // first me
         loading: true,
         content: "Searching with MySQL...",
     })
-}).then(() => {
+}).then(() => {                                                      // eleventh message
     return botui.message.add( {
         delay: 2000,
         loading: true,
         content: "It took me " + window.result.runtime + " milliseconds" + " to find the keyword '" + window.result.keyword + "' "
             + window.result.hits + " times in " + window.result.year
     })
-}).then(() => {
+}).then(() => {                                                      // twelfth message
     mongoDBSearch();
 
     return botui.message.add({
@@ -134,14 +141,14 @@ botui.message.add({                                                  // first me
         loading: true,
         content: "Searching with MongoDB...",
     })
-}).then(() => {
+}).then(() => {                                                      // thirteenth message
     return botui.message.add({
         delay: 2000,
         loading: true,
         content: "It took me " + window.result.runtime + " milliseconds" + " to find the keyword '" + window.result.keyword + "' "
             + window.result.hits + " times in " + window.result.year
     })
-}).then(() => {
+}).then(() => {                                                      // fourteenth message
     luceneIndexSearch();
 
     return botui.message.add({
@@ -149,7 +156,7 @@ botui.message.add({                                                  // first me
         loading: true,
         content: "Searching with Lucene Index...",
     })
-}).then(() => {
+}).then(() => {                                                      // fifteenth message
     return botui.message.add({
         delay: 2000,
         loading: true,
