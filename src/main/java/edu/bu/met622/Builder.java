@@ -77,10 +77,6 @@ public class Builder {
      * Merge multiple XML documents into one
      */
     private void mergeXML(ArrayList<String> selectedFiles) {
-//        ArrayList<String> fileContainer = new ArrayList<>();
-//        for (File file : selectedFiles) {
-//            fileContainer.add(file.getPath());
-//        }
 
         FileMerger fileMerger = new FileMerger(selectedFiles, Config.OUTPUT_FILE);
         try {
@@ -94,7 +90,7 @@ public class Builder {
      * Build up the databases if they don't exist
      */
     private void initDabases() {
-        XMLParser parser = new XMLParser();                     // Parse entire document and then search
+        XMLParser parser = new XMLParser();
 
         if (!LuceneIndex.exists()) {                            // If document hasn't been parsed then...
             parser.parse();                                     // Parse the entire document

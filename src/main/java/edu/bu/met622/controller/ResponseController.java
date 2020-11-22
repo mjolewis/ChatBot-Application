@@ -5,6 +5,7 @@ import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.model.ClientMessage;
 import edu.bu.met622.model.ServerResponse;
+import edu.bu.met622.utils.BFParser;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Controller;
 public class ResponseController {
 
     String keyword;                                                  // The user entered keyword
-    String year;                                                     // The user entered year to search within
 
     /**
      * Maps messages to the /keyword endpoint by matching the declared patterns to a destination extracted from the
@@ -33,29 +33,18 @@ public class ResponseController {
     }
 
     /**
-     * Maps messages to the /year endpoint by matching the declared patterns to a destination extracted from the
-     * message
-     *
-     * @param year The keyword entered by the user
-     */
-    @MessageMapping("/year")
-    public void year(ClientMessage year) {
-        this.year = year.getYear();
-    }
-
-    /**
      * Maps messages to the /mysql/search endpoint by matching the declared patterns to a destination extracted from
      * the message. Sends the response to the /query/response endpoint
      */
     @MessageMapping("/mysql/search")
-    @SendTo("/query/response")
+    @SendTo("/query/mysql/response")
     public ServerResponse mySqlResponse() {
         MySQL mySQLDB = MySQL.getInstance();
 
-        double hits = mySQLDB.query(keyword, year);
+        double hits = mySQLDB.query(keyword);
         double runtime = mySQLDB.getRunTime();
 
-        return new ServerResponse(keyword, year, hits, runtime);
+        return new ServerResponse(keyword, hits, runtime);
     }
 
     /**
@@ -63,14 +52,14 @@ public class ResponseController {
      * the message. Sends the response to the /query/response endpoint
      */
     @MessageMapping("/mongodb/search")
-    @SendTo("/query/response")
+    @SendTo("/query/mongodb/response")
     public ServerResponse mongoDBResponse() {
         MongoDB mongoDB = MongoDB.getInstance();
 
-        double hits = mongoDB.query(keyword, year);
+        double hits = mongoDB.query(keyword);
         double runtime = mongoDB.getRunTime();
 
-        return new ServerResponse(keyword, year, hits, runtime);
+        return new ServerResponse(keyword, hits, runtime);
     }
 
     /**
@@ -78,14 +67,28 @@ public class ResponseController {
      * the message. Sends the response to the /query/response endpoint
      */
     @MessageMapping("/lucene/search")
-    @SendTo("/query/response")
+    @SendTo("/query/lucene/response")
     public ServerResponse luceneResponse() {
         LuceneSearch luceneSearch = new LuceneSearch();
 
-        // TODO: 11/20/20 fix number of docs to all docs
         double hits = luceneSearch.search(keyword, 5000);
         double runtime = luceneSearch.getRunTime();
 
-        return new ServerResponse(keyword, year, hits, runtime);
+        return new ServerResponse(keyword, hits, runtime);
+    }
+
+    /**
+     * Maps messages to the /bruteforce/search endpoint by matching the declared patterns to a destination extracted
+     * from the message. Sends the response to the /query/response endpoint
+     */
+    @MessageMapping("/bruteforce/search")
+    @SendTo("/query/bruteforce/response")
+    public ServerResponse bruteForceSearch() {
+        BFParser bfParser = new BFParser();
+
+        double hits = bfParser.parse(keyword);
+        double runtime = bfParser.getRunTime();
+
+        return new ServerResponse(keyword, hits, runtime);
     }
 }

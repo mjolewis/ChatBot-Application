@@ -7,9 +7,11 @@ import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import edu.bu.met622.utils.Logger;
 import org.bson.Document;
 import edu.bu.met622.model.Article;
 import edu.bu.met622.resources.Config;
+import sun.rmi.runtime.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class MongoDB {
     private MongoDatabase db;                                   // The database object
     private MongoCollection<Document> collection;               // A collection within the database
     private Document doc;                                       // A document (row) that is inserted into the collection
+    private static Logger logger;                               // Logs application events to files
     private static boolean exists = false;                      // True if the table has been built; Otherwise false
     private double startTime;                                   // Tracks the runtime of the query
     private double endTime;                                     // Tracks the runtime of the query
@@ -48,6 +51,8 @@ public class MongoDB {
 
         // If the collection does not exist, MongoDB creates it implicitly
         collection = db.getCollection(Config.COLLECTION);
+
+        logger = Logger.getInstance();                               // Log application events to a file
     }
 
     /**
@@ -108,6 +113,34 @@ public class MongoDB {
             exists = true;
         }
         return exists;
+    }
+
+    /**
+     * A query to count the number of times the given keyword appears in the specified year. For example, how many
+     * times does "flu" appear in knowledge base
+     *
+     * @param keyword A value to be searched for
+     * @return The number of times the keyword was found within the specified year
+     */
+    public double query(String keyword) {
+        double hits = 0;
+
+        startTime = System.currentTimeMillis();                           // Start the runtime clock
+
+        BasicDBObject query = new BasicDBObject();
+        query.put("title", java.util.regex.Pattern.compile(keyword));
+        FindIterable<Document> results = collection.find(query);
+
+        for (Document result : results) {
+            ++hits;
+        }
+
+        endTime = System.currentTimeMillis();                             // Stop the runtime clock
+        runtime = endTime - startTime;                                    // The total runtime of the query
+
+        logger.runtime(Config.MONGODB, runtime);
+
+        return hits;
     }
 
     /**
