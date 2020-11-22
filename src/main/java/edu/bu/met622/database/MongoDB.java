@@ -10,8 +10,7 @@ import com.mongodb.client.model.Indexes;
 import edu.bu.met622.utils.Logger;
 import org.bson.Document;
 import edu.bu.met622.model.Article;
-import edu.bu.met622.resources.Config;
-import sun.rmi.runtime.Log;
+import edu.bu.met622.resources.ApplicationConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,15 +41,15 @@ public class MongoDB {
     private MongoDB() {
         client = new MongoClient();                                  // Connect to a local instance on the default port
 
-        System.out.println(Config.CONNECTING);                       // Notification about connecting to the db
+        System.out.println(ApplicationConfig.CONNECTING);                       // Notification about connecting to the db
 
         // If the database doesn't exist, it will be created automatically so there is no need for null checks
-        db = client.getDatabase(Config.MONGO_DB);
+        db = client.getDatabase(ApplicationConfig.MONGO_DB);
 
-        System.out.println(Config.CONNECTED);                        // Notification about being connecting to the db
+        System.out.println(ApplicationConfig.CONNECTED);                        // Notification about being connecting to the db
 
         // If the collection does not exist, MongoDB creates it implicitly
-        collection = db.getCollection(Config.COLLECTION);
+        collection = db.getCollection(ApplicationConfig.COLLECTION);
 
         logger = Logger.getInstance();                               // Log application events to a file
     }
@@ -79,24 +78,24 @@ public class MongoDB {
      */
     public void buildDB(List<Article> articlesList) {
 
-        System.out.println(Config.POPULATING_DB);                    // Notification about populating the db
+        System.out.println(ApplicationConfig.POPULATING_DB);                    // Notification about populating the db
 
         // Create a unique index based on the article id
-        collection.createIndex(Indexes.text(Config.DOCUMENT_ID), new IndexOptions().unique(true).sparse(true));
+        collection.createIndex(Indexes.text(ApplicationConfig.DOCUMENT_ID), new IndexOptions().unique(true).sparse(true));
         for (Article article : articlesList) {
 
             doc = new Document();
 
-            doc.put(Config.DOCUMENT_ID, article.getId());
-            doc.put(Config.DOCUMENT_MONTH, article.getMonth());
-            doc.put(Config.DOCUMENT_YEAR, article.getYear());
-            doc.put(Config.DOCUMENT_DATE, article.getYear() + "-" + article.getMonth() + "-" + "1");
-            doc.put(Config.DOCUMENT_TITLE, article.getTitle());
+            doc.put(ApplicationConfig.DOCUMENT_ID, article.getId());
+            doc.put(ApplicationConfig.DOCUMENT_MONTH, article.getMonth());
+            doc.put(ApplicationConfig.DOCUMENT_YEAR, article.getYear());
+            doc.put(ApplicationConfig.DOCUMENT_DATE, article.getYear() + "-" + article.getMonth() + "-" + "1");
+            doc.put(ApplicationConfig.DOCUMENT_TITLE, article.getTitle());
 
             try {
                 collection.insertOne(doc);                               // Insert the document into the collection
             } catch (Exception e) {
-                System.out.println(Config.DUPLICATE_ENTRY);
+                System.out.println(ApplicationConfig.DUPLICATE_ENTRY);
             }
         }
 
@@ -138,7 +137,7 @@ public class MongoDB {
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
 
-        logger.runtime(Config.MONGODB, runtime);
+        logger.runtime(ApplicationConfig.MONGODB, runtime);
 
         return hits;
     }

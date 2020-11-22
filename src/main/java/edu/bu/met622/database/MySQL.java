@@ -1,10 +1,9 @@
 package edu.bu.met622.database;
 
 import edu.bu.met622.model.Article;
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.utils.Logger;
 
-import java.io.File;
 import java.sql.*;
 import java.util.List;
 
@@ -60,9 +59,9 @@ public class MySQL {
 
         try {
             // A connection (session) with a specific database
-            System.out.println(Config.CONNECTING);
-            con = DriverManager.getConnection(Config.SQL_DB, Config.SQL_USER, Config.SQL_PWD);
-            System.out.println(Config.CONNECTED);
+            System.out.println(ApplicationConfig.CONNECTING);
+            con = DriverManager.getConnection(ApplicationConfig.SQL_DB, ApplicationConfig.SQL_USER, ApplicationConfig.SQL_PWD);
+            System.out.println(ApplicationConfig.CONNECTED);
 
             // A statement object holds SQL commands
             stmt = con.createStatement();
@@ -71,11 +70,11 @@ public class MySQL {
             DatabaseMetaData metaData = con.getMetaData();
 
             // A description of the table represented by the catalog, schema, table name, and types
-            ResultSet table = metaData.getTables(null, null, Config.TABLE_NAME, null);
+            ResultSet table = metaData.getTables(null, null, ApplicationConfig.TABLE_NAME, null);
             if (!table.next()) {
-                System.out.println(Config.CREATING_TABLE);
-                stmt.execute(Config.CREATE_TABLE);                    // Create table if it doesn't exist
-                System.out.println(Config.CREATED_TABLE);
+                System.out.println(ApplicationConfig.CREATING_TABLE);
+                stmt.execute(ApplicationConfig.CREATE_TABLE);                    // Create table if it doesn't exist
+                System.out.println(ApplicationConfig.CREATED_TABLE);
             }
 
             // Insert data into the database only if the ID doesn't already exist
@@ -130,7 +129,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            logger.runtime(Config.MYSQL, runtime);
+            logger.runtime(ApplicationConfig.MYSQL, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {

@@ -5,7 +5,7 @@ package edu.bu.met622.resources;
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
-public class Config {
+public class ApplicationConfig {
 
     // Start up messages
     public static final String START_MESSAGE = "\nLaunching ChatBot...";
@@ -25,7 +25,6 @@ public class Config {
     public static final String ARTICLE_TITLE = "ArticleTitle";
     public static final String YEAR = "Year";
     public static final String MONTH = "Month";
-    public static final String FILE_SELECTION_ERROR = "Error. Please select more than one file";
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.mm";
 
     // Disk storage
@@ -40,9 +39,6 @@ public class Config {
     public static final String LUCENE_INDEX = "Lucene Index";
     public static final String INDEX_DIRECTORY = "index_directory";
 
-    // Conversions
-    public static final double MILLIS_TO_SECONDS = 1000.0;
-
     // Shared DB
     public static final String POPULATING_DB = "Populating database...";
 
@@ -55,8 +51,6 @@ public class Config {
     public static final String CONNECTED = "Connection successful...";
     public static final String CREATING_TABLE = "Creating table in the database...";
     public static final String CREATED_TABLE = "Created table successfully...";
-    public static final String RECORDS_INSERTED = " records inserted";
-    public static final String IN_YEAR_QUERY = "Single year search (y/n): ";
     public static final String TABLE_NAME = "articles";
     public static final String CREATE_TABLE = "CREATE TABLE articles" +
                                               "(id VARCHAR(20) PRIMARY KEY," +
