@@ -1,6 +1,7 @@
 package edu.bu.met622.database;
 
 import edu.bu.met622.resources.Config;
+import edu.bu.met622.utils.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -24,6 +25,7 @@ public class LuceneSearch {
     private IndexSearcher searcher = null;
     private QueryParser parser;
     private ScoreDoc[] hits = null;
+    private static Logger logger;                               // Logs application events to files
     private double startTime;                                   // Tracks the runtime of the query
     private double endTime;                                     // Tracks the runtime of the query
     private double runtime;                                     // The total runtime of the query
@@ -35,7 +37,9 @@ public class LuceneSearch {
      * @throws OutOfMemoryError Indicates insufficient memory for this new SearchEngine
      */
     public LuceneSearch() {
+
         parser = new QueryParser(Config.ARTICLE_TITLE, new StandardAnalyzer());
+        logger = Logger.getInstance();                               // Log application events to a file
     }
 
     /**
@@ -62,6 +66,8 @@ public class LuceneSearch {
         }
 
         runtime = endTime - startTime;
+        logger.runtime(Config.LUCENE_INDEX, runtime);
+
         return hits.length;                                     // The number of times the keyword was found
     }
 

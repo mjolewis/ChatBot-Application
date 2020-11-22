@@ -9,7 +9,6 @@ var socket = new SockJS('/chatbot');
 var stompClient = Stomp.over(socket);
 var botui = new BotUI('botui-app');
 var keyword;
-var year;
 
 /**
  * Establish a websocket connection. Upon successful connection, subscribe to /query/response destination where the
@@ -17,8 +16,25 @@ var year;
  */
 stompClient.connect({}, function (frame) {
     console.log('Connected: ' + frame);
-    stompClient.subscribe('/query/response', function (response) {
-        window.result = JSON.parse(response.body);
+
+    // Register the MySQL response
+    stompClient.subscribe('/query/mysql/response', function (response) {
+        window.mySqlResponse = JSON.parse(response.body);
+    });
+
+    // Register the MongoDB response
+    stompClient.subscribe('/query/mongodb/response', function (response) {
+        window.mongoDBResponse = JSON.parse(response.body);
+    });
+
+    // Register the Lucene Index response
+    stompClient.subscribe('/query/lucene/response', function (response) {
+        window.luceneResponse = JSON.parse(response.body);
+    });
+
+    // Register the Brute Force response
+    stompClient.subscribe('/query/bruteforce/response', function (response) {
+        window.bruteForeceResponse = JSON.parse(response.body);
     });
 });
 
@@ -30,137 +46,138 @@ function sendKeyword(keyword) {
 }
 
 /**
- * Send the year to endpoint
- */
-function sendYear(year) {
-    stompClient.send("/app/year", {}, JSON.stringify({'year': year}));
-}
-
-/**
- * Search a MySQL database for the keyword
+ * Search for the keyword using MySQL
  */
 function mySqlSearch() {
     stompClient.send("/app/mysql/search", {});
 }
 
 /**
- * Search a MongoDB database for the keyword
+ * Search for the keyword using MongoDB
  */
 function mongoDBSearch() {
     stompClient.send("/app/mongodb/search", {});
 }
 
 /**
- * Search a Lucene Index for the keyword
+ * Search for the keyword using Lucene Index
  */
 function luceneIndexSearch() {
     stompClient.send("/app/lucene/search", {});
 }
 
 /**
+ * Search for the keyword using Brute Force
+ */
+function bruteForceSearch() {
+    stompClient.send("/app/bruteforce/search", {});
+}
+
+//*********************************************************************************************************************
+// Start the BotUI Conversation
+//*********************************************************************************************************************
+
+/**
  * A conversation with the user managed by BotUI
  */
 botui.message.add({                                                  // first message
-    delay: 200,
+    delay: 500,
     content: 'Welcome to ChatBot'
 }).then(() => {
     return botui.message.add({                                       // second message
         delay: 2000,
         loading: true,
-        content: "I'll help you search through PubMed! Let's start with this...",
+        content: "If you enter a keyword, I'll search across PubMed for it...",
     })
 }).then(() => {                                                      // third message
     return botui.message.add( {
-        delay: 2000,
+        delay: 3000,
         loading: true,
-        content: "What year should I search in?"
-    })
-}).then(() => {                                                      // fourth message
-    return botui.action.text({
-        action: {
-            placeholder: "Enter a year"
-        }
-    })
-}).then(function(res) {                                   // fifth message
-    year = res.value;
-    sendYear(year);
-
-    return botui.message.add( {
-        delay: 2000,
-        loading: true,
-        content: "Sounds good! Just one more question...",
-    })
-}).then(() => {                                                      // sixth message
-    return botui.message.add( {
-        delay: 2000,
-        loading: true,
-        content: "What do you want to search for? You can enter a keyword like 'Flu'?"
+        content: "You can enter a keyword like 'Flu'?"
     })
 }).then(() => {
-    return botui.action.text({                                       // seventh message
+    return botui.action.text({                                       // User inputs the keyword
         action: {
+            delay: 1000,
             placeholder: "Enter a keyword"
         }
     })
-}).then(function (res) {                                   // eighth message
+}).then(function (res) {                                   // fourth message
     keyword = res.value;
     sendKeyword(keyword);
 
     return botui.message.add( {
         delay: 2000,
         loading: true,
-        content: "Ok, I'll search for " + keyword + " in " + year + "..."
+        content: "Ok, I'll search for " + keyword
     })
-}).then(() => {                                                      // ninth message
+}).then(() => {                                                      // fifth message
+
+    // Pre-perform the searches for more efficient conversation flow
+    mySqlSearch();
+    mongoDBSearch();
+    luceneIndexSearch();
+    bruteForceSearch();
+
     return botui.message.add({
         delay: 2000,
         loading: true,
         content: "For simulation purposes, I am going to search multiple databases so you can compare the runtime " +
             "performance. I will search a MySQL database, a MongoDB database, a Lucene Index, and using Brute Force..."
     })
-}).then(() => {                                                      // tenth message
-    mySqlSearch();
+}).then(() => {                                                      // sixth message
 
     return botui.message.add({
-        delay: 6000,
+        delay: 8000,
         loading: true,
         content: "Searching with MySQL...",
     })
-}).then(() => {                                                      // eleventh message
+}).then(() => {                                                      // seventh message
     return botui.message.add( {
         delay: 2000,
         loading: true,
-        content: "It took me " + window.result.runtime + " milliseconds" + " to find the keyword '" + window.result.keyword + "' "
-            + window.result.hits + " times in " + window.result.year
+        content: "It took me " + window.mySqlResponse.runtime + " milliseconds" + " to find the keyword '" +
+            window.mySqlResponse.keyword + "' " + window.mySqlResponse.hits + " times"
     })
-}).then(() => {                                                      // twelfth message
-    mongoDBSearch();
+}).then(() => {                                                      // eighth message
 
     return botui.message.add({
-        delay: 3000,
+        delay: 4000,
         loading: true,
         content: "Searching with MongoDB...",
+    })
+}).then(() => {                                                      // ninth message
+    return botui.message.add({
+        delay: 2000,
+        loading: true,
+        content: "It took me " + window.mongoDBResponse.runtime + " milliseconds" + " to find the keyword '" +
+            window.mongoDBResponse.keyword + "' " + window.mongoDBResponse.hits + " times"
+    })
+}).then(() => {                                                      // tenth message
+
+    return botui.message.add({
+        delay: 4000,
+        loading: true,
+        content: "Searching with Lucene Index...",
+    })
+}).then(() => {                                                      // eleventh message
+    return botui.message.add({
+        delay: 2000,
+        loading: true,
+        content: "It took me " + window.luceneResponse.runtime + " milliseconds" + " to find the keyword '" +
+            window.luceneResponse.keyword + "' " + window.luceneResponse.hits + " times"
+    })
+}).then(() => {                                                      // twelth message
+    return botui.message.add({
+        delay: 4000,
+        loading: true,
+        content: "Searching with Brute Force...",
     })
 }).then(() => {                                                      // thirteenth message
     return botui.message.add({
         delay: 2000,
         loading: true,
-        content: "It took me " + window.result.runtime + " milliseconds" + " to find the keyword '" + window.result.keyword + "' "
-            + window.result.hits + " times in " + window.result.year
-    })
-}).then(() => {                                                      // fourteenth message
-    luceneIndexSearch();
-
-    return botui.message.add({
-        delay: 3000,
-        loading: true,
-        content: "Searching with Lucene Index...",
-    })
-}).then(() => {                                                      // fifteenth message
-    return botui.message.add({
-        delay: 2000,
-        loading: true,
-        content: "It took me " + window.result.runtime + " milliseconds" + " to find the keyword '" + window.result.keyword + "' "
-            + window.result.hits + " times in " + window.result.year
+        content: "It took me " + window.bruteForeceResponse.runtime + " milliseconds" + " to find the keyword '" +
+            window.bruteForeceResponse.keyword + "' " + window.bruteForeceResponse.hits + " times"
     })
 });

@@ -28,6 +28,10 @@ public class BFParser extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private List<Article> articles;                             // A container of PubMed articles
     private Storage storage;                                    // Persist search history
+    private static Logger logger;                               // Logs application events to files
+    private double startTime;                                   // Tracks the runtime of the query
+    private double endTime;                                     // Tracks the runtime of the query
+    private double runtime;                                     // The total runtime of the query
 
     /**
      * Initialize a new Parser
@@ -38,7 +42,8 @@ public class BFParser extends DefaultHandler {
 
         fileName = Config.OUTPUT_FILE;
         articles = new ArrayList<>();
-        storage = new Storage();
+        storage = new Storage();                                     // Store search parameters onto disk
+        logger = Logger.getInstance();                               // Log application events to a file
     }
 
     /**
@@ -54,17 +59,16 @@ public class BFParser extends DefaultHandler {
         this.fileName = fileName;
         this.articles = articles;
         this.storage = storage;
+        logger = Logger.getInstance();                               // Log application events to a file
     }
 
     /**
      * Brute force event-based processing of an XML document assigned to this objects fileName member variable
      *
      * @param searchParam A value to be searched
-     * @param hits        The maximum number of hits allowed. A hit occurs when the searchParam is found while parsing the
-     *                    document
      * @return The runtime of the current search
      */
-    public long parse(String searchParam, int hits) {
+    public long parse(String searchParam) {
 
         boolean isID = false;
         boolean isMonth = false;
@@ -74,8 +78,6 @@ public class BFParser extends DefaultHandler {
         String month = "";
         String year = "";
         String title = "";
-        long startTime = 0;
-        long endTime = 0;
         int hitCount = 0;
 
         save(searchParam);
@@ -124,7 +126,7 @@ public class BFParser extends DefaultHandler {
                     case XMLStreamConstants.END_ELEMENT:
                         EndElement endElement = xmlEvent.asEndElement();
 
-                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE) && hitCount < hits) {
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE)) { //&& hitCount < hits) {
                             if (title.toLowerCase().contains(searchParam.toLowerCase())) {
                                 ++hitCount;                                          // Track the number of hits
                                 articles.add(new Article(id, month, year, title));   // Track articles in container
@@ -133,11 +135,14 @@ public class BFParser extends DefaultHandler {
                         break;
                 }
             }
+
             endTime = System.currentTimeMillis();
+            runtime = endTime - startTime;
+            logger.runtime(Config.BRUTEFORCE, runtime);
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
-        return endTime - startTime;                                                 // Runtime of current search
+        return hitCount;                                                       // Number of times keyword was found
     }
 
     /**
@@ -145,6 +150,14 @@ public class BFParser extends DefaultHandler {
      */
     public void print() {
         storage.print();                                                       // Delegate to the storage object
+    }
+
+    /**
+     * Accessor method that return the total runtime of the query
+     * @return The runtime of the query
+     */
+    public double getRunTime() {
+        return runtime;
     }
 
     /**

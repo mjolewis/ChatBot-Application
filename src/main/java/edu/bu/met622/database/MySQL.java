@@ -2,7 +2,9 @@ package edu.bu.met622.database;
 
 import edu.bu.met622.model.Article;
 import edu.bu.met622.resources.Config;
+import edu.bu.met622.utils.Logger;
 
+import java.io.File;
 import java.sql.*;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class MySQL {
     private static Statement stmt;                              // Holds a SQL command
     private static PreparedStatement pStmt;                     // A wrapper for a Statement object to prevent injection
     private static boolean exists = false;                      // True if the table has been built; Otherwise false
+    private static Logger logger;                               // Logs application events to files
     private double startTime;                                   // Tracks the runtime of the query
     private double endTime;                                     // Tracks the runtime of the query
     private double runtime;                                     // The total runtime of the query
@@ -28,6 +31,7 @@ public class MySQL {
      * @throws OutOfMemoryError Indicates insufficient memory for this new object
      */
     private MySQL() {
+        logger = Logger.getInstance();                          // Log application events to a file
     }
 
     /**
@@ -104,6 +108,42 @@ public class MySQL {
     }
 
     /**
+     * A query to count the number of times the given keyword appears. For example, “flu” or “obesity"
+     *
+     * @param keyword A value to be searched for
+     * @return The number of times the keyword was found in the specified year
+     */
+    public double query(String keyword) {
+        double hits = 0;
+
+        String sqlQuery = "SELECT * FROM articles WHERE title LIKE ?";
+        try {
+            startTime = System.currentTimeMillis();                       // Start the runtime clock
+
+            stmt = con.createStatement();                                 // A Statement object holds SQL commands
+
+            // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
+            pStmt = con.prepareStatement(sqlQuery);
+            pStmt.setString(1, "%" + keyword + "%");
+
+            ResultSet rs = pStmt.executeQuery();                          // Execute the query
+            endTime = System.currentTimeMillis();                         // Stop the runtime clock
+            runtime = endTime - startTime;                                // The total runtime of the query
+
+            logger.runtime(Config.MYSQL, runtime);
+
+            // Determine the number of times the keyword is in the database
+            while (rs != null && rs.next()) {
+                ++hits;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return hits;
+    }
+
+    /**
      * A query to count the number of times the given keyword appears in the specified year. For example, “flu”,
      * “obesity"
      *
@@ -135,7 +175,6 @@ public class MySQL {
             }
 
         } catch (SQLException e) {
-            // TODO: 10/31/20 write to log file
             e.printStackTrace();
         }
         return hits;

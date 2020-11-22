@@ -1,28 +1,28 @@
 package edu.bu.met622.model;
 
+/**********************************************************************************************************************
+ * A data model for the response message
+ *
+ * @author Michael Lewis
+ * @version November 20, 2020 - Kickoff
+ *********************************************************************************************************************/
 public class ServerResponse {
 
     private String keyword;
-    private String year;
     private double hits;
     private double runtime;
 
     public ServerResponse() {}
 
-    public ServerResponse(String keyword, String year, double hits, double runtime) {
+    public ServerResponse(String keyword, double hits, double runtime) {
 
         this.keyword = keyword;
-        this.year = year;
         this.hits = hits;
         this.runtime = runtime;
     }
 
     public String getKeyword() {
         return keyword;
-    }
-
-    public String getYear() {
-        return year;
     }
 
     public double getHits() {

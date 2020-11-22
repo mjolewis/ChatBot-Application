@@ -13,29 +13,8 @@ public class Config {
     // Files
     public static final String FILE_1 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1334.xml";
     public static final String FILE_2 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1335.xml";
-
-    // Database selection
-    public static String BF_SEARCH = "Brute Force (y/n): ";
-    public static String LUCENE_SEARCH = "Lucene Index (y/n): ";
-    public static String SQL_DB_SEARCH = "SQL Database (y/n): ";
-    public static String MONGODB_SEARCH = "MongoDB (y/n): ";
-    public static String NO_SELECTION = "No selection made. Try again...";
-
-    // User input
-    public static final String ENTER_KEYWORD = "Enter search parameter: ";
-    public static final String ENTER_YEAR = "Enter year of search: ";
-    public static final String ENTER_NUM_OF_DOCS = "Number of docs: ";
-    public static final String INVALID_INPUT = "Invalid input. Try Again.";
-    public static final String DISPLAY_DOCUMENTS = "Display documents (y/n)? ";
-    public static final String DISPLAY_RUNTIMES = "Display run times (y/n)? ";
-    public static final String DISPLAY_SEARCH_HISTORY = "Display search history (y/n)? ";
-    public static final String SEARCH_AGAIN = "Search again (y/n)? ";
-    public static final String RANGE_QUERY = "Range search (y/n): ";
-    public static final String RANGE_NOTIFICATION = "You selected a range based search. Enter start month, start year, end month, end year";
-    public static final String ENTER_START_MONTH = "Enter start month: ";
-    public static final String ENTER_START_YEAR = "Enter start year: ";
-    public static final String ENTER_END_MONTH = "Enter end month: ";
-    public static final String ENTER_END_YEAR = "Enter end year: ";
+    public static final String RUNTIME_LOG = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/runtime.csv";
+    public static final String ERROR_LOG = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/errors.csv";
 
     // Parser
     public static final String OPENING_ROOT_TAG = "<PubmedArticleSet>";
@@ -54,7 +33,11 @@ public class Config {
     public static final String COMMA_DELIMITER = ",";
     public static final String NEW_LINE_SEPARATOR = "\n";
 
+    // Brute Force
+    public static final String BRUTEFORCE = "Brute Force";
+
     // Lucene Indexing
+    public static final String LUCENE_INDEX = "Lucene Index";
     public static final String INDEX_DIRECTORY = "index_directory";
 
     // Conversions
@@ -64,6 +47,7 @@ public class Config {
     public static final String POPULATING_DB = "Populating database...";
 
     // MySQL Database
+    public static final String MYSQL = "MySQL";
     public static final String SQL_DB = "jdbc:mysql://localhost:3306/met622?useTimezone=true&serverTimezone=UTC";
     public static final String SQL_USER = "root";
     public static final String SQL_PWD = "root";
@@ -81,6 +65,7 @@ public class Config {
                                               "title VARCHAR(1000));";
 
     // MongoDB
+    public static final String MONGODB = "MongoDB";
     public static final String MONGO_DB = "met622";
     public static final String COLLECTION = "articles";
     public static final String DOCUMENT_ID = "id";
