@@ -2,10 +2,7 @@ package edu.bu.met622.utils;
 
 import edu.bu.met622.resources.ApplicationConfig;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**********************************************************************************************************************
  * Log application events
@@ -45,7 +42,7 @@ public class Logger {
     /**
      * Log the runtime of the specified search type
      *
-     * @param searchType The type of search that was performed (e.g. MySQL, MongoDB, Lucene Index, Brute Force)
+     * @param searchType The type of search that was performed
      * @param runtime    The total runtime of the current search
      */
     public void runtime(String searchType, double runtime) {
