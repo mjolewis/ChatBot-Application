@@ -1,7 +1,7 @@
 package edu.bu.met622.database;
 
 import edu.bu.met622.model.Article;
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -35,7 +35,7 @@ public class LuceneIndex {
      */
     public LuceneIndex() {
         try {
-            Directory indexDir = FSDirectory.open(Paths.get(Config.INDEX_DIRECTORY));
+            Directory indexDir = FSDirectory.open(Paths.get(ApplicationConfig.INDEX_DIRECTORY));
             IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
             indexWriter = new IndexWriter(indexDir, config);
         } catch (IOException e) {
@@ -55,12 +55,12 @@ public class LuceneIndex {
                 Document doc = new Document();             // Create documents that will be stored in the index
 
                 // Tokenize the Article Title
-                doc.add(new TextField(Config.ARTICLE_TITLE, article.getTitle(), Field.Store.YES));
+                doc.add(new TextField(ApplicationConfig.ARTICLE_TITLE, article.getTitle(), Field.Store.YES));
 
                 // Add the article ID and publication date as atomic values
-                doc.add(new StringField(Config.PMID, article.getId(), Field.Store.YES));
-                doc.add(new StringField(Config.MONTH, article.getMonth(), Field.Store.YES));
-                doc.add(new StringField(Config.YEAR, article.getYear(), Field.Store.YES));
+                doc.add(new StringField(ApplicationConfig.PMID, article.getId(), Field.Store.YES));
+                doc.add(new StringField(ApplicationConfig.MONTH, article.getMonth(), Field.Store.YES));
+                doc.add(new StringField(ApplicationConfig.YEAR, article.getYear(), Field.Store.YES));
 
                 indexWriter.addDocument(doc);              // Add the document to the index
                 exists = true;                             // Prevents the XML document from being re-parsed

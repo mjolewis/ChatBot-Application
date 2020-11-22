@@ -1,6 +1,6 @@
 package edu.bu.met622.utils;
 
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,8 +24,8 @@ public class Logger {
      * @throws OutOfMemoryError Indicates insufficient memory for this new Logger
      */
     private Logger() {
-        runtimeLog = new File(Config.RUNTIME_LOG);
-        errorLog = new File(Config.ERROR_LOG);
+        runtimeLog = new File(ApplicationConfig.RUNTIME_LOG);
+        errorLog = new File(ApplicationConfig.ERROR_LOG);
     }
 
     /**
@@ -50,7 +50,7 @@ public class Logger {
      */
     public void runtime(String searchType, double runtime) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(runtimeLog, true))) {
-            writer.write(searchType + Config.COMMA_DELIMITER + runtime + Config.NEW_LINE_SEPARATOR);
+            writer.write(searchType + ApplicationConfig.COMMA_DELIMITER + runtime + ApplicationConfig.NEW_LINE_SEPARATOR);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -2,16 +2,13 @@ package edu.bu.met622;
 
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
-import edu.bu.met622.resources.DbSelector;
-import edu.bu.met622.resources.QuerySelector;
 import edu.bu.met622.database.LuceneIndex;
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**********************************************************************************************************************
  * Mediator class to build the simulation
@@ -32,7 +29,7 @@ public class Builder {
      * Notify the user that the ChatBot session is initiating
      */
     public void startMessage() {
-        System.out.println(Config.START_MESSAGE);
+        System.out.println(ApplicationConfig.START_MESSAGE);
     }
 
     /**
@@ -41,8 +38,8 @@ public class Builder {
      */
     public void build() {
         ArrayList<String> selectedFiles = new ArrayList<>();
-        selectedFiles.add(Config.FILE_1);
-        selectedFiles.add(Config.FILE_2);
+        selectedFiles.add(ApplicationConfig.FILE_1);
+        selectedFiles.add(ApplicationConfig.FILE_2);
 
         mergeXML(selectedFiles);
         initDabases();
@@ -52,21 +49,21 @@ public class Builder {
      * Close all database resources
      */
     public void cleanup() {
-        System.out.print(Config.CLOSING_CONNECTIONS);                     // Notify user that connections are closing
+        System.out.print(ApplicationConfig.CLOSING_CONNECTIONS);                     // Notify user that connections are closing
 
         MySQL.closeConnection();                                          // Close the database connection
         MySQL.closeStatement();                                           // Close the SQL statement object
         MySQL.closePreparedStatement();                                   // Close the PreparedStatement object
         MongoDB.closeConnection();                                                  // Close the MongoDB client
 
-        System.out.print(Config.CLOSED_CONNECTIONS);                      // Notify user that connections are closed
+        System.out.print(ApplicationConfig.CLOSED_CONNECTIONS);                      // Notify user that connections are closed
     }
 
     /**
      * Notify the user that the ChatBot session has terminated
      */
     public void endMessage() {
-        System.out.print(Config.END_MESSAGE);                            // Terminate ChatBot message for the client
+        System.out.print(ApplicationConfig.END_MESSAGE);                            // Terminate ChatBot message for the client
     }
 
     //*****************************************************************************************************************
@@ -78,7 +75,7 @@ public class Builder {
      */
     private void mergeXML(ArrayList<String> selectedFiles) {
 
-        FileMerger fileMerger = new FileMerger(selectedFiles, Config.OUTPUT_FILE);
+        FileMerger fileMerger = new FileMerger(selectedFiles, ApplicationConfig.OUTPUT_FILE);
         try {
             fileMerger.merge();
         } catch (IOException e) {

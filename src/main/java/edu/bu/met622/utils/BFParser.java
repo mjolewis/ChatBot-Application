@@ -1,6 +1,6 @@
 package edu.bu.met622.utils;
 
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -40,7 +40,7 @@ public class BFParser extends DefaultHandler {
      */
     public BFParser() {
 
-        fileName = Config.OUTPUT_FILE;
+        fileName = ApplicationConfig.OUTPUT_FILE;
         articles = new ArrayList<>();
         storage = new Storage();                                     // Store search parameters onto disk
         logger = Logger.getInstance();                               // Log application events to a file
@@ -96,13 +96,13 @@ public class BFParser extends DefaultHandler {
                         StartElement startElement = xmlEvent.asStartElement();
                         String qName = startElement.getName().getLocalPart();
 
-                        if (qName.equalsIgnoreCase(Config.PMID)) {
+                        if (qName.equalsIgnoreCase(ApplicationConfig.PMID)) {
                             isID = true;
-                        } else if (qName.equalsIgnoreCase(Config.MONTH)) {
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.MONTH)) {
                             isMonth = true;
-                        } else if (qName.equalsIgnoreCase(Config.YEAR)) {
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.YEAR)) {
                             isYear = true;
-                        } else if (qName.equalsIgnoreCase(Config.ARTICLE_TITLE)) {
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.ARTICLE_TITLE)) {
                             isTitle = true;
                         }
                         break;
@@ -126,7 +126,7 @@ public class BFParser extends DefaultHandler {
                     case XMLStreamConstants.END_ELEMENT:
                         EndElement endElement = xmlEvent.asEndElement();
 
-                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE)) { //&& hitCount < hits) {
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(ApplicationConfig.PUB_MED_ARTICLE)) { //&& hitCount < hits) {
                             if (title.toLowerCase().contains(searchParam.toLowerCase())) {
                                 ++hitCount;                                          // Track the number of hits
                                 articles.add(new Article(id, month, year, title));   // Track articles in container
@@ -138,7 +138,7 @@ public class BFParser extends DefaultHandler {
 
             endTime = System.currentTimeMillis();
             runtime = endTime - startTime;
-            logger.runtime(Config.BRUTEFORCE, runtime);
+            logger.runtime(ApplicationConfig.BRUTEFORCE, runtime);
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
@@ -199,7 +199,7 @@ public class BFParser extends DefaultHandler {
      */
     private void save(String searchParam) {
         LocalDateTime timestamp = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Config.DATE_FORMAT);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ApplicationConfig.DATE_FORMAT);
 
         storage.saveToMemory(searchParam, timestamp.format(dateTimeFormatter));
         try {

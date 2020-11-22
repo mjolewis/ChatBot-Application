@@ -1,7 +1,5 @@
 package edu.bu.met622.model;
 
-//import javax.persistence.Entity;
-//import javax.persistence.Id;
 import java.util.Objects;
 
 /**********************************************************************************************************************
@@ -9,7 +7,6 @@ import java.util.Objects;
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
-//@Entity
 public class Article {
 
     private String id;

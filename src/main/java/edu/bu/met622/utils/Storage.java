@@ -1,6 +1,6 @@
 package edu.bu.met622.utils;
 
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class Storage {
      */
     public Storage() {
         searchHistory = new HashMap<>();
-        String fileName = Config.SEARCH_HISTORY;
+        String fileName = ApplicationConfig.SEARCH_HISTORY;
         file = new File(fileName);
         bufferedWriter = null;
         bufferedReader = null;
@@ -57,8 +57,8 @@ public class Storage {
                 file.createNewFile();
             }
             bufferedWriter = new BufferedWriter(new FileWriter(file, true));
-            bufferedWriter.write(searchParam.toLowerCase() + Config.COMMA_DELIMITER +
-                    timestamp + Config.NEW_LINE_SEPARATOR);
+            bufferedWriter.write(searchParam.toLowerCase() + ApplicationConfig.COMMA_DELIMITER +
+                    timestamp + ApplicationConfig.NEW_LINE_SEPARATOR);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -122,7 +122,7 @@ public class Storage {
         try {
             bufferedReader = new BufferedReader(new FileReader(file));
             while ((line = bufferedReader.readLine()) != null) {
-                items = line.split(Config.COMMA_DELIMITER);                 // K,V pair split by "," in CSV file
+                items = line.split(ApplicationConfig.COMMA_DELIMITER);                 // K,V pair split by "," in CSV file
 
                 if (!searchHistory.containsKey(items[0])) {                    // If the key isn't in the collection
                     ArrayList<String> values = new ArrayList<>();

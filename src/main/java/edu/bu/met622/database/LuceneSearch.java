@@ -1,6 +1,6 @@
 package edu.bu.met622.database;
 
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.utils.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
@@ -38,7 +38,7 @@ public class LuceneSearch {
      */
     public LuceneSearch() {
 
-        parser = new QueryParser(Config.ARTICLE_TITLE, new StandardAnalyzer());
+        parser = new QueryParser(ApplicationConfig.ARTICLE_TITLE, new StandardAnalyzer());
         logger = Logger.getInstance();                               // Log application events to a file
     }
 
@@ -55,7 +55,7 @@ public class LuceneSearch {
             startTime = System.currentTimeMillis();
 
             Query query = parser.parse(searchParam);
-            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(Config.INDEX_DIRECTORY))));
+            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(ApplicationConfig.INDEX_DIRECTORY))));
             TopDocs docs = searcher.search(query, numOfDocs);
 
             endTime = System.currentTimeMillis();
@@ -66,7 +66,7 @@ public class LuceneSearch {
         }
 
         runtime = endTime - startTime;
-        logger.runtime(Config.LUCENE_INDEX, runtime);
+        logger.runtime(ApplicationConfig.LUCENE_INDEX, runtime);
 
         return hits.length;                                     // The number of times the keyword was found
     }
@@ -80,10 +80,10 @@ public class LuceneSearch {
 
             try {
                 Document doc = searcher.doc(docId);
-                System.out.print(i + 1 + ") " + "Pub ID: " + doc.get(Config.PMID) + "\n" +
-                        "\tTitle: " + doc.get(Config.ARTICLE_TITLE) + "\n" +
-                        "\tMonth: " + doc.get(Config.MONTH) + "\n" +
-                        "\tYear: " + doc.get(Config.YEAR) + "\n");
+                System.out.print(i + 1 + ") " + "Pub ID: " + doc.get(ApplicationConfig.PMID) + "\n" +
+                        "\tTitle: " + doc.get(ApplicationConfig.ARTICLE_TITLE) + "\n" +
+                        "\tMonth: " + doc.get(ApplicationConfig.MONTH) + "\n" +
+                        "\tYear: " + doc.get(ApplicationConfig.YEAR) + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }

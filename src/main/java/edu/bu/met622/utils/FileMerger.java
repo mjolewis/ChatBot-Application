@@ -1,6 +1,6 @@
 package edu.bu.met622.utils;
 
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class FileMerger {
      */
     public FileMerger() {
         filePaths = new ArrayList<>();
-        mergedFileName = Config.OUTPUT_FILE;
+        mergedFileName = ApplicationConfig.OUTPUT_FILE;
         stringBuilder = new StringBuilder();
     }
 
@@ -73,26 +73,26 @@ public class FileMerger {
                     while ((fileContent = reader.readLine()) != null) {
 
                         // Only include a closing root tag when processing the last file
-                        if (!(fileContent.contains(Config.CLOSING_ROOT_TAG))) {
+                        if (!(fileContent.contains(ApplicationConfig.CLOSING_ROOT_TAG))) {
                             stringBuilder.append(fileContent);
                         }
                     }
                 } else if (fileCount > 1 && fileCount < filePaths.size()) {    // Process [second file, last file)
                     while ((fileContent = reader.readLine()) != null &&
-                            !fileContent.equals(Config.OPENING_ROOT_TAG)) {
+                            !fileContent.equals(ApplicationConfig.OPENING_ROOT_TAG)) {
                         reader.readLine();
                     }
 
                     while ((fileContent = reader.readLine()) != null) {        // Read content (open tag, closing tag)
 
                         // Closing tag only added after the last file is processed
-                        if (!(fileContent.contains(Config.CLOSING_ROOT_TAG))) {
+                        if (!(fileContent.contains(ApplicationConfig.CLOSING_ROOT_TAG))) {
                             stringBuilder.append(fileContent);
                         }
                     }
                 } else {                                                       // Process last file
                     while ((fileContent = reader.readLine()) != null &&
-                            !fileContent.equals(Config.OPENING_ROOT_TAG)) {
+                            !fileContent.equals(ApplicationConfig.OPENING_ROOT_TAG)) {
                         reader.readLine();
                     }
 

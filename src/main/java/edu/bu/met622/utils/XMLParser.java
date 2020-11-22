@@ -3,7 +3,7 @@ package edu.bu.met622.utils;
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.database.LuceneIndex;
-import edu.bu.met622.resources.Config;
+import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -40,7 +40,7 @@ public class XMLParser extends DefaultHandler {
      */
     public XMLParser() {
 
-        fileName = Config.OUTPUT_FILE;
+        fileName = ApplicationConfig.OUTPUT_FILE;
         articles = new ArrayList<>();
         storage = new Storage();
         luceneIndex = new LuceneIndex();
@@ -88,13 +88,13 @@ public class XMLParser extends DefaultHandler {
                         StartElement startElement = xmlEvent.asStartElement();
                         String qName = startElement.getName().getLocalPart();
 
-                        if (qName.equalsIgnoreCase(Config.PMID)) {
+                        if (qName.equalsIgnoreCase(ApplicationConfig.PMID)) {
                             isID = true;
-                        } else if (qName.equalsIgnoreCase(Config.MONTH)) {
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.MONTH)) {
                             isMonth = true;
-                        } else if (qName.equalsIgnoreCase(Config.YEAR)) {
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.YEAR)) {
                             isYear = true;
-                        } else if (qName.equalsIgnoreCase(Config.ARTICLE_TITLE)) {
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.ARTICLE_TITLE)) {
                             isTitle = true;
                         }
                         break;
@@ -118,7 +118,7 @@ public class XMLParser extends DefaultHandler {
                     case XMLStreamConstants.END_ELEMENT:
                         EndElement endElement = xmlEvent.asEndElement();
 
-                        if (endElement.getName().getLocalPart().equalsIgnoreCase(Config.PUB_MED_ARTICLE)) {
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(ApplicationConfig.PUB_MED_ARTICLE)) {
                             articles.add(new Article(id, month, year, title));
                         }
                         break;
@@ -198,7 +198,7 @@ public class XMLParser extends DefaultHandler {
      */
     private void save(String searchParam) {
         LocalDateTime timestamp = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(Config.DATE_FORMAT);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ApplicationConfig.DATE_FORMAT);
 
         storage.saveToMemory(searchParam, timestamp.format(dateTimeFormatter));
         try {
