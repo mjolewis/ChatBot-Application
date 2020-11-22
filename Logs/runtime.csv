@@ -1,39 +1,36 @@
-MySQL,110.0
-MongoDB,111.0
-Lucene Index,282.0
-Brute Force,13914.0
-MySQL,97.0
-MongoDB,80.0
-Lucene Index,64.0
-Brute Force,10986.0
-MySQL,97.0
-MongoDB,106.0
-Lucene Index,257.0
-Brute Force,11219.0
-MySQL,94.0
-MongoDB,112.0
-Lucene Index,221.0
-Brute Force,10904.0
-MySQL,85.0
-MongoDB,83.0
-Lucene Index,54.0
-Brute Force,10148.0
-MySQL,87.0
-MongoDB,80.0
-Lucene Index,50.0
-Brute Force,14021.0
-MySQL,89.0
-MongoDB,113.0
-Lucene Index,242.0
-Brute Force,11769.0
-MySQL,105.0
-MongoDB,108.0
-Lucene Index,337.0
-Brute Force,10001.0
-MySQL,98.0
-MongoDB,123.0
-Lucene Index,266.0
+MySQL,227.0
+MongoDB,380.0
+Lucene Index,570.0
+Brute Force,13142.0
+MySQL,185.0
+MongoDB,304.0
+Lucene Index,575.0
+Brute Force,12528.0
 MySQL,170.0
-MongoDB,349.0
-Lucene Index,361.0
-Brute Force,12807.0
+Lucene Index,229.0
+MongoDB,368.0
+Brute Force,12298.0
+MySQL,372.0
+MongoDB,416.0
+Lucene Index,862.0
+Brute Force,13381.0
+MySQL,155.0
+Lucene Index,394.0
+MongoDB,466.0
+Brute Force,13343.0
+MySQL,217.0
+MongoDB,384.0
+Lucene Index,400.0
+Brute Force,13630.0
+MySQL,193.0
+MongoDB,302.0
+Lucene Index,474.0
+Brute Force,14761.0
+Lucene Index,129.0
+MySQL,147.0
+MongoDB,191.0
+Brute Force,14474.0
+MySQL,191.0
+MongoDB,251.0
+Lucene Index,362.0
+Brute Force,12260.0

@@ -69,6 +69,9 @@ public class ApplicationConfig {
     public static final String DOCUMENT_TITLE = "title";
     public static final String DUPLICATE_ENTRY = "Duplicate entry";
 
+    // Chart info
+    public static final String CHART_TITLE = "Runtime Results";
+
     // Cleanup messages
     public static final String CLOSING_CONNECTIONS = "\nClosing Database Connections...";
     public static final String CLOSED_CONNECTIONS = "\nDatabase Connections Closed...";
