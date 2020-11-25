@@ -36,6 +36,10 @@ stompClient.connect({}, function (frame) {
     stompClient.subscribe('/query/bruteforce/response', function (response) {
         window.bruteForeceResponse = JSON.parse(response.body);
     });
+
+    // Register the Brute Force response
+    stompClient.subscribe('/query/graph/response', function (response) {
+    });
 });
 
 /**
@@ -73,6 +77,13 @@ function bruteForceSearch() {
     stompClient.send("/app/bruteforce/search", {});
 }
 
+/**
+ * Read the runtime CSV file and plot the results
+ */
+function loadGraph() {
+    stompClient.send("/app/graph", {});
+}
+
 //*********************************************************************************************************************
 // Start the BotUI Conversation
 //*********************************************************************************************************************
@@ -90,10 +101,11 @@ botui.message.add({                                                  // first me
         content: "If you enter a keyword, I'll search across PubMed for it...",
     })
 }).then(() => {                                                      // third message
-    return botui.message.add( {
-        delay: 3000,
+    return botui.message.add({
+        delay: 2000,
         loading: true,
-        content: "You can enter a keyword like 'Flu'?"
+        content: "For simulation purposes, I am going to search multiple databases and compare the runtime " +
+            "performance. I will search with MySQL, MongoDB, Lucene Index, and Brute Force..."
     })
 }).then(() => {
     getUserInput();
@@ -105,7 +117,7 @@ botui.message.add({                                                  // first me
 function getUserInput() {
     botui.action.text({                                       // User inputs the keyword
         action: {
-            delay: 1000,
+            delay: 3000,
             placeholder: "Enter a keyword"
         }
     }).then(function (res) {                                   // fourth message
@@ -125,16 +137,10 @@ function getUserInput() {
         luceneIndexSearch();
         bruteForceSearch();
 
-        return botui.message.add({
-            delay: 2000,
-            loading: true,
-            content: "For simulation purposes, I am going to search multiple databases and compare the runtime " +
-                "performance. I will search with MySQL, MongoDB, Lucene Index, and Brute Force..."
-        })
     }).then(() => {                                                      // sixth message
 
         return botui.message.add({
-            delay: 8000,
+            delay: 2000,
             loading: true,
             content: "Searching with MySQL...",
         })
@@ -188,14 +194,14 @@ function getUserInput() {
         })
     }).then(() => {
         return botui.message.add({
-            delay: 2000,
+            delay: 4000,
             loading: true,
             content: "I am done searching. Would you like to search again?"
         })
     }).then(() => {
         return botui.action.text({
             action: {
-                delay: 1000,
+                delay: 2000,
                 placeholder: "Enter yes or no"
             }
         })
@@ -203,10 +209,11 @@ function getUserInput() {
         if (res.value === "yes" || res.value === "Yes") {
             getUserInput();
         } else {
+            loadGraph();
             return botui.message.add({
                 delay: 2000,
                 loading: true,
-                content: "Okay, then we're all done"
+                content: "Alright, we're done searching. I'll plot the results now..."
             })
         }
     })

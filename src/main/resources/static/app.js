@@ -36,6 +36,10 @@ stompClient.connect({}, function (frame) {
     stompClient.subscribe('/query/bruteforce/response', function (response) {
         window.bruteForeceResponse = JSON.parse(response.body);
     });
+
+    // Register the Graph response
+    stompClient.subscribe('/query/graph/response', function (response) {
+    });
 });
 
 /**
@@ -73,6 +77,13 @@ function bruteForceSearch() {
     stompClient.send("/app/bruteforce/search", {});
 }
 
+/**
+ * Read the runtime CSV file and plot the results
+ */
+function loadGraph() {
+    stompClient.send("/app/graph", {});
+}
+
 //*********************************************************************************************************************
 // Start the BotUI Conversation
 //*********************************************************************************************************************
@@ -90,10 +101,11 @@ botui.message.add({                                                  // first me
         content: "If you enter a keyword, I'll search across PubMed for it...",
     })
 }).then(() => {                                                      // third message
-    return botui.message.add( {
-        delay: 3000,
+    return botui.message.add({
+        delay: 2000,
         loading: true,
-        content: "You can enter a keyword like 'Flu'?"
+        content: "For simulation purposes, I am going to search multiple databases and compare the runtime " +
+            "performance. I will search with MySQL, MongoDB, Lucene Index, and Brute Force..."
     })
 }).then(() => {
     getUserInput();
@@ -105,7 +117,7 @@ botui.message.add({                                                  // first me
 function getUserInput() {
     botui.action.text({                                       // User inputs the keyword
         action: {
-            delay: 1000,
+            delay: 3000,
             placeholder: "Enter a keyword"
         }
     }).then(function (res) {                                   // fourth message
@@ -125,22 +137,16 @@ function getUserInput() {
         luceneIndexSearch();
         bruteForceSearch();
 
-        return botui.message.add({
-            delay: 2000,
-            loading: true,
-            content: "For simulation purposes, I am going to search multiple databases and compare the runtime " +
-                "performance. I will search with MySQL, MongoDB, Lucene Index, and Brute Force..."
-        })
     }).then(() => {                                                      // sixth message
 
         return botui.message.add({
-            delay: 8000,
+            delay: 2200,
             loading: true,
             content: "Searching with MySQL...",
         })
     }).then(() => {                                                      // seventh message
         return botui.message.add( {
-            delay: 2000,
+            delay: 2200,
             loading: true,
             content: "It took me " + window.mySqlResponse.runtime + " milliseconds" + " to find the keyword '" +
                 window.mySqlResponse.keyword + "' " + window.mySqlResponse.hits + " times"
@@ -148,13 +154,13 @@ function getUserInput() {
     }).then(() => {                                                      // eighth message
 
         return botui.message.add({
-            delay: 4000,
+            delay: 4500,
             loading: true,
             content: "Searching with MongoDB...",
         })
     }).then(() => {                                                      // ninth message
         return botui.message.add({
-            delay: 2000,
+            delay: 2200,
             loading: true,
             content: "It took me " + window.mongoDBResponse.runtime + " milliseconds" + " to find the keyword '" +
                 window.mongoDBResponse.keyword + "' " + window.mongoDBResponse.hits + " times"
@@ -162,40 +168,40 @@ function getUserInput() {
     }).then(() => {                                                      // tenth message
 
         return botui.message.add({
-            delay: 4000,
+            delay: 4500,
             loading: true,
             content: "Searching with Lucene Index...",
         })
     }).then(() => {                                                      // eleventh message
         return botui.message.add({
-            delay: 2000,
+            delay: 2200,
             loading: true,
             content: "It took me " + window.luceneResponse.runtime + " milliseconds" + " to find the keyword '" +
                 window.luceneResponse.keyword + "' " + window.luceneResponse.hits + " times"
         })
     }).then(() => {                                                      // twelth message
         return botui.message.add({
-            delay: 4000,
+            delay: 4500,
             loading: true,
             content: "Searching with Brute Force...",
         })
     }).then(() => {                                                      // thirteenth message
         return botui.message.add({
-            delay: 2000,
+            delay: 2200,
             loading: true,
             content: "It took me " + window.bruteForeceResponse.runtime + " milliseconds" + " to find the keyword '" +
                 window.bruteForeceResponse.keyword + "' " + window.bruteForeceResponse.hits + " times"
         })
     }).then(() => {
         return botui.message.add({
-            delay: 2000,
+            delay: 4500,
             loading: true,
             content: "I am done searching. Would you like to search again?"
         })
     }).then(() => {
         return botui.action.text({
             action: {
-                delay: 1000,
+                delay: 2000,
                 placeholder: "Enter yes or no"
             }
         })
@@ -203,10 +209,11 @@ function getUserInput() {
         if (res.value === "yes" || res.value === "Yes") {
             getUserInput();
         } else {
+            loadGraph();
             return botui.message.add({
                 delay: 2000,
                 loading: true,
-                content: "Okay, then we're all done"
+                content: "Alright, we're done searching. I'll plot the results now..."
             })
         }
     })

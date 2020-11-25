@@ -5,10 +5,15 @@ import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.model.ClientMessage;
 import edu.bu.met622.model.ServerResponse;
+import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.utils.BFParser;
+import edu.bu.met622.utils.Grapher;
+import javafx.application.Application;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+
+import javax.swing.*;
 
 /**********************************************************************************************************************
  * A web request handler
@@ -90,5 +95,23 @@ public class ResponseController {
         double runtime = bfParser.getRunTime();
 
         return new ServerResponse(keyword, hits, runtime);
+    }
+
+    /**
+     * Maps messages to the /graph endpoint by matching the declared patterns to a destination extracted from the
+     * message. Sends the response to the /query/graph/response endpoint
+     */
+    @MessageMapping("/graph")
+    @SendTo("/query/graph/response")
+    public void loadGraph() {
+        Grapher grapher = new Grapher();
+
+        grapher.graph();
+
+        grapher.setAlwaysOnTop(true);
+        grapher.pack();
+        grapher.setSize(ApplicationConfig.CHART_WIDTH, ApplicationConfig.CHART_HEIGHT);
+        grapher.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        grapher.setVisible(true);
     }
 }
