@@ -71,6 +71,10 @@ public class ApplicationConfig {
 
     // Chart info
     public static final String CHART_TITLE = "Runtime Results";
+    public static final String Y_AXIS = "Milliseconds";
+    public static final String X_AXIS = "Interval";
+    public static final int CHART_HEIGHT = 1000;
+    public static final int CHART_WIDTH = 1000;
 
     // Cleanup messages
     public static final String CLOSING_CONNECTIONS = "\nClosing Database Connections...";

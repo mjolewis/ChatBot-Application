@@ -1,7 +1,8 @@
 package edu.bu.met622;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**********************************************************************************************************************
  * Main entry point
@@ -17,6 +18,10 @@ public class ChatBotApplication {
         builder.startMessage();
         builder.build();
 
-        SpringApplication.run(ChatBotApplication.class, args);
+        //SpringApplication.run(ChatBotApplication.class, args);
+        SpringApplicationBuilder springBuilder = new SpringApplicationBuilder(ChatBotApplication.class);
+        springBuilder.headless(false);
+        ConfigurableApplicationContext context = springBuilder.run(args);
+
     }
 }
