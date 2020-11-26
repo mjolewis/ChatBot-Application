@@ -25,6 +25,8 @@ import javax.swing.*;
 public class ResponseController {
 
     String keyword;                                                  // The user entered keyword
+    String startYear;                                                // The first year in the range to be searched
+    String endYear;                                                  // The last year in the range to be searched
 
     /**
      * Maps messages to the /keyword endpoint by matching the declared patterns to a destination extracted from the
@@ -38,6 +40,28 @@ public class ResponseController {
     }
 
     /**
+     * Maps messages to the /keyword endpoint by matching the declared patterns to a destination extracted from the
+     * message
+     *
+     * @param startYear The first year in the range to be searched provided by the user
+     */
+    @MessageMapping("/startYear")
+    public void startYear(ClientMessage startYear) {
+        this.startYear = startYear.getStartYear();
+    }
+
+    /**
+     * Maps messages to the /endYear endpoint by matching the declared patterns to a destination extracted from the
+     * message
+     *
+     * @param endYear The last year in the range to be searched provided by the user
+     */
+    @MessageMapping("/endYear")
+    public void endYear(ClientMessage endYear) {
+        this.endYear = endYear.getEndYear();
+    }
+
+    /**
      * Maps messages to the /mysql/search endpoint by matching the declared patterns to a destination extracted from
      * the message. Sends the response to the /query/response endpoint
      */
@@ -46,7 +70,7 @@ public class ResponseController {
     public ServerResponse mySqlResponse() {
         MySQL mySQLDB = MySQL.getInstance();
 
-        double hits = mySQLDB.query(keyword);
+        double hits = mySQLDB.query(keyword, startYear, endYear);
         double runtime = mySQLDB.getRunTime();
 
         return new ServerResponse(keyword, hits, runtime);

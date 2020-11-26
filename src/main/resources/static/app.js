@@ -9,6 +9,8 @@ var socket = new SockJS('/chatbot');
 var stompClient = Stomp.over(socket);
 var botui = new BotUI('botui-app');
 var keyword;
+var startYear;
+var endYear;
 
 /**
  * Establish a websocket connection. Upon successful connection, subscribe to /query/response destination where the
@@ -50,6 +52,20 @@ function sendKeyword(keyword) {
 }
 
 /**
+ * Send the startYear to endpoint. The startYear is the first year that will be searched. This support range queries
+ */
+function sendStartYear(startYear) {
+    stompClient.send("/app/startYear", {}, JSON.stringify({"startYear": startYear}));
+}
+
+/**
+ * Send the endYear to endpoint. The endYear is the last year that will be searched. This support range queries
+ */
+function sendEndYear(endYear) {
+    stompClient.send("/app/endYear", {}, JSON.stringify({"endYear": endYear}))
+}
+
+/**
  * Search for the keyword using MySQL
  */
 function mySqlSearch() {
@@ -83,6 +99,42 @@ function bruteForceSearch() {
 function loadGraph() {
     stompClient.send("/app/graph", {});
 }
+
+// var substringMatcher = function(strs) {
+//     return function findMatches(q, cb) {
+//         var matches, substringRegex;
+//
+//         // an array that will be populated with substring matches
+//         matches = [];
+//
+//         // regex used to determine if a string contains the substring `q`
+//         substrRegex = new RegExp(q, 'i');
+//
+//         // iterate through the pool of strings and for any string that
+//         // contains the substring `q`, add it to the `matches` array
+//         $.each(strs, function(i, str) {
+//             if (substrRegex.test(str)) {
+//                 matches.push(str);
+//             }
+//         });
+//
+//         cb(matches);
+//     };
+// };
+//
+// var keywords = ['flu', 'brain', 'cancer', 'lungs', 'heart',
+//     'eyes', 'cough', 'covid-19', 'cold', 'influenza', 'stomach',
+// ];
+//
+// $('#autocomplete .typeahead').typeahead({
+//         hint: true,
+//         highlight: true,
+//         minLength: 1
+//     },
+//     {
+//         name: 'keywords',
+//         source: substringMatcher(keywords)
+//     });
 
 //*********************************************************************************************************************
 // Start the BotUI Conversation
@@ -124,18 +176,37 @@ function getUserInput() {
         keyword = res.value;
         sendKeyword(keyword);
 
-        return botui.message.add( {
-            delay: 2000,
-            loading: true,
-            content: "Ok, I'll search for " + keyword
+        return botui.action.text({
+            action: {
+                delay: 3000,
+                placeholder: "Start search in year:"
+            }
         })
-    }).then(() => {                                                      // fifth message
+    }).then(function (res) {
+        startYear = res.value;
+        sendStartYear(startYear);
+
+        return botui.action.text({
+            action: {
+                delay: 3000,
+                placeholder: "End search in year:"
+            }
+        })
+    }).then(function (res) {
+        endYear = res.value;
+        sendEndYear(endYear); // fifth message
 
         // Pre-perform the searches for more efficient conversation flow
         mySqlSearch();
         mongoDBSearch();
         luceneIndexSearch();
         bruteForceSearch();
+
+        return botui.message.add({
+            delay: 2200,
+            loading: true,
+            content: "Okay, I'll search for " + keyword + " from " + startYear + " to " + endYear
+        })
 
     }).then(() => {                                                      // sixth message
 
