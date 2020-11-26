@@ -205,7 +205,7 @@ function getUserInput() {
         return botui.message.add({
             delay: 2200,
             loading: true,
-            content: "Okay, I'll search for " + keyword + "from " + startYear + " to " + endYear
+            content: "Okay, I'll search for " + keyword + " from " + startYear + " to " + endYear
         })
 
     }).then(() => {                                                      // sixth message

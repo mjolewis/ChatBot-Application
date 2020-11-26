@@ -85,7 +85,7 @@ public class ResponseController {
     public ServerResponse mongoDBResponse() {
         MongoDB mongoDB = MongoDB.getInstance();
 
-        double hits = mongoDB.query(keyword);
+        double hits = mongoDB.query(keyword, startYear, endYear);
         double runtime = mongoDB.getRunTime();
 
         return new ServerResponse(keyword, hits, runtime);
