@@ -8,7 +8,6 @@ import edu.bu.met622.model.ServerResponse;
 import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.utils.BFParser;
 import edu.bu.met622.utils.Grapher;
-import javafx.application.Application;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -100,7 +99,7 @@ public class ResponseController {
     public ServerResponse luceneResponse() {
         LuceneSearch luceneSearch = new LuceneSearch();
 
-        double hits = luceneSearch.search(keyword, 5000);
+        double hits = luceneSearch.search(keyword, startYear, endYear, Integer.MAX_VALUE);
         double runtime = luceneSearch.getRunTime();
 
         return new ServerResponse(keyword, hits, runtime);
