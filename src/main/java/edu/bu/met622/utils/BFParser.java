@@ -65,10 +65,10 @@ public class BFParser extends DefaultHandler {
     /**
      * Brute force event-based processing of an XML document assigned to this objects fileName member variable
      *
-     * @param searchParam A value to be searched
+     * @param keyword A value to be searched
      * @return The runtime of the current search
      */
-    public long parse(String searchParam) {
+    public long parse(String keyword) {
 
         boolean isID = false;
         boolean isMonth = false;
@@ -80,7 +80,7 @@ public class BFParser extends DefaultHandler {
         String title = "";
         int hitCount = 0;
 
-        save(searchParam);
+        save(keyword);
 
         startTime = System.currentTimeMillis();
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -126,8 +126,99 @@ public class BFParser extends DefaultHandler {
                     case XMLStreamConstants.END_ELEMENT:
                         EndElement endElement = xmlEvent.asEndElement();
 
-                        if (endElement.getName().getLocalPart().equalsIgnoreCase(ApplicationConfig.PUB_MED_ARTICLE)) { //&& hitCount < hits) {
-                            if (title.toLowerCase().contains(searchParam.toLowerCase())) {
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(ApplicationConfig.PUB_MED_ARTICLE)) {
+                            if (title.toLowerCase().contains(keyword.toLowerCase())) {
+                                ++hitCount;                                          // Track the number of hits
+                                articles.add(new Article(id, month, year, title));   // Track articles in container
+                            }
+                        }
+                        break;
+                }
+            }
+
+            endTime = System.currentTimeMillis();
+            runtime = endTime - startTime;
+            logger.runtime(ApplicationConfig.BRUTEFORCE, runtime);
+        } catch (FileNotFoundException | XMLStreamException e) {
+            e.printStackTrace();
+        }
+        return hitCount;                                                       // Number of times keyword was found
+    }
+
+    /**
+     * Brute force event-based processing of an XML document assigned to this objects fileName member variable
+     *
+     * @param keyword    A value to be searched
+     * @param startYear  The first year within the search range
+     * @param endYear    The last year within the search range
+     * @return The runtime of the current search
+     */
+    public long parse(String keyword, String startYear, String endYear) {
+
+        boolean isID = false;
+        boolean isMonth = false;
+        boolean isYear = false;
+        boolean isTitle = false;
+        boolean inRange = false;
+        String id = "";
+        String month = "";
+        String year = "";
+        String title = "";
+        int hitCount = 0;
+        int numericStartYear = Integer.parseInt(startYear);          // Only count articles within the range
+        int numericEndYear = Integer.parseInt(endYear);              // Only count articles within the range
+
+        save(keyword);
+
+        startTime = System.currentTimeMillis();
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        try {
+            XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileName));
+
+            while (xmlEventReader.hasNext()) {
+                XMLEvent xmlEvent = xmlEventReader.nextEvent();
+
+                switch (xmlEvent.getEventType()) {
+
+                    case XMLStreamConstants.START_ELEMENT:
+                        StartElement startElement = xmlEvent.asStartElement();
+                        String qName = startElement.getName().getLocalPart();
+
+                        if (qName.equalsIgnoreCase(ApplicationConfig.PMID)) {
+                            isID = true;
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.MONTH)) {
+                            isMonth = true;
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.YEAR)) {
+                            isYear = true;
+                        } else if (qName.equalsIgnoreCase(ApplicationConfig.ARTICLE_TITLE)) {
+                            isTitle = true;
+                        }
+                        break;
+                    case XMLStreamConstants.CHARACTERS:
+                        Characters characters = xmlEvent.asCharacters();
+
+                        if (isID) {
+                            id = characters.getData();
+                            isID = false;
+                        } else if (isMonth) {
+                            month = characters.getData();
+                            isMonth = false;
+                        } else if (isYear) {
+                            year = characters.getData();
+                            int numericYear = Integer.parseInt(year);
+                            inRange = numericYear >= numericStartYear && numericYear <= numericEndYear;
+                            isYear = false;
+                        } else if (isTitle) {
+                            title = characters.getData();
+                            isTitle = false;
+                        }
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        EndElement endElement = xmlEvent.asEndElement();
+
+                        // Only count the article if it's within the specified range of years
+                        if (endElement.getName().getLocalPart().equalsIgnoreCase(ApplicationConfig.PUB_MED_ARTICLE) && inRange) {
+                            if (title.toLowerCase().contains(keyword.toLowerCase())) {
                                 ++hitCount;                                          // Track the number of hits
                                 articles.add(new Article(id, month, year, title));   // Track articles in container
                             }
