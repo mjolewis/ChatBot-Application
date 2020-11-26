@@ -115,7 +115,7 @@ public class ResponseController {
     public ServerResponse bruteForceSearch() {
         BFParser bfParser = new BFParser();
 
-        double hits = bfParser.parse(keyword);
+        double hits = bfParser.parse(keyword, startYear, endYear);
         double runtime = bfParser.getRunTime();
 
         return new ServerResponse(keyword, hits, runtime);
