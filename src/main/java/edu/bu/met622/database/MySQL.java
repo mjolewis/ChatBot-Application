@@ -168,6 +168,8 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
+            logger.runtime(ApplicationConfig.MYSQL, runtime);
+
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
                 ++hits;
@@ -176,6 +178,49 @@ public class MySQL {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return hits;
+    }
+
+    /**
+     * A query to count the number of times the given keyword appears in the specified date range. For example, “flu”,
+     * “obesity" in the range 2018 - 2020
+     *
+     * @param keyword    A value to be searched
+     * @param startYear  The first year within the search range
+     * @param endYear    The last year within the search range
+     * @return The number of times the keyword was found in the specified year
+     */
+    public double query(String keyword, String startYear, String endYear) {
+        double hits = 0;
+
+        String sqlQuery = "SELECT * FROM articles WHERE title LIKE ? AND year >= ? AND year <= ? ";
+
+        try {
+            startTime = System.currentTimeMillis();                       // Start the run time clock
+
+            stmt = con.createStatement();                                 // A Statement object holds SQL commands
+
+            // Prepared Statements prevent SQL injection and efficiently execute the statement multiple times
+            pStmt = con.prepareStatement(sqlQuery);
+            pStmt.setString(1, "%" + keyword + "%");
+            pStmt.setString(2, startYear);
+            pStmt.setString(3, endYear);
+
+            ResultSet rs = pStmt.executeQuery();                          // Execute the query
+            endTime = System.currentTimeMillis();                         // Stop the runtime clock
+            runtime = endTime - startTime;                                // The total runtime of the query
+
+            logger.runtime(ApplicationConfig.MYSQL, runtime);
+
+            // Determine the number of times the keyword is in the database
+            while (rs != null && rs.next()) {
+                ++hits;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return hits;
     }
 
@@ -213,13 +258,14 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
+            logger.runtime(ApplicationConfig.MYSQL, runtime);
+
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
                 ++hits;
             }
 
         } catch (SQLException e) {
-            // TODO: 10/31/20 write to log file
             e.printStackTrace();
         }
 

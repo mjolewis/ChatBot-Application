@@ -3,19 +3,36 @@
     <head>
         <meta charset="utf-8">
         <title>ChatBot</title>
+
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+        <!-- Start WebSockets -->
         <script src="/webjars/sockjs-client/sockjs.min.js"></script>
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <!-- End WebSockets -->
 
+        <!-- Start BotUI -->
         <link rel="stylesheet" href="https://unpkg.com/botui/build/botui.min.css" />
         <link rel="stylesheet" href="https://unpkg.com/botui/build/botui-theme-default.css" />
+        <!-- End BotUI -->
     </head>
 
     <body>
+
+<!--    <div id="autocomplete">-->
+<!--        <input class="typeahead" type="text" placeholder="Enter a keyword">-->
+<!--    </div>-->
+
     <div id="botui-app" class="botui-app-container">
         <bot-ui></bot-ui>
     </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins and Typeahead) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- Typeahead.js Bundle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/botui/build/botui.min.js"></script>
