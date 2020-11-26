@@ -136,15 +136,14 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-
-        logger.runtime(ApplicationConfig.MONGODB, runtime);
+        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
 
         return hits;
     }
 
     /**
-     * A query to count the number of times the given keyword appears in the specified year. For example, how many
-     * times does "flu" appear in knowledge base within the year 2020
+     * A query to count the number of times the given keyword appears in the specified year. For example, count how
+     * many times "flu" appears in knowledge base within the year 2020
      *
      * @param keyword A value to be searched for
      * @param year    The year to search within
@@ -166,6 +165,38 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
+        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+
+        return hits;
+    }
+
+    /**
+     * A query to count the number of times the given keyword appears in the specified range of years. For example,
+     * count how times "flu" appears in knowledge base from 2018 - 2020
+     *
+     * @param keyword   A value to be searched for
+     * @param startYear The first year within the search range
+     * @param endYear   The last year within the search range
+     * @return The number of times the keyword was found within the specified year
+     */
+    public double query(String keyword, String startYear, String endYear) {
+        double hits = 0;
+
+        startTime = System.currentTimeMillis();                           // Start the runtime clock
+
+        List<DBObject> criteria = new ArrayList<>();
+        criteria.add(new BasicDBObject("title", java.util.regex.Pattern.compile(keyword)));
+        criteria.add(new BasicDBObject("year", new BasicDBObject("$gte", startYear)));
+        criteria.add(new BasicDBObject("year", new BasicDBObject("$lte", endYear)));
+        FindIterable<Document> results = collection.find(new BasicDBObject("$and", criteria));
+
+        for (Document result : results) {
+            ++hits;
+        }
+
+        endTime = System.currentTimeMillis();                             // Stop the runtime clock
+        runtime = endTime - startTime;                                    // The total runtime of the query
+        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
 
         return hits;
     }
@@ -200,6 +231,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
+        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
 
         return hits;
     }
