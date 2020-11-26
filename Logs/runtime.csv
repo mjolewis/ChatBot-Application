@@ -134,3 +134,27 @@ Lucene Index,97.0
 MySQL,133.0
 MongoDB,313.0
 Brute Force,14127.0
+MySQL,171.0
+MongoDB,287.0
+Lucene Index,590.0
+Brute Force,16137.0
+MySQL,160.0
+MongoDB,320.0
+Lucene Index,868.0
+Brute Force,11678.0
+MySQL,144.0
+MongoDB,184.0
+Lucene Index,457.0
+Brute Force,11421.0
+MySQL,224.0
+MongoDB,293.0
+Lucene Index,636.0
+Brute Force,12143.0
+MySQL,208.0
+MongoDB,430.0
+Lucene Index,1619.0
+Brute Force,12617.0
+MySQL,169.0
+MongoDB,186.0
+Lucene Index,538.0
+Brute Force,11710.0

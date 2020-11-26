@@ -6,10 +6,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.document.Document;
 
@@ -20,6 +17,8 @@ import java.nio.file.Paths;
  * Support user queries with full-text and efficient search capabilities
  *
  * @author Michael Lewis
+ * @version September 18, 2020 Kick-Off
+ * @version November 26, 2020 Range query support
  *********************************************************************************************************************/
 public class LuceneSearch {
     private IndexSearcher searcher = null;
@@ -43,24 +42,67 @@ public class LuceneSearch {
     }
 
     /**
-     * Searches the Lucene Index for the specified search parameter and returns the top N documents
+     * Searches the Lucene Index for a keyword
      *
-     * @param searchParam A user specified search string
-     * @param numOfDocs   The maximum number of documents to return when the search parameter is found
-     * @return The runtime of the current search
+     * @param keyword   A user specified search string
+     * @param numOfDocs The maximum number of documents to return when the search parameter is found
+     * @return The number of times the keyword was found in the index
      */
-    public double search(String searchParam, int numOfDocs) {
+    public double search(String keyword, int numOfDocs) {
 
         try {
             startTime = System.currentTimeMillis();
 
-            Query query = parser.parse(searchParam);
+            Query query = parser.parse(keyword);
             searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(ApplicationConfig.INDEX_DIRECTORY))));
             TopDocs docs = searcher.search(query, numOfDocs);
 
             endTime = System.currentTimeMillis();
 
             hits = docs.scoreDocs;
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        }
+
+        runtime = endTime - startTime;
+        logger.runtime(ApplicationConfig.LUCENE_INDEX, runtime);
+
+        return hits.length;                                     // The number of times the keyword was found
+    }
+
+    /**
+     * Searches the Lucene Index for a keyword within [startYear, endYear]
+     *
+     * @param keyword   A value to be searched
+     * @param startYear The first year within the search range
+     * @param endYear   The last year within the search range
+     * @param numOfDocs The maximum number of documents to return when the search parameter is found
+     * @return The number of times the keyword was found in the specified range
+     */
+    public double search(String keyword, String startYear, String endYear, int numOfDocs) {
+
+        try {
+            startTime = System.currentTimeMillis();
+
+            Query keywordQuery = parser.parse(keyword);
+            TermRangeQuery termRangeQuery = TermRangeQuery.newStringRange(ApplicationConfig.YEAR,
+                    startYear,
+                    endYear,
+                    true,
+                    true);
+
+            BooleanQuery.Builder bq = new BooleanQuery.Builder();              // Matches boolean combinations of multiple queries
+            bq.add(keywordQuery, BooleanClause.Occur.MUST);                    // Add the keyword query to the clause
+            bq.add(termRangeQuery, BooleanClause.Occur.MUST);                  // Add the range query to the clause
+
+            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(ApplicationConfig.INDEX_DIRECTORY))));
+
+            TopDocs docs = searcher.search(bq.build(), numOfDocs);             // Create a new BooleanQuery based on the parameters that have been set
+
+            endTime = System.currentTimeMillis();
+
+            hits = docs.scoreDocs;
+
         } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
