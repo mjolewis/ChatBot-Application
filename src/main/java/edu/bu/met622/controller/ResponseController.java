@@ -6,8 +6,8 @@ import edu.bu.met622.database.MySQL;
 import edu.bu.met622.model.ClientMessage;
 import edu.bu.met622.model.ServerResponse;
 import edu.bu.met622.resources.ApplicationConfig;
-import edu.bu.met622.utils.BFParser;
-import edu.bu.met622.utils.Grapher;
+import edu.bu.met622.database.BruteForceSearch;
+import edu.bu.met622.output.Grapher;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -112,7 +112,7 @@ public class ResponseController {
     @MessageMapping("/bruteforce/search")
     @SendTo("/query/bruteforce/response")
     public ServerResponse bruteForceSearch() {
-        BFParser bfParser = new BFParser();
+        BruteForceSearch bfParser = new BruteForceSearch();
 
         double hits = bfParser.parse(keyword, startYear, endYear);
         double runtime = bfParser.getRunTime();

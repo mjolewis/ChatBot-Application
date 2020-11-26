@@ -3,6 +3,7 @@ package edu.bu.met622.utils;
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.database.LuceneIndex;
+import edu.bu.met622.output.Storage;
 import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;

@@ -2,7 +2,7 @@ package edu.bu.met622.database;
 
 import edu.bu.met622.model.Article;
 import edu.bu.met622.resources.ApplicationConfig;
-import edu.bu.met622.utils.Logger;
+import edu.bu.met622.output.Logger;
 
 import java.sql.*;
 import java.util.List;
