@@ -1,7 +1,7 @@
 package edu.bu.met622.database;
 
 import edu.bu.met622.resources.ApplicationConfig;
-import edu.bu.met622.utils.Logger;
+import edu.bu.met622.output.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;

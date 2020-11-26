@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import edu.bu.met622.utils.Logger;
+import edu.bu.met622.output.Logger;
 import org.bson.Document;
 import edu.bu.met622.model.Article;
 import edu.bu.met622.resources.ApplicationConfig;
