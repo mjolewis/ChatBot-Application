@@ -1,12 +1,12 @@
 package edu.bu.met622.model;
 
 /**********************************************************************************************************************
- * A data model for the response message
+ * A data model for the query results. This data model is used to update the View
  *
  * @author Michael Lewis
  * @version November 20, 2020 - Kickoff
  *********************************************************************************************************************/
-public class ServerResponse {
+public class QueryResult {
 
     private String keyword;
     private double hits;
@@ -17,7 +17,7 @@ public class ServerResponse {
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new ServerResponse
      */
-    public ServerResponse() {
+    public QueryResult() {
     }
 
     /**
@@ -27,7 +27,7 @@ public class ServerResponse {
      * @param hits    The number of times the keyword was found
      * @param runtime The time in milliseconds it took to complete the search
      */
-    public ServerResponse(String keyword, double hits, double runtime) {
+    public QueryResult(String keyword, double hits, double runtime) {
 
         this.keyword = keyword;
         this.hits = hits;

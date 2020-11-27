@@ -19,7 +19,7 @@ public class ApplicationConfig {
     // Parser
     public static final String OPENING_ROOT_TAG = "<PubmedArticleSet>";
     public static final String CLOSING_ROOT_TAG =  "</PubmedArticleSet>";
-    public static final String OUTPUT_FILE = "master_file.xml";
+    public static final String MERGED_XML_FILE = "master_file.xml";
     public static final String PMID = "PMID";
     public static final String PUB_MED_ARTICLE = "PubmedArticle";
     public static final String ARTICLE_TITLE = "ArticleTitle";
@@ -73,8 +73,8 @@ public class ApplicationConfig {
     public static final String CHART_TITLE = "Runtime Results";
     public static final String Y_AXIS = "Milliseconds";
     public static final String X_AXIS = "Interval";
-    public static final int CHART_HEIGHT = 1000;
-    public static final int CHART_WIDTH = 1000;
+    public static final int CHART_HEIGHT = 900;
+    public static final int CHART_WIDTH = 1200;
 
     // Cleanup messages
     public static final String CLOSING_CONNECTIONS = "\nClosing Database Connections...";

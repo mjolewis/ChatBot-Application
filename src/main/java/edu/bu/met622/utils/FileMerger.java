@@ -24,7 +24,7 @@ public class FileMerger {
      */
     public FileMerger() {
         filePaths = new ArrayList<>();
-        mergedFileName = ApplicationConfig.OUTPUT_FILE;
+        mergedFileName = ApplicationConfig.MERGED_XML_FILE;
         stringBuilder = new StringBuilder();
     }
 

@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Michael Lewis
  * @version September 18, 2020 Kick-Off
  *********************************************************************************************************************/
-public class Storage {
+public class Save {
 
     private Map<String, ArrayList<String>> searchHistory;       // Key: Search Parameter; Value: Frequency, Timestamp
     private File file;
@@ -27,7 +27,7 @@ public class Storage {
      * @note If the application has previously stored search history to disk, then initializing Storage will put the
      *         history back into memory
      */
-    public Storage() {
+    public Save() {
         searchHistory = new HashMap<>();
         String fileName = ApplicationConfig.SEARCH_HISTORY;
         file = new File(fileName);
@@ -37,7 +37,7 @@ public class Storage {
         // If search history exists on disk, put it back into memory
         if (file.exists()) {
             try {
-                restoreHistory();
+                loadToMemory();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -51,7 +51,7 @@ public class Storage {
      * @param timestamp   The date and time of the search
      * @throws IOException Indicates a failed or interrupted I/O operation
      */
-    public void saveToDisk(String searchParam, String timestamp) throws IOException {
+    public void toDisk(String searchParam, String timestamp) throws IOException {
         try {
             if (!file.exists()) {
                 file.createNewFile();
@@ -74,7 +74,7 @@ public class Storage {
      * @param searchParam The search parameter entered by the user
      * @param timestamp   The date and time of the search
      */
-    public void saveToMemory(String searchParam, String timestamp) {
+    public void toMemory(String searchParam, String timestamp) {
 
         if (!searchHistory.containsKey(searchParam)) {                         // If the key isn't in the collection
             ArrayList<String> values = new ArrayList<>();
@@ -115,7 +115,7 @@ public class Storage {
     /*
      * If search history exists on disk, put it back into memory
      */
-    private void restoreHistory() throws IOException {
+    private void loadToMemory() throws IOException {
         String[] items;
         String line;
 

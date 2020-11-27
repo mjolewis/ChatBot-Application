@@ -3,7 +3,6 @@ package edu.bu.met622.utils;
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.database.LuceneIndex;
-import edu.bu.met622.output.Storage;
 import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
@@ -18,9 +17,6 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**********************************************************************************************************************
@@ -31,8 +27,6 @@ import java.util.*;
 public class XMLParser extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private List<Article> articles;                             // A collection of every article in the input file
-    private Storage storage;                                    // Persist search history
-    private LuceneIndex luceneIndex;                                    // Builds a Lucene Index
 
     /**
      * Initialize a new Parser
@@ -41,10 +35,8 @@ public class XMLParser extends DefaultHandler {
      */
     public XMLParser() {
 
-        fileName = ApplicationConfig.OUTPUT_FILE;
+        fileName = ApplicationConfig.MERGED_XML_FILE;
         articles = new ArrayList<>();
-        storage = new Storage();
-        luceneIndex = new LuceneIndex();
     }
 
     /**
@@ -52,14 +44,12 @@ public class XMLParser extends DefaultHandler {
      *
      * @param fileName Name and extension of the file to parse
      * @param articles A list of articles
-     * @param storage  An object capable of storing data in memory and on disk
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public XMLParser(String fileName, ArrayList<Article> articles, Storage storage) {
+    public XMLParser(String fileName, ArrayList<Article> articles) {
 
         this.fileName = fileName;
         this.articles = articles;
-        this.storage = storage;
     }
 
     /**
@@ -149,26 +139,9 @@ public class XMLParser extends DefaultHandler {
     /**
      * Builds a Lucene Index
      */
-    public void createIndex() {
+    public void createLuceneIndex() {
+        LuceneIndex luceneIndex = new LuceneIndex();
         luceneIndex.createIndex(articles);
-    }
-
-    /**
-     * Prints the search history to the console
-     */
-    public void print() {
-        storage.print();                                                       // Delegate to the storage object
-    }
-
-    /**
-     * Accessor method that returns the container of search history data. This includes the search parameter, the
-     * frequency, and timestamps
-     *
-     * @return The users search history
-     * @note Each entry in the container stores the time stamps for all searches
-     */
-    public Map<String, ArrayList<String>> getSearchHistory() {
-        return storage.getSearchHistory();                                     // Delegate to the storage object
     }
 
     /**
@@ -188,24 +161,5 @@ public class XMLParser extends DefaultHandler {
      */
     public void setArticles(List<Article> articles) {
         this.articles = articles;
-    }
-
-    //*****************************************************************************************************************
-    // Helper methods to persist data
-    //*****************************************************************************************************************
-
-    /*
-     * Store search history in-memory and on disk
-     */
-    private void save(String searchParam) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ApplicationConfig.DATE_FORMAT);
-
-        storage.saveToMemory(searchParam, timestamp.format(dateTimeFormatter));
-        try {
-            storage.saveToDisk(searchParam, timestamp.format(dateTimeFormatter));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

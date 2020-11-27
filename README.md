@@ -64,13 +64,13 @@ was successfully parsed by the Parser.
 Importantly, this class must be updated to accurately reflect the data model if the underlying knowledge base changes. 
 
 ***Storage***\
-The Storage class takes input from the Parser class and provides in-memory and disk storage solutions. Importantly, if 
+The Storage class takes input from the Parser class and provides in-memory and disk save solutions. Importantly, if 
 the application has previously stored data on disk, the application will first restore that data into memory to give 
 the user fast access to all previous search results.
 
 Finally, the application automatically persists search results onto disk. Despite the cost of I/O operations, storing 
 the search results to disk happens immediately to ensure system integrity. This approach prevents data loss if an event 
-that causes a loss of volatile storage occurs while the application is still running.
+that causes a loss of volatile save occurs while the application is still running.
 
 ***Indexer***\
 The Indexer class is the core functionality of the Lucene index. It builds an inverted index data structure to provide 
@@ -108,7 +108,7 @@ single-responsibility, which has been highlighted in the System Components secti
 for extension, but closed for modification to ensure system integrity (e.g. invariants always remain true).
 
 UML Diagram:
-![Chatbot](https://user-images.githubusercontent.com/12025538/97821659-3d50da80-1c81-11eb-9ae7-465a232e6c0a.png)
+![Chatbot](https://user-images.githubusercontent.com/12025538/100486773-696e4880-30d3-11eb-85fa-e702ebdfac5d.png)
 
 # Extreme Scenarios and Limitations
 Depending on the JVM and XML files sizes, this application has limitations. For example, the heap size may be exceeded

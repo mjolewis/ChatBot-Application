@@ -10,8 +10,8 @@ import java.io.*;
  * @author Michael Lewis
  * @version November 22, 2020 - Kickoff
  *********************************************************************************************************************/
-public class Logger {
-    private static Logger logger = null;
+public class Log {
+    private static Log log = null;
     private File runtimeLog;
     private File errorLog;
 
@@ -20,7 +20,7 @@ public class Logger {
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new Logger
      */
-    private Logger() {
+    private Log() {
         runtimeLog = new File(ApplicationConfig.RUNTIME_LOG);
         errorLog = new File(ApplicationConfig.ERROR_LOG);
     }
@@ -31,12 +31,12 @@ public class Logger {
      *
      * @return A Logger instance
      */
-    public static Logger getInstance() {
-        if (logger == null) {
-            logger = new Logger();
+    public static Log getInstance() {
+        if (log == null) {
+            log = new Log();
         }
 
-        return logger;
+        return log;
     }
 
     /**

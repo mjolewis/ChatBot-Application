@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import edu.bu.met622.output.Logger;
+import edu.bu.met622.output.Log;
 import org.bson.Document;
 import edu.bu.met622.model.Article;
 import edu.bu.met622.resources.ApplicationConfig;
@@ -22,12 +22,12 @@ import java.util.List;
  * @version October 28, 2020 - Kickoff
  *********************************************************************************************************************/
 public class MongoDB {
-    private static MongoDB mongoDB;                             // A connection to the database
+    private static MongoDB con;                                 // A connection to the database
     private static MongoClient client;                          // Connection to a local instance
     private MongoDatabase db;                                   // The database object
     private MongoCollection<Document> collection;               // A collection within the database
     private Document doc;                                       // A document (row) that is inserted into the collection
-    private static Logger logger;                               // Logs application events to files
+    private static Log log;                                     // Logs application events to files
     private static boolean exists = false;                      // True if the table has been built; Otherwise false
     private double startTime;                                   // Tracks the runtime of the query
     private double endTime;                                     // Tracks the runtime of the query
@@ -51,7 +51,7 @@ public class MongoDB {
         // If the collection does not exist, MongoDB creates it implicitly
         collection = db.getCollection(ApplicationConfig.COLLECTION);
 
-        logger = Logger.getInstance();                               // Log application events to a file
+        log = Log.getInstance();                               // Log application events to a file
     }
 
     /**
@@ -63,10 +63,10 @@ public class MongoDB {
      *         method
      */
     public static MongoDB getInstance() {
-        if (mongoDB == null) {
-            mongoDB = new MongoDB();
+        if (con == null) {
+            con = new MongoDB();
         }
-        return mongoDB;
+        return con;
     }
 
     /**
@@ -136,7 +136,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
 
         return hits;
     }
@@ -165,7 +165,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
 
         return hits;
     }
@@ -196,7 +196,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, runtime);                  // Log the database type and runtime
 
         return hits;
     }
@@ -231,7 +231,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        logger.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
 
         return hits;
     }
