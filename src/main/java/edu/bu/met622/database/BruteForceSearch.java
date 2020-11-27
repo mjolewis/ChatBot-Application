@@ -1,7 +1,7 @@
 package edu.bu.met622.database;
 
-import edu.bu.met622.output.Logger;
-import edu.bu.met622.output.Storage;
+import edu.bu.met622.output.Log;
+import edu.bu.met622.output.Save;
 import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.model.Article;
 import org.xml.sax.helpers.DefaultHandler;
@@ -16,9 +16,6 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**********************************************************************************************************************
@@ -29,8 +26,7 @@ import java.util.*;
 public class BruteForceSearch extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private List<Article> articles;                             // A container of PubMed articles
-    private Storage storage;                                    // Persist search history
-    private static Logger logger;                               // Logs application events to files
+    private static Log log;                                     // Logs application events to files
     private double startTime;                                   // Tracks the runtime of the query
     private double endTime;                                     // Tracks the runtime of the query
     private double runtime;                                     // The total runtime of the query
@@ -42,10 +38,9 @@ public class BruteForceSearch extends DefaultHandler {
      */
     public BruteForceSearch() {
 
-        fileName = ApplicationConfig.OUTPUT_FILE;
+        fileName = ApplicationConfig.MERGED_XML_FILE;
         articles = new ArrayList<>();
-        storage = new Storage();                                     // Store search parameters onto disk
-        logger = Logger.getInstance();                               // Log application events to a file
+        log = Log.getInstance();                               // Log application events to a file
     }
 
     /**
@@ -53,24 +48,22 @@ public class BruteForceSearch extends DefaultHandler {
      *
      * @param fileName Name and extension of the file to parse
      * @param articles A list of articles
-     * @param storage  An object capable of storing data in memory and on disk
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public BruteForceSearch(String fileName, ArrayList<Article> articles, Storage storage) {
+    public BruteForceSearch(String fileName, ArrayList<Article> articles) {
 
         this.fileName = fileName;
         this.articles = articles;
-        this.storage = storage;
-        logger = Logger.getInstance();                               // Log application events to a file
+        log = Log.getInstance();                               // Log application events to a file
     }
 
     /**
      * Brute force event-based processing of an XML document assigned to this objects fileName member variable
      *
      * @param keyword A value to be searched
-     * @return The runtime of the current search
+     * @return The number of times the keyword was found in the specified year
      */
-    public long parse(String keyword) {
+    public double parse(String keyword) {
 
         boolean isID = false;
         boolean isMonth = false;
@@ -81,8 +74,6 @@ public class BruteForceSearch extends DefaultHandler {
         String year = "";
         String title = "";
         int hitCount = 0;
-
-        save(keyword);
 
         startTime = System.currentTimeMillis();
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -140,7 +131,7 @@ public class BruteForceSearch extends DefaultHandler {
 
             endTime = System.currentTimeMillis();
             runtime = endTime - startTime;
-            logger.runtime(ApplicationConfig.BRUTEFORCE, runtime);
+            log.runtime(ApplicationConfig.BRUTEFORCE, runtime);
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
@@ -153,9 +144,9 @@ public class BruteForceSearch extends DefaultHandler {
      * @param keyword    A value to be searched
      * @param startYear  The first year within the search range
      * @param endYear    The last year within the search range
-     * @return The runtime of the current search
+     * @return The number of times the keyword was found in the specified year
      */
-    public long parse(String keyword, String startYear, String endYear) {
+    public double parse(String keyword, String startYear, String endYear) {
 
         boolean isID = false;
         boolean isMonth = false;
@@ -169,8 +160,6 @@ public class BruteForceSearch extends DefaultHandler {
         int hitCount = 0;
         int numericStartYear = Integer.parseInt(startYear);          // Only count articles within the range
         int numericEndYear = Integer.parseInt(endYear);              // Only count articles within the range
-
-        save(keyword);
 
         startTime = System.currentTimeMillis();
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -231,18 +220,11 @@ public class BruteForceSearch extends DefaultHandler {
 
             endTime = System.currentTimeMillis();
             runtime = endTime - startTime;
-            logger.runtime(ApplicationConfig.BRUTEFORCE, runtime);
+            log.runtime(ApplicationConfig.BRUTEFORCE, runtime);
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
         return hitCount;                                                       // Number of times keyword was found
-    }
-
-    /**
-     * Prints search history to the console
-     */
-    public void print() {
-        storage.print();                                                       // Delegate to the storage object
     }
 
     /**
@@ -251,17 +233,6 @@ public class BruteForceSearch extends DefaultHandler {
      */
     public double getRunTime() {
         return runtime;
-    }
-
-    /**
-     * Accessor method that returns the container of search history data. This includes the search parameter, the
-     * frequency, and timestamps
-     *
-     * @return The users search history
-     * @note Each entry in the container stores the time stamps for all searches
-     */
-    public Map<String, ArrayList<String>> getSearchHistory() {
-        return storage.getSearchHistory();                                     // Delegate to the storage object
     }
 
     /**
@@ -281,24 +252,5 @@ public class BruteForceSearch extends DefaultHandler {
      */
     public void setArticles(List<Article> articles) {
         this.articles = articles;
-    }
-
-    //*****************************************************************************************************************
-    // Helper methods to persist data
-    //*****************************************************************************************************************
-
-    /*
-     * Store search history in-memory and on disk
-     */
-    private void save(String searchParam) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ApplicationConfig.DATE_FORMAT);
-
-        storage.saveToMemory(searchParam, timestamp.format(dateTimeFormatter));
-        try {
-            storage.saveToDisk(searchParam, timestamp.format(dateTimeFormatter));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

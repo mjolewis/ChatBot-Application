@@ -4,15 +4,19 @@ import edu.bu.met622.database.LuceneSearch;
 import edu.bu.met622.database.MongoDB;
 import edu.bu.met622.database.MySQL;
 import edu.bu.met622.model.ClientMessage;
-import edu.bu.met622.model.ServerResponse;
+import edu.bu.met622.model.QueryResult;
+import edu.bu.met622.output.Save;
 import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.database.BruteForceSearch;
-import edu.bu.met622.output.Grapher;
+import edu.bu.met622.output.Graph;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**********************************************************************************************************************
  * A web request handler
@@ -23,9 +27,19 @@ import javax.swing.*;
 @Controller
 public class ResponseController {
 
-    String keyword;                                                  // The user entered keyword
-    String startYear;                                                // The first year in the range to be searched
-    String endYear;                                                  // The last year in the range to be searched
+    private String keyword;                                               // The user entered keyword
+    private String startYear;                                             // The first year in the range to be searched
+    private String endYear;                                               // The last year in the range to be searched
+    private Save save;                                              // Persist search history
+
+    /**
+     * Initialize a new ResponseController
+     *
+     * @throws OutOfMemoryError Indicates insufficient memory for this new ResponseController
+     */
+    public ResponseController() {
+        this.save = new Save();
+    }
 
     /**
      * Maps messages to the /keyword endpoint by matching the declared patterns to a destination extracted from the
@@ -66,13 +80,13 @@ public class ResponseController {
      */
     @MessageMapping("/mysql/search")
     @SendTo("/query/mysql/response")
-    public ServerResponse mySqlResponse() {
+    public QueryResult mySqlResponse() {
         MySQL mySQLDB = MySQL.getInstance();
 
         double hits = mySQLDB.query(keyword, startYear, endYear);
         double runtime = mySQLDB.getRunTime();
 
-        return new ServerResponse(keyword, hits, runtime);
+        return new QueryResult(keyword, hits, runtime);
     }
 
     /**
@@ -81,13 +95,13 @@ public class ResponseController {
      */
     @MessageMapping("/mongodb/search")
     @SendTo("/query/mongodb/response")
-    public ServerResponse mongoDBResponse() {
+    public QueryResult mongoDBResponse() {
         MongoDB mongoDB = MongoDB.getInstance();
 
         double hits = mongoDB.query(keyword, startYear, endYear);
         double runtime = mongoDB.getRunTime();
 
-        return new ServerResponse(keyword, hits, runtime);
+        return new QueryResult(keyword, hits, runtime);
     }
 
     /**
@@ -96,13 +110,13 @@ public class ResponseController {
      */
     @MessageMapping("/lucene/search")
     @SendTo("/query/lucene/response")
-    public ServerResponse luceneResponse() {
+    public QueryResult luceneResponse() {
         LuceneSearch luceneSearch = new LuceneSearch();
 
         double hits = luceneSearch.search(keyword, startYear, endYear, Integer.MAX_VALUE);
         double runtime = luceneSearch.getRunTime();
 
-        return new ServerResponse(keyword, hits, runtime);
+        return new QueryResult(keyword, hits, runtime);
     }
 
     /**
@@ -111,13 +125,13 @@ public class ResponseController {
      */
     @MessageMapping("/bruteforce/search")
     @SendTo("/query/bruteforce/response")
-    public ServerResponse bruteForceSearch() {
+    public QueryResult bruteForceResponse() {
         BruteForceSearch bfParser = new BruteForceSearch();
 
         double hits = bfParser.parse(keyword, startYear, endYear);
         double runtime = bfParser.getRunTime();
 
-        return new ServerResponse(keyword, hits, runtime);
+        return new QueryResult(keyword, hits, runtime);
     }
 
     /**
@@ -127,14 +141,33 @@ public class ResponseController {
     @MessageMapping("/graph")
     @SendTo("/query/graph/response")
     public void loadGraph() {
-        Grapher grapher = new Grapher();
+        Graph graph = new Graph();
 
-        grapher.graph();
+        graph.build();
 
-        grapher.setAlwaysOnTop(true);
-        grapher.pack();
-        grapher.setSize(ApplicationConfig.CHART_WIDTH, ApplicationConfig.CHART_HEIGHT);
-        grapher.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        grapher.setVisible(true);
+        graph.setAlwaysOnTop(true);
+        graph.pack();
+        graph.setSize(ApplicationConfig.CHART_WIDTH, ApplicationConfig.CHART_HEIGHT);
+        graph.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        graph.setVisible(true);
+    }
+
+    //*****************************************************************************************************************
+    // Helper methods to persist data
+    //*****************************************************************************************************************
+
+    /*
+     * Store search history in-memory and on disk
+     */
+    private void save(String keyword) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ApplicationConfig.DATE_FORMAT);
+
+        save.toMemory(keyword, timestamp.format(dateTimeFormatter));
+        try {
+            save.toDisk(keyword, timestamp.format(dateTimeFormatter));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,7 +2,7 @@ package edu.bu.met622.database;
 
 import edu.bu.met622.model.Article;
 import edu.bu.met622.resources.ApplicationConfig;
-import edu.bu.met622.output.Logger;
+import edu.bu.met622.output.Log;
 
 import java.sql.*;
 import java.util.List;
@@ -19,7 +19,7 @@ public class MySQL {
     private static Statement stmt;                              // Holds a SQL command
     private static PreparedStatement pStmt;                     // A wrapper for a Statement object to prevent injection
     private static boolean exists = false;                      // True if the table has been built; Otherwise false
-    private static Logger logger;                               // Logs application events to files
+    private static Log log;                               // Logs application events to files
     private double startTime;                                   // Tracks the runtime of the query
     private double endTime;                                     // Tracks the runtime of the query
     private double runtime;                                     // The total runtime of the query
@@ -30,7 +30,7 @@ public class MySQL {
      * @throws OutOfMemoryError Indicates insufficient memory for this new object
      */
     private MySQL() {
-        logger = Logger.getInstance();                          // Log application events to a file
+        log = Log.getInstance();                          // Log application events to a file
     }
 
     /**
@@ -129,7 +129,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            logger.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
@@ -168,7 +168,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            logger.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
@@ -210,7 +210,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            logger.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
@@ -258,7 +258,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            logger.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {

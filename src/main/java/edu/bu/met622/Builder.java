@@ -42,7 +42,7 @@ public class Builder {
         selectedFiles.add(ApplicationConfig.FILE_2);
 
         mergeXML(selectedFiles);
-        initDabases();
+        initDatabases();
     }
 
     /**
@@ -75,7 +75,7 @@ public class Builder {
      */
     private void mergeXML(ArrayList<String> selectedFiles) {
 
-        FileMerger fileMerger = new FileMerger(selectedFiles, ApplicationConfig.OUTPUT_FILE);
+        FileMerger fileMerger = new FileMerger(selectedFiles, ApplicationConfig.MERGED_XML_FILE);
         try {
             fileMerger.merge();
         } catch (IOException e) {
@@ -86,12 +86,12 @@ public class Builder {
     /*
      * Build up the databases if they don't exist
      */
-    private void initDabases() {
+    private void initDatabases() {
         XMLParser parser = new XMLParser();
 
         if (!LuceneIndex.exists()) {                            // If document hasn't been parsed then...
             parser.parse();                                     // Parse the entire document
-            parser.createIndex();                               // Build Lucene Index
+            parser.createLuceneIndex();                               // Build Lucene Index
         }
 
         if (!MySQL.exists()) {                                  // If database hasn't been built then...

@@ -19,7 +19,7 @@ import java.io.IOException;
  * @author Michael Lewis
  * @version November 25, 2020 - Kickoff
  *********************************************************************************************************************/
-public class Grapher extends JFrame {
+public class Graph extends JFrame {
 
     private String dataSource;                                  // The filepath to read from
 
@@ -28,7 +28,7 @@ public class Grapher extends JFrame {
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new Grapher
      */
-    public Grapher() {
+    public Graph() {
         dataSource = ApplicationConfig.RUNTIME_LOG;
     }
 
@@ -38,7 +38,7 @@ public class Grapher extends JFrame {
      * @param dataSource The absolute path to a CSV file that contains the dataset to be graphed
      * @throws OutOfMemoryError Indicates insufficient memory for this new Grapher
      */
-    public Grapher(String dataSource) {
+    public Graph(String dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -46,7 +46,7 @@ public class Grapher extends JFrame {
      * Create a line chart. The x-axis is represented by intervals and the y-axis is represented by milliseconds. Each
      * point on the chart represents the time it took to query a database for a specific keyword
      */
-    public void graph() {
+    public void build() {
 
         DefaultCategoryDataset dataset = createDataSet();
 
