@@ -85,8 +85,8 @@ public class Graph extends JFrame {
                 int count = 0;                                  // Every interval has four entries, so track how many entries we've seen so far
                 while (line != null && count < 4) {
 
-                    databaseType = line.split(ApplicationConfig.COMMA_DELIMITER)[0];
-                    runtime = Double.parseDouble(line.split(ApplicationConfig.COMMA_DELIMITER)[2]);
+                    databaseType = line.split(ApplicationConfig.COMMA_DELIMITER)[1];
+                    runtime = Double.parseDouble(line.split(ApplicationConfig.COMMA_DELIMITER)[3]);
                     dataset.addValue(runtime, databaseType, String.valueOf(interval));
 
                     /* All entries in this interval have been read. Thus, the next line is the beginning of the next
