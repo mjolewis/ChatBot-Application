@@ -4,15 +4,16 @@
 The ChatBot application is used to respond to user queries. The underlying knowledge base is represented as a single XML 
 document that can be created from multiple source XML documents being fed into the system.  
 
-For sample purposes, the application provides both a brute force searching mechanism as well as ultra-fast search 
-capabilities via the Lucene search library.
+For sample purposes, the application provides multiple data stores including, MySQL, MongoDB, and Lucene Index. In
+addition to being able to query these databases, the application also provides a brute force force searching mechanism 
+to highlight how inefficient it is relative to the more suitable data access mechanisms provided by the databases.
 
 The current application logic follows a classification logic, that is, it groups file objects into one master aggregate 
 and then uses that aggregate file to search for a keyword. When the searching is complete, the simulation results are 
-packaged into Article aggregates. These Article aggregates can be retrieved by the user and subsequently printed to the 
-console or otherwise repacked into an output file. 
+packaged into Article aggregates. These Article aggregates can be retrieved by the user and subsequently added to the 
+client view.
 
-Finally, all search data is persisted onto disk.
+Finally, the runtime of all client queries can be graphed for informational purposes.
 
 # Usage
 Download the JAR file to your computer and then run it. You can select the JAR file from either the Gradle build or the 
@@ -26,7 +27,7 @@ variables in the Constants class need to be updated, along with the data model c
 
 # System Components
 ***Builder***\
-The Builder class serves as a mediator method that puts the simulation together. It has three public methods and two 
+The Builder class serves as a mediator method that puts the simulation together. It has four public methods and two 
 private helper methods. In particular, it provides an informative message when the simulation beings, it provides a 
 file dialog box for the user to choose N files and then builds the application components, and finally provides an 
 informative message to end the simulation.
@@ -43,17 +44,12 @@ Mutators provided for convenience.
 The Parser has been specialized to parse XML documents from ftp://ftp.ncbi.nlm.nih.gov/pubmed/. However, the class
 can easily be extended to parse XML documents from any source. Please see the Usage section for more information.
 
-The XMLParser's sole job is to receive a search parameter and parse the XML document in search of the specified search 
-parameter. Once found, an Article object will be created with the the title of the article, it's publication date, and 
-publication ID.
+The XMLParser's sole job is parse a master XML document into Article objects. After creating the Article objects, the
+XMLParser will activate database builds if the databases don't already exist. The purpose of this is to prepopulate the 
+databases with Article data before the client interacts with the web application.
 
 Note that the Parser relies on the Java StAX API, which exposes methods for iterative, event-based processing of XML 
 documents. Please visit https://docs.oracle.com/javase/tutorial/jaxp/stax/api.html for more information.
-
-For illustrative purposes, the XMLParser has both brute force and Lucene search mechanisms. These searching capabilities 
-are for instructional purposes only to highlight why efficient search capabilities are a necessary requirement for 
-production systems. As a result, ensure that the brute force searching method is removed prior to deploying the 
-application to production.
 
 For more details on Lucene, please see the Indexer class or visit https://lucene.apache.org/core/.
 
@@ -63,44 +59,89 @@ was successfully parsed by the Parser.
 
 Importantly, this class must be updated to accurately reflect the data model if the underlying knowledge base changes. 
 
-***Storage***\
-The Storage class takes input from the Parser class and provides in-memory and disk save solutions. Importantly, if 
-the application has previously stored data on disk, the application will first restore that data into memory to give 
-the user fast access to all previous search results.
+***ApplicationConfig***\
+The ApplicationConfig class provides the application with access to shared resources such as data constants.
 
-Finally, the application automatically persists search results onto disk. Despite the cost of I/O operations, storing 
-the search results to disk happens immediately to ensure system integrity. This approach prevents data loss if an event 
-that causes a loss of volatile save occurs while the application is still running.
+***WebSocketConfig***\
+The WebSocketConfig class is solely responsible for configuring and enable WebSocket and STOMP messaging. The purpose
+of this class is to create the foundation for an interactive web application that uses message brokers and STOMP 
+(simple text oriented messaging protocol that sits on top of a lower level WebSocket)
 
-***Indexer***\
-The Indexer class is the core functionality of the Lucene index. It builds an inverted index data structure to provide 
+***ClientMessage***\
+The ClientMessage class provides a simplified data model of the client message. This message is routed to the 
+QueryController or the OutputController which then use the @MessageMapping annotation to determine which method to 
+activate.
+
+***QueryResult***\
+The QueryResult class provides a simplified data model of the server response. This class packages a set of information 
+that contains the answer to the query requested by the client. After packaging, the QueryController uses the @SendTo 
+annotation to determine which route to send the response to. The message is then used by the client subscribers to 
+update the view.
+
+***QueryController***\
+The QueryController class is an annotated class that works with Spring to route STOMP messages. It handles a web 
+request and uses the @MessageMapping annotation to route that request to the appropriate destination. In particular, 
+it handles the /query messages and subsequently works with the MySQL, MongoDB, LuceneSearch, and BruteForce classes to
+perform a keyword range query specified by the client. 
+
+Finally, it can use the @SendTo annotation to respond to the client with a message that updates the view. This message 
+is packaged into a QueryResult.
+
+***OutputController***\
+The OutputController class is an annotated class that works with Spring to route STOMP messages. It handles a web 
+request and uses the @MessageMapping annotation to route that request to the appropriate destination. In particular, 
+it handles the /graph message and subsequently works with the Graph class to plot the runtime results of all queries.
+
+This class does not need to update the view and, therefore, does not send a message back to the client.
+
+***LuceneIndex***\
+The LuceneIndex class is the core functionality of the Lucene index. It builds an inverted index data structure for 
 efficient search capabilities over a corpus of documents. This is similar to how a textbook provides an index at the 
 end of the book as a way to efficiently identify pages that contain keywords. In contrast, brute force search is 
 analogous to reading every word in the body of the text as a way to identify keywords. This inverted index is stored on 
 disk within the index_directory sub-folder.
 
-***SearchEngine***\
-The SearchEngine class is the final component of the Lucene index. Its sole responsibility is to search through the 
-previously created index for a specified keyword. If the keyword is found, the class will print relevant information 
-for the user. The information includes the article id, article title, article publication date.
-
-***DatabaseOptions***\
-An enum containing constants that define a collection of database options. For example, a user can select between the 
-following options: bruteforce, lucene, MySQL, mongoDB.
-
-***QueryOptions***\
-An enum containing constants the define a collection of search options. For example, a user can select between the 
-following options when querying the databases: in-year search or range-based search
+***LuceneSearch***\
+The LuceneSearch class is the final component of the Lucene index. Its sole responsibility is to give the 
+QueryController access to various query options. This class supplements the various other databases that are provided 
+to demonstrate how to use Lucene in a Java application. 
 
 ***MySQL***\
-The MySQL class is responsible for building a relational database and providing the user various query options. This 
-class supplements the various other databases that are provided to demonstrate how to use MySQL in a Java application. 
-In particular, to demonstrate the differences between a relational database and a document database.
+The MySQL class is responsible for building a relational database as well as giving the QueryController access to 
+various query options. This class supplements the various other databases that are provided to demonstrate how to use 
+MySQL in a Java application. 
 
 ***MongoDB***\
-The MongoDB class is responsible for building a document database and providing the user various query options. This 
-class supplements the various other databases that are provided to demonstrate how to use MongoDB in a Java 
-application. In particular, to demonstrate the differences between a relational database and a document database.
+The MongoDB class is responsible for building a document database as well as giving the QueryController access to 
+various query options. This class supplements the various other databases that are provided to demonstrate how to use 
+MongoDB in a Java application.
+
+***BruteForce***\
+The BruteForce class is responsible for brute force parsing an XML document as well as giving the QueryController 
+access to various query options. This class supplements the various other databases that are provided to demonstrate 
+how inefficient a brute force mechanism is relative to MySQL, MongoDB, and Lucene.
+
+***Log***\
+The Log class is responsible for logging critical information about the client requests. For example, the client 
+sends a request to perform a keyword range query and the Log will automatically store the DAO that was used along with 
+keyword and the amount of time the search took.
+
+The log file can then be analyzed to study the runtime performance of the various databases. In particular, the Graph 
+class will extract data from the log and plot the runtime results. This is useful because it provides an easy and 
+efficient way to measure the runtime performances.
+
+***Graph***\
+The Graph class is responsible for plotting the search performances. For each interaction with the client, the 
+application performs four queries for the four different data stores. As a result, the Graph class plots four different 
+runtime results for each interaction with the client. 
+
+Importantly, the Graph will show the entire history of client interactions because the Log class stores every 
+interaction.
+
+***Save***\
+The Save class is solely responsible for providing in-memory and disk storage solutions. Importantly, if the
+application has previously stored data on disk, the application will first restore that data into memory to give the
+the user fast access to all previous search results.
 
 # System Design
 The system architecture is based on SOLID principles. Each class within the application has a well-defined 
@@ -108,7 +149,7 @@ single-responsibility, which has been highlighted in the System Components secti
 for extension, but closed for modification to ensure system integrity (e.g. invariants always remain true).
 
 UML Diagram:
-![Chatbot](https://user-images.githubusercontent.com/12025538/100486773-696e4880-30d3-11eb-85fa-e702ebdfac5d.png)
+![Chatbot](https://user-images.githubusercontent.com/12025538/100518858-56568980-3162-11eb-9ebe-20fda85e7efe.png)
 
 # Extreme Scenarios and Limitations
 Depending on the JVM and XML files sizes, this application has limitations. For example, the heap size may be exceeded
