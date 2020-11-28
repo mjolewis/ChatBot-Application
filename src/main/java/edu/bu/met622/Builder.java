@@ -1,8 +1,8 @@
 package edu.bu.met622;
 
-import edu.bu.met622.database.MongoDB;
-import edu.bu.met622.database.MySQL;
-import edu.bu.met622.database.LuceneIndex;
+import edu.bu.met622.daos.MongoDB;
+import edu.bu.met622.daos.MySQL;
+import edu.bu.met622.daos.LuceneIndex;
 import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.utils.FileMerger;
 import edu.bu.met622.utils.XMLParser;

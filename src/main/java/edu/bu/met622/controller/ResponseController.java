@@ -1,13 +1,13 @@
 package edu.bu.met622.controller;
 
-import edu.bu.met622.database.LuceneSearch;
-import edu.bu.met622.database.MongoDB;
-import edu.bu.met622.database.MySQL;
-import edu.bu.met622.model.ClientMessage;
-import edu.bu.met622.model.QueryResult;
+import edu.bu.met622.daos.LuceneSearch;
+import edu.bu.met622.daos.MongoDB;
+import edu.bu.met622.daos.MySQL;
+import edu.bu.met622.entities.ClientMessage;
+import edu.bu.met622.entities.QueryResult;
 import edu.bu.met622.output.Save;
 import edu.bu.met622.resources.ApplicationConfig;
-import edu.bu.met622.database.BruteForceSearch;
+import edu.bu.met622.daos.BruteForce;
 import edu.bu.met622.output.Graph;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -126,7 +126,7 @@ public class ResponseController {
     @MessageMapping("/bruteforce/search")
     @SendTo("/query/bruteforce/response")
     public QueryResult bruteForceResponse() {
-        BruteForceSearch bfParser = new BruteForceSearch();
+        BruteForce bfParser = new BruteForce();
 
         double hits = bfParser.parse(keyword, startYear, endYear);
         double runtime = bfParser.getRunTime();

@@ -1,9 +1,8 @@
-package edu.bu.met622.database;
+package edu.bu.met622.daos;
 
 import edu.bu.met622.output.Log;
-import edu.bu.met622.output.Save;
 import edu.bu.met622.resources.ApplicationConfig;
-import edu.bu.met622.model.Article;
+import edu.bu.met622.entities.Article;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.stream.XMLEventReader;
@@ -23,7 +22,7 @@ import java.util.*;
  *
  * @author Michael Lewis
  *********************************************************************************************************************/
-public class BruteForceSearch extends DefaultHandler {
+public class BruteForce extends DefaultHandler {
     private String fileName;                                    // File to be searched
     private List<Article> articles;                             // A container of PubMed articles
     private static Log log;                                     // Logs application events to files
@@ -36,7 +35,7 @@ public class BruteForceSearch extends DefaultHandler {
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public BruteForceSearch() {
+    public BruteForce() {
 
         fileName = ApplicationConfig.MERGED_XML_FILE;
         articles = new ArrayList<>();
@@ -50,7 +49,7 @@ public class BruteForceSearch extends DefaultHandler {
      * @param articles A list of articles
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public BruteForceSearch(String fileName, ArrayList<Article> articles) {
+    public BruteForce(String fileName, ArrayList<Article> articles) {
 
         this.fileName = fileName;
         this.articles = articles;

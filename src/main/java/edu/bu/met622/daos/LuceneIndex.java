@@ -1,6 +1,6 @@
-package edu.bu.met622.database;
+package edu.bu.met622.daos;
 
-import edu.bu.met622.model.Article;
+import edu.bu.met622.entities.Article;
 import edu.bu.met622.resources.ApplicationConfig;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
