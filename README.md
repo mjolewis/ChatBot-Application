@@ -149,7 +149,7 @@ single-responsibility, which has been highlighted in the System Components secti
 for extension, but closed for modification to ensure system integrity (e.g. invariants always remain true).
 
 UML Diagram:
-![Chatbot](https://user-images.githubusercontent.com/12025538/100518858-56568980-3162-11eb-9ebe-20fda85e7efe.png)
+![Chatbot](https://user-images.githubusercontent.com/12025538/100526763-04c9f100-319a-11eb-93b3-448f71307b85.png)
 
 # Extreme Scenarios and Limitations
 Depending on the JVM and XML files sizes, this application has limitations. For example, the heap size may be exceeded
