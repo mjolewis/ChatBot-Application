@@ -42,12 +42,15 @@ public class Log {
     /**
      * Log the runtime of the specified search type
      *
-     * @param searchType The type of search that was performed
-     * @param runtime    The total runtime of the current search
+     * @param databaseType The type of search that was performed
+     * @param keyword      The keyword that was searched
+     * @param runtime      The total runtime of the current search
      */
-    public void runtime(String searchType, double runtime) {
+    public void runtime(String databaseType, String keyword, double runtime) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(runtimeLog, true))) {
-            writer.write(searchType + ApplicationConfig.COMMA_DELIMITER + runtime + ApplicationConfig.NEW_LINE_SEPARATOR);
+            writer.write(databaseType + ApplicationConfig.COMMA_DELIMITER
+                    + keyword + ApplicationConfig.COMMA_DELIMITER
+                    + runtime + ApplicationConfig.NEW_LINE_SEPARATOR);
         } catch (IOException e) {
             e.printStackTrace();
         }

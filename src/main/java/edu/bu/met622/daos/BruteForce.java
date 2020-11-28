@@ -130,7 +130,7 @@ public class BruteForce extends DefaultHandler {
 
             endTime = System.currentTimeMillis();
             runtime = endTime - startTime;
-            log.runtime(ApplicationConfig.BRUTEFORCE, runtime);
+            log.runtime(ApplicationConfig.BRUTEFORCE, keyword, runtime);
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }
@@ -219,7 +219,7 @@ public class BruteForce extends DefaultHandler {
 
             endTime = System.currentTimeMillis();
             runtime = endTime - startTime;
-            log.runtime(ApplicationConfig.BRUTEFORCE, runtime);
+            log.runtime(ApplicationConfig.BRUTEFORCE, keyword, runtime);
         } catch (FileNotFoundException | XMLStreamException e) {
             e.printStackTrace();
         }

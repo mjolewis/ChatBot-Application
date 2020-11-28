@@ -14,6 +14,7 @@ public class ApplicationConfig {
     public static final String FILE_1 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1334.xml";
     public static final String FILE_2 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1335.xml";
     public static final String RUNTIME_LOG = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/runtime.csv";
+    public static final String SEARCH_HISTORY = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/search_history.csv";
     public static final String ERROR_LOG = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/errors.csv";
 
     // Parser
@@ -27,8 +28,7 @@ public class ApplicationConfig {
     public static final String MONTH = "Month";
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.mm";
 
-    // Disk storage
-    public static final String SEARCH_HISTORY = "search_history.csv";
+    // CSV Manipulation
     public static final String COMMA_DELIMITER = ",";
     public static final String NEW_LINE_SEPARATOR = "\n";
 

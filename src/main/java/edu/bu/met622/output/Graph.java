@@ -78,7 +78,7 @@ public class Graph extends JFrame {
             String line;                                        // The current line being read
             String databaseType;                                // Previously stored database type
             double runtime;                                     // Previously stored runtime from database queries
-            double interval = 1;                                // Used as the x-axis
+            double interval = 1;                                // Used as the x-axis label
 
             while ((line = reader.readLine()) != null) {
 
@@ -86,7 +86,7 @@ public class Graph extends JFrame {
                 while (line != null && count < 4) {
 
                     databaseType = line.split(ApplicationConfig.COMMA_DELIMITER)[0];
-                    runtime = Double.parseDouble(line.split(ApplicationConfig.COMMA_DELIMITER)[1]);
+                    runtime = Double.parseDouble(line.split(ApplicationConfig.COMMA_DELIMITER)[2]);
                     dataset.addValue(runtime, databaseType, String.valueOf(interval));
 
                     /* All entries in this interval have been read. Thus, the next line is the beginning of the next

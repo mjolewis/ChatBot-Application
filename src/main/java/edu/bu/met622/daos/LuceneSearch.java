@@ -65,7 +65,7 @@ public class LuceneSearch {
         }
 
         runtime = endTime - startTime;
-        log.runtime(ApplicationConfig.LUCENE_INDEX, runtime);
+        log.runtime(ApplicationConfig.LUCENE_INDEX, keyword, runtime);
 
         return hits.length;                                     // The number of times the keyword was found
     }
@@ -108,7 +108,7 @@ public class LuceneSearch {
         }
 
         runtime = endTime - startTime;
-        log.runtime(ApplicationConfig.LUCENE_INDEX, runtime);
+        log.runtime(ApplicationConfig.LUCENE_INDEX, keyword, runtime);
 
         return hits.length;                                     // The number of times the keyword was found
     }

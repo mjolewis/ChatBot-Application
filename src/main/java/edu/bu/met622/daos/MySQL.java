@@ -129,7 +129,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            log.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, keyword, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
@@ -168,7 +168,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            log.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, keyword, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
@@ -210,7 +210,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            log.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, keyword, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
@@ -258,7 +258,7 @@ public class MySQL {
             endTime = System.currentTimeMillis();                         // Stop the runtime clock
             runtime = endTime - startTime;                                // The total runtime of the query
 
-            log.runtime(ApplicationConfig.MYSQL, runtime);
+            log.runtime(ApplicationConfig.MYSQL, keyword, runtime);
 
             // Determine the number of times the keyword is in the database
             while (rs != null && rs.next()) {
