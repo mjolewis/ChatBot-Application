@@ -1,4 +1,4 @@
-package edu.bu.met622.model;
+package edu.bu.met622.entities;
 
 /**********************************************************************************************************************
  * A data model for the query results. This data model is used to update the View

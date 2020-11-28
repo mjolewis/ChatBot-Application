@@ -1,4 +1,4 @@
-package edu.bu.met622.model;
+package edu.bu.met622.entities;
 
 /**********************************************************************************************************************
  * Represents the message from the client

@@ -1,4 +1,4 @@
-package edu.bu.met622.database;
+package edu.bu.met622.daos;
 
 import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.output.Log;

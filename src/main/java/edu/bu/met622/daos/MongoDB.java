@@ -1,4 +1,4 @@
-package edu.bu.met622.database;
+package edu.bu.met622.daos;
 
 import com.mongodb.*;
 import com.mongodb.client.FindIterable;
@@ -9,7 +9,7 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import edu.bu.met622.output.Log;
 import org.bson.Document;
-import edu.bu.met622.model.Article;
+import edu.bu.met622.entities.Article;
 import edu.bu.met622.resources.ApplicationConfig;
 
 import java.util.ArrayList;
