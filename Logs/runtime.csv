@@ -1,20 +1,12 @@
-MySQL,flu,146.0
-MongoDB,flu,276.0
-Lucene Index,flu,1264.0
-Brute Force,flu,11203.0
-MySQL,covid-19,169.0
-MongoDB,covid-19,187.0
-Lucene Index,covid-19,2240.0
-Brute Force,covid-19,11242.0
-MySQL,stomach,150.0
-MongoDB,stomach,211.0
-Lucene Index,stomach,505.0
-Brute Force,stomach,11034.0
-MongoDB,stomach,187.0
-MySQL,stomach,232.0
-Lucene Index,stomach,1351.0
-Brute Force,stomach,11990.0
-MongoDB,brain,203.0
-MySQL,brain,228.0
-Lucene Index,brain,806.0
-Brute Force,brain,12077.0
+2020-11-28 15:58:02.58,MongoDB,covid-19,174.0
+2020-11-28 15:58:02.58,MySQL,covid-19,196.0
+2020-11-28 15:58:03.58,Lucene Index,covid-19,786.0
+2020-11-28 15:58:16.58,Brute Force,covid-19,14230.0
+2020-11-28 16:01:46.01,MySQL,stomach,178.0
+2020-11-28 16:01:46.01,MongoDB,stomach,232.0
+2020-11-28 16:01:47.01,Lucene Index,stomach,670.0
+2020-11-28 16:01:59.01,Brute Force,stomach,12601.0
+2020-11-28 16:02:25.02,MySQL,stomach,147.0
+2020-11-28 16:02:26.02,MongoDB,stomach,292.0
+2020-11-28 16:02:26.02,Lucene Index,stomach,722.0
+2020-11-28 16:02:38.02,Brute Force,stomach,12389.0
