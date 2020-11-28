@@ -22,6 +22,5 @@ public class ChatBotApplication {
         SpringApplicationBuilder springBuilder = new SpringApplicationBuilder(ChatBotApplication.class);
         springBuilder.headless(false);
         ConfigurableApplicationContext context = springBuilder.run(args);
-
     }
 }

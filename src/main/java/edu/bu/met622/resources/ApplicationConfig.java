@@ -10,11 +10,11 @@ public class ApplicationConfig {
     // Start up messages
     public static final String START_MESSAGE = "\nLaunching ChatBot...";
 
+    // File Chooser
+    public static final String FILE_SELECTION_ERROR = "Error. No files selected";
+
     // Files
-    public static final String FILE_1 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1334.xml";
-    public static final String FILE_2 = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/pubmed20n1335.xml";
     public static final String RUNTIME_LOG = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/runtime.csv";
-    public static final String SEARCH_HISTORY = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/search_history.csv";
     public static final String ERROR_LOG = "/Users/mlewis/IntelliJProjects/CS622/ChatBot/Logs/errors.csv";
 
     // Parser

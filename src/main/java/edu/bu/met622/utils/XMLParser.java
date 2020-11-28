@@ -35,21 +35,20 @@ public class XMLParser extends DefaultHandler {
      */
     public XMLParser() {
 
-        fileName = ApplicationConfig.MERGED_XML_FILE;
-        articles = new ArrayList<>();
+        this.fileName = ApplicationConfig.MERGED_XML_FILE;
+        this.articles = new ArrayList<>();
     }
 
     /**
      * Initialize a new Parser with the file to be parsed
      *
      * @param fileName Name and extension of the file to parse
-     * @param articles A list of articles
      * @throws OutOfMemoryError Indicates insufficient memory for this new XMLParser
      */
-    public XMLParser(String fileName, ArrayList<Article> articles) {
+    public XMLParser(String fileName) {
 
         this.fileName = fileName;
-        this.articles = articles;
+        this.articles = new ArrayList<>();
     }
 
     /**
