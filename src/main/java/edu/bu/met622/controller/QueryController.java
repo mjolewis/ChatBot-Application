@@ -5,18 +5,10 @@ import edu.bu.met622.daos.MongoDB;
 import edu.bu.met622.daos.MySQL;
 import edu.bu.met622.entities.ClientMessage;
 import edu.bu.met622.entities.QueryResult;
-import edu.bu.met622.output.Save;
-import edu.bu.met622.resources.ApplicationConfig;
 import edu.bu.met622.daos.BruteForce;
-import edu.bu.met622.output.Graph;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-
-import javax.swing.*;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**********************************************************************************************************************
  * A web request handler
@@ -25,21 +17,18 @@ import java.time.format.DateTimeFormatter;
  * @version November 20, 2020 - Kickoff
  *********************************************************************************************************************/
 @Controller
-public class ResponseController {
+public class QueryController {
 
     private String keyword;                                               // The user entered keyword
     private String startYear;                                             // The first year in the range to be searched
     private String endYear;                                               // The last year in the range to be searched
-    private Save save;                                              // Persist search history
 
     /**
      * Initialize a new ResponseController
      *
      * @throws OutOfMemoryError Indicates insufficient memory for this new ResponseController
      */
-    public ResponseController() {
-        this.save = new Save();
-    }
+    public QueryController() {}
 
     /**
      * Maps messages to the /keyword endpoint by matching the declared patterns to a destination extracted from the
@@ -132,42 +121,5 @@ public class ResponseController {
         double runtime = bfParser.getRunTime();
 
         return new QueryResult(keyword, hits, runtime);
-    }
-
-    /**
-     * Maps messages to the /graph endpoint by matching the declared patterns to a destination extracted from the
-     * message. Sends the response to the /query/graph/response endpoint
-     */
-    @MessageMapping("/graph")
-    @SendTo("/query/graph/response")
-    public void loadGraph() {
-        Graph graph = new Graph();
-
-        graph.build();
-
-        graph.setAlwaysOnTop(true);
-        graph.pack();
-        graph.setSize(ApplicationConfig.CHART_WIDTH, ApplicationConfig.CHART_HEIGHT);
-        graph.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        graph.setVisible(true);
-    }
-
-    //*****************************************************************************************************************
-    // Helper methods to persist data
-    //*****************************************************************************************************************
-
-    /*
-     * Store search history in-memory and on disk
-     */
-    private void save(String keyword) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ApplicationConfig.DATE_FORMAT);
-
-        save.toMemory(keyword, timestamp.format(dateTimeFormatter));
-        try {
-            save.toDisk(keyword, timestamp.format(dateTimeFormatter));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

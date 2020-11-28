@@ -136,7 +136,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        log.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, keyword, runtime);         // Log the database type and runtime
 
         return hits;
     }
@@ -165,7 +165,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        log.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, keyword, runtime);         // Log the database type and runtime
 
         return hits;
     }
@@ -196,7 +196,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        log.runtime(ApplicationConfig.MONGODB, runtime);                  // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, keyword, runtime);         // Log the database type and runtime
 
         return hits;
     }
@@ -231,7 +231,7 @@ public class MongoDB {
 
         endTime = System.currentTimeMillis();                             // Stop the runtime clock
         runtime = endTime - startTime;                                    // The total runtime of the query
-        log.runtime(ApplicationConfig.MONGODB, runtime);               // Log the database type and runtime
+        log.runtime(ApplicationConfig.MONGODB, keyword, runtime);         // Log the database type and runtime
 
         return hits;
     }
