@@ -1,4 +1,4 @@
-# ChatBot Application with Java StAX and Lucene
+# ChatBot Application
 
 # Description
 The ChatBot application is used to respond to user queries. The underlying knowledge base is represented as a single XML 
@@ -157,5 +157,6 @@ for extremely large files. To handle this issue, either manually increase the he
 do not exceed the capacity of the heap.
 
 # Output Analysis
-Please check the search_history file for sample output in .csv format
+Please check the Log folder for sample output in .csv format. Alternatively, you may run the application and interact 
+with the client to have a runtime graph automatically built.
 
