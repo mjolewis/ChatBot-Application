@@ -69,7 +69,7 @@ public class QueryController {
      */
     @MessageMapping("/mysql/search")
     @SendTo("/query/mysql/response")
-    public QueryResult mySqlResponse() {
+    public QueryResult mySql() {
         MySQL mySQLDB = MySQL.getInstance();
 
         double hits = mySQLDB.query(keyword, startYear, endYear);
@@ -84,7 +84,7 @@ public class QueryController {
      */
     @MessageMapping("/mongodb/search")
     @SendTo("/query/mongodb/response")
-    public QueryResult mongoDBResponse() {
+    public QueryResult mongoDB() {
         MongoDB mongoDB = MongoDB.getInstance();
 
         double hits = mongoDB.query(keyword, startYear, endYear);
@@ -99,7 +99,7 @@ public class QueryController {
      */
     @MessageMapping("/lucene/search")
     @SendTo("/query/lucene/response")
-    public QueryResult luceneResponse() {
+    public QueryResult lucene() {
         LuceneSearch luceneSearch = new LuceneSearch();
 
         double hits = luceneSearch.search(keyword, startYear, endYear, Integer.MAX_VALUE);
@@ -114,7 +114,7 @@ public class QueryController {
      */
     @MessageMapping("/bruteforce/search")
     @SendTo("/query/bruteforce/response")
-    public QueryResult bruteForceResponse() {
+    public QueryResult bruteForce() {
         BruteForce bfParser = new BruteForce();
 
         double hits = bfParser.parse(keyword, startYear, endYear);
