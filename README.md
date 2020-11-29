@@ -18,8 +18,11 @@ visual analysis of the efficiency of each approach.
 
 # Usage
 This application comes with an executable WAR file that can be downloaded from the target directory. More specifically, 
-./target/ChatBot-1.0-SNAPSHOT.war. To run the application, download the WAR file and run the 
-'java -jar ChatBot-1.0-SNAPSHOT.war' command.
+./target/ChatBot-1.0-SNAPSHOT.war. Follow the following instructions to use the application
+1) Download the WAR file and CD into the downloaded directory
+2) Run the 'java -jar ChatBot-1.0-SNAPSHOT.war' command
+3) A file chooser will open. Select the XML files that will become the underlying knowledge base
+4) Launch a web browser and navigate to http://localhost:8080/? to interact with the ChatBot
 
 Since this code is for demonstration only, the application has been specialized to work with files from 
 ftp://ftp.ncbi.nlm.nih.gov/pubmed/ but can easily be extended to work with XML files from any source. Keep in mind, 
