@@ -13,12 +13,13 @@ and then uses that aggregate file to search for a keyword. When the searching is
 packaged into Article aggregates. These Article aggregates can be retrieved by the user and subsequently added to the 
 client view.
 
-Finally, the runtime of all client queries can be graphed for informational purposes.
+Finally, the runtime of all client initiated queries can be graphed and, therefore, the application also enables a 
+visual analysis of the efficiency of each approach.
 
 # Usage
-Download the JAR file to your computer and then run it. You can select the JAR file from either the Gradle build or the 
-Maven build. Both are provided for demonstration purposes. These executables can be found in either 
-./build/libs/ChatBot-1.0-SNAPSHOT.jar or ./target/ChatBot-1.0-SNAPSHOT-jar-with-dependencies.jar
+This application comes with an executable WAR file that can be downloaded from the target directory. More specifically, 
+./target/ChatBot-1.0-SNAPSHOT.war. To run the application, download the WAR file and run the 
+'java -jar ChatBot-1.0-SNAPSHOT.war' command.
 
 Since this code is for demonstration only, the application has been specialized to work with files from 
 ftp://ftp.ncbi.nlm.nih.gov/pubmed/ but can easily be extended to work with XML files from any source. Keep in mind, 
@@ -137,11 +138,6 @@ runtime results for each interaction with the client.
 
 Importantly, the Graph will show the entire history of client interactions because the Log class stores every 
 interaction.
-
-***Save***\
-The Save class is solely responsible for providing in-memory and disk storage solutions. Importantly, if the
-application has previously stored data on disk, the application will first restore that data into memory to give the
-the user fast access to all previous search results.
 
 # System Design
 The system architecture is based on SOLID principles. Each class within the application has a well-defined 
